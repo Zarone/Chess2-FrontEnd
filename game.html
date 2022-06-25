@@ -10,28 +10,117 @@
     
     <title>Chess 2</title>
 
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles/styles.css">
+
+    <script src="./game.js" type="module"></script>
 
 </head>
-<body>
+<body class="custom-bg-secondary">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <header>
         <nav class="navbar navbar-expand-sm custom-bg-primary">
             <div class="container-fluid">
-              <div class=" navbar-collapse justify-content-center">
+                <div class=" navbar-collapse justify-content-center">
                 <ul class="navbar-nav">
-                  <li class="nav-item">
+                    <li class="nav-item">
                     <a class="nav-link text-white" href="./index.html">Home</a>
-                  </li>
-                  <li class="nav-item">
+                    </li>
+                    <li class="nav-item">
                     <a class="nav-link text-white" href="./game.html">Play!</a>
-                  </li>
-                  <li class="nav-item">
+                    </li>
+                    <li class="nav-item">
                     <a class="nav-link text-white" href="./faq.html">Why?</a>
-                  </li>
+                    </li>
                 </ul>
-              </div>
+                </div>
             </div>
-          </nav>
+        </nav>
+        <div class="container custom-bg-tertiary mt-3 mb-3 rounded">
+            <p id="roomID" class="display-6 text-white">Room ID: </p>
+        </div>
+        <div class="container-fluid d-flex justify-content-center align-items-center">
+            <div class="jail-1">
+                <div id="x2" class="chess-jail-box white-box">x2</div>
+                <div id="x1" class="chess-jail-box black-box">x1</div>
+            </div>
+            <div class="chess-board container">
+                <div id="a8" class="chess-box white-box">a8</div>
+                <div id="b8" class="chess-box black-box">b8</div>
+                <div id="c8" class="chess-box white-box"></div>
+                <div id="d8" class="chess-box black-box"></div>
+                <div id="e8" class="chess-box white-box"></div>
+                <div id="f8" class="chess-box black-box"></div>
+                <div id="g8" class="chess-box white-box">g8</div>
+                <div id="h8" class="chess-box black-box">h8</div>
+                
+                <div id="a7" class="chess-box black-box">a7</div>
+                <div id="b7" class="chess-box white-box"></div>
+                <div id="c7" class="chess-box black-box"></div>
+                <div id="d7" class="chess-box white-box"></div>
+                <div id="e7" class="chess-box black-box"></div>
+                <div id="f7" class="chess-box white-box"></div>
+                <div id="g7" class="chess-box black-box"></div>
+                <div id="h7" class="chess-box white-box">h7</div>
+        
+                <div id="a6" class="chess-box white-box"></div>
+                <div id="b6" class="chess-box black-box"></div>
+                <div id="c6" class="chess-box white-box"></div>
+                <div id="d6" class="chess-box black-box"></div>
+                <div id="e6" class="chess-box white-box"></div>
+                <div id="f6" class="chess-box black-box"></div>
+                <div id="g6" class="chess-box white-box"></div>
+                <div id="h6" class="chess-box black-box"></div>
+                
+                <div id="a5" class="chess-box black-box"></div>
+                <div id="b5" class="chess-box white-box"></div>
+                <div id="c5" class="chess-box black-box"></div>
+                <div id="d5" class="chess-box white-box"></div>
+                <div id="e5" class="chess-box black-box"></div>
+                <div id="f5" class="chess-box white-box"></div>
+                <div id="g5" class="chess-box black-box"></div>
+                <div id="h5" class="chess-box white-box"></div>
+                
+                <div id="a4" class="chess-box white-box"></div>
+                <div id="b4" class="chess-box black-box"></div>
+                <div id="c4" class="chess-box white-box"></div>
+                <div id="d4" class="chess-box black-box"></div>
+                <div id="e4" class="chess-box white-box"></div>
+                <div id="f4" class="chess-box black-box"></div>
+                <div id="g4" class="chess-box white-box"></div>
+                <div id="h4" class="chess-box black-box"></div>
+        
+                <div id="a3" class="chess-box black-box"></div>
+                <div id="b3" class="chess-box white-box"></div>
+                <div id="c3" class="chess-box black-box"></div>
+                <div id="d3" class="chess-box white-box"></div>
+                <div id="e3" class="chess-box black-box"></div>
+                <div id="f3" class="chess-box white-box"></div>
+                <div id="g3" class="chess-box black-box"></div>
+                <div id="h3" class="chess-box white-box"></div>
+        
+                <div id="a2" class="chess-box white-box">a2</div>
+                <div id="b2" class="chess-box black-box"></div>
+                <div id="c2" class="chess-box white-box"></div>
+                <div id="d2" class="chess-box black-box"></div>
+                <div id="e2" class="chess-box white-box"></div>
+                <div id="f2" class="chess-box black-box"></div>
+                <div id="g2" class="chess-box white-box"></div>
+                <div id="h2" class="chess-box black-box">h2</div>
+        
+                <div id="a1" class="chess-box black-box">a1</div>
+                <div id="b1" class="chess-box white-box">b1</div>
+                <div id="c1" class="chess-box black-box"></div>
+                <div id="d1" class="chess-box white-box"></div>
+                <div id="e1" class="chess-box black-box"></div>
+                <div id="f1" class="chess-box white-box"></div>
+                <div id="g1" class="chess-box black-box">g1</div>
+                <div id="h1" class="chess-box white-box">h1</div>
+            </div>
+            <div class="jail-2">
+                <div id="y2" class="chess-jail-box black-box">y2</div>
+                <div id="y1" class="chess-jail-box white-box">y1</div>
+            </div>
+        </div>
     </header>
 </body>
 </html>

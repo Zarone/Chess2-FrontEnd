@@ -10,7 +10,8 @@
 
     <title>Chess 2</title>
 
-    <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./styles/styles.css">
+    <script src="./helper-js/join.js" type="module"></script>
 
 </head>
 <body class="custom-bg-secondary">
@@ -31,11 +32,11 @@
                 </ul>
               </div>
             </div>
-          </nav>
+        </nav>
     </header>
     <section>
         <div class="container-fluid text-white pt-5">
-            <div class="container my-5 custom-bg-primary pb-5 round">
+            <div class="container my-5 custom-bg-primary pb-5 rounded">
                 <div class="row mb-4">
                     <div class="col-lg-7">
                         <p class="display-3">Chess 2</p>
@@ -43,17 +44,17 @@
                         <p class="h3">Site by Zach Alfano</p>
                     </div>
                     <div class="col-lg-5 pt-5">
-                        <div class="container custom-bg-tertiary round pt-3 pb-3">
+                        <div class="container custom-bg-tertiary rounded pt-3 pb-3">
                             <div class="d-grid">
-                                <button type="button" class="btn btn-primary btn-block">Play</button>
+                                <button type="button" id="raw-join" class="btn btn-primary btn-block">Play</button>
                                 <p>
                                     Press this button if you just want to jump into a game!
                                 </p>
                             </div>
                             <div>
                                 <div class="d-flex">
-                                    <button type="button" class="btn btn-primary btn-block">Play With Friends</button>
-                                    <input class="form-control" type="text" placeholder="Room ID">
+                                    <button type="button" id="room-join" class="btn btn-primary btn-block">Play With Friends</button>
+                                    <input class="form-control" id ="room-id" type="text" placeholder="Room ID">
                                 </div>
                                 <p>
                                     If you want to play with friends, you can enter the room ID they should be provided with!
