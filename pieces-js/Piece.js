@@ -9,6 +9,11 @@ export class Piece {
     }
 
     getImageSrc(){
-        console.log("called Piece getImageSrc")
+        console.error("called Piece getImageSrc")
+    }
+
+    getMoves(){
+        console.error("called piece getMoves")
+        return []
     }
 }

@@ -81,14 +81,14 @@ html, body {
         rgba(255, 255, 255, 0.0) 0 calc(min(
             var(--tile-size-fixed),
             var(--tile-size-dynamic)
-        )/4),
-        rgba(206, 210, 215, 1) calc(min(
+        )/6),
+        rgba(174, 176, 179, 0.5) calc(min(
             var(--tile-size-fixed),
             var(--tile-size-dynamic)
-        )/4) calc(min(
+        )/6) calc(min(
             var(--tile-size-fixed),
             var(--tile-size-dynamic)
-        )/2)
+        )/3)
     );
 }
 

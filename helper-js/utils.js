@@ -15,3 +15,7 @@ export function getQuerystring() {
     }
     return output;
 }
+
+export const toID = [
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
+]

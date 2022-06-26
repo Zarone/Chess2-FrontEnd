@@ -44,7 +44,7 @@ window.onload = async () => {
     })
 
     socket.on('player', (playerInfo)=>{
-        console.log(playerInfo)
+        // console.log(playerInfo)
         playerID = playerInfo.pid;
         isWhite = playerInfo.isWhite;
 
@@ -69,10 +69,25 @@ window.onload = async () => {
             }
         }
     })
-
-    let chessBoard = new ChessBoard()
+    
+    let chessBoard = new ChessBoard((moveInfo)=>{
+        socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
+    })
+    
     chessBoard.updatePieces()
 
+    socket.on("registeredMove", args=>{
+        console.log("registered move")
+        console.log(args, roomID, playerID)
+        if (roomID == args.room && playerID != args.player){
+            if (chessBoard.validateMove(args.moveInfo.fromPos, args.moveInfo.toPos)){
+                chessBoard.makePreValidatedMove(args.moveInfo.fromPos, args.moveInfo.toPos);
+            } else {
+                console.error("move is not allowed")
+            }
+        }
+    })
+    
     document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 

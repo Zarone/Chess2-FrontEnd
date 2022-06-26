@@ -6,6 +6,8 @@ import {King} from "./pieces-js/King.js"
 import {Elephant} from "./pieces-js/Elephant.js"
 import {Bear} from "./pieces-js/Bear.js"
 
+import {toID} from "./helper-js/utils.js"
+
 export class ChessBoard {
 
     boardLayout = {} // set in constructor
@@ -15,7 +17,9 @@ export class ChessBoard {
     draggingPieceHeight = null
     draggingPieceDom = null
 
-    constructor(){
+    makeMoveCallbackFunc = undefined;
+
+    constructor(callback){
         this.boardLayout = {
             "a8": new Rook("a8", false),
             "b8": new Monkey("b8", false),
@@ -45,46 +49,135 @@ export class ChessBoard {
             "g1": new Monkey("g1", true),
             "h1": new Rook("h1", true),
 
-            "a2": new Fish("a1", true),
-            "b2": new Fish("b1", true),
-            "c2": new Elephant("c1", true),
-            "d2": new Fish("d1", true),
-            "e2": new Fish("e1", true),
-            "f2": new Elephant("f1", true),
-            "g2": new Fish("g1", true),
-            "h2": new Fish("h1", true),
+            "a2": new Fish("a2", true),
+            "b2": new Fish("b2", true),
+            "c2": new Elephant("c2", true),
+            "d2": new Fish("d2", true),
+            "e2": new Fish("e2", true),
+            "f2": new Elephant("f2", true),
+            "g2": new Fish("g2", true),
+            "h2": new Fish("h2", true),
 
             "z1": new Bear("z1")
         }
+
+        this.makeMoveCallbackFunc = callback;
     }
 
     cursorMove(event){
         if (this.dragging){
             // console.log(event)
-            this.draggingPieceDom.style.left = (event.clientX - this.draggingPieceWidth/2 - 0) + "px"
-            this.draggingPieceDom.style.top = (event.clientY - this.draggingPieceHeight/2 - 0) + "px"
+            this.draggingPieceDom.style.left = (event.clientX - this.draggingPieceWidth/2) + "px"
+            this.draggingPieceDom.style.top = (event.clientY - this.draggingPieceHeight/2) + "px"
         }
     }
 
     dragStart(event){
         console.log("drag start", event.target)
+        event.preventDefault();
 
         this.draggingPieceDom = event.target
         this.draggingPieceWidth = event.target.offsetWidth
         this.draggingPieceHeight = event.target.offsetHeight
-        event.preventDefault();
         this.draggingPiece = this.boardLayout[event.srcElement.parentNode.id]
         this.dragging = true
+
+        this.findAndRenderMoves(this.draggingPiece)
     }
 
     dragEnd(event){
+
+        if (!this.dragging) return
+
+        console.log("this.draggingPieceDom", this.draggingPieceDom)
         this.draggingPieceDom.parentNode.removeChild(this.draggingPieceDom.parentNode.lastChild)
 
-        
         let attemptMoveTo = document.elementFromPoint(event.clientX, event.clientY)
-        console.log("drag end", attemptMoveTo)
+        // console.log("drag end", attemptMoveTo.nodeName)
+
+        if (attemptMoveTo.nodeName == "IMG"){
+            attemptMoveTo = attemptMoveTo.parentElement
+        }
+
+        this.makeMove(attemptMoveTo)
+    }
+
+    makeMove(moveToDom){
+        // console.log("move to", moveToDom.className.split(" ").includes())
+        let classNames = moveToDom.className.split(" ")
+
+        if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
+            console.log("not a tile on the game board")
+        } else if (moveToDom.id == this.draggingPiece.position){
+            console.log("moving to same tile as you're already on")
+        } else if(moveToDom.style.backgroundColor == 'red'){
+            
+            this.boardLayout[moveToDom.id] = this.draggingPiece
+            
+            let fromPos = this.draggingPiece.position;
+
+            delete this.boardLayout[this.draggingPiece.position]
+
+            this.draggingPiece.position = moveToDom.id
+
+            let toPos = this.draggingPiece.position;
+
+            this.makeMoveCallbackFunc({fromPos, toPos})
+
+        }
 
         this.dragging = false
+        this.resetTiles();
+        this.updatePieces();
+    }
+
+    filterImpossibleMoves(moves){
+        return moves.filter((elem, index)=>{
+            return index != 0
+        })
+    }
+
+    makePreValidatedMove(fromPos, toPos){
+        this.boardLayout[toPos] = this.boardLayout[fromPos]
+
+        this.boardLayout[toPos].position = toPos
+
+        delete this.boardLayout[fromPos]
+
+
+        console.log(this.boardLayout, "after makePreValidatedMove")
+
+        this.resetTiles();
+        this.updatePieces();
+    }
+
+    renderMoves(moves){
+        for (let i = 0; i < moves.length; i++){
+            let editTileDom = document.getElementById(moves[i].pos);
+            editTileDom.style.backgroundColor = 'red'
+        }
+    }
+
+    findMoves(piece){
+        let movesFromPiece = piece.getMoves()
+        console.log("movesFromPiece",movesFromPiece)
+        return this.filterImpossibleMoves(movesFromPiece)
+    }
+
+    validateMove(currentPosition, newPosition){
+        let thisPiece = this.boardLayout[currentPosition]
+        let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves())
+        for (let i = 0; i < legalMoves.length; i++){
+            if (legalMoves[i].pos == newPosition) return true;
+        }
+        console.log("received invalid move")
+        return false
+    }
+
+    findAndRenderMoves(piece){
+        let movesToRender = this.findMoves(piece)
+        console.log("movesToRender", movesToRender)
+        this.renderMoves(movesToRender)
     }
 
     renderPiece(tileDom, piece){
@@ -101,6 +194,19 @@ export class ChessBoard {
         tileDom.addEventListener("dragstart", event => this.dragStart(event))
     }
 
+    resetTiles(){
+        for (let i = 0; i < 8; i++){
+            for (let j = 0; j < 8; j++){
+                let id = toID[i]+(j+1);
+                document.getElementById(id).style.backgroundColor = ''
+            }
+        }
+        document.getElementById("x1").style.backgroundColor = ''
+        document.getElementById("x2").style.backgroundColor = ''
+        document.getElementById("y1").style.backgroundColor = ''
+        document.getElementById("y2").style.backgroundColor = ''
+    }
+
     updatePieces(){
         let allPieces = Object.keys(this.boardLayout)
         for (let i = 0; i < allPieces.length; i++){
@@ -110,6 +216,26 @@ export class ChessBoard {
             this.renderPiece(tileDom, piece)
             
             this.addPieceEvents(tileDom)
+        }
+        
+        for (let i = 0; i < 8; i++){
+            for (let j = 0; j < 8; j++){
+                let id = toID[i]+(j+1);
+                let piece = this.boardLayout[id]
+                let tileDom = document.getElementById(id);
+
+                if (piece == undefined){
+                    while (tileDom.hasChildNodes()) {
+                        tileDom.removeChild(tileDom.lastChild);
+                    }
+                } else {                
+                    this.renderPiece(tileDom, piece)
+
+                    this.addPieceEvents(tileDom)
+                }
+
+                
+            }
         }
     }
 }
