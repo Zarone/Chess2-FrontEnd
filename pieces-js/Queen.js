@@ -1,6 +1,7 @@
 import {Piece} from "./Piece.js"
+import { FishQueen } from "./FishQueen.js";
 
-export class Queen extends Piece {
+export class Queen extends FishQueen {
     constructor(position, isWhite){
         super(position, isWhite);
     }

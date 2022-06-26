@@ -165,18 +165,18 @@ export class ChessBoard {
         } else if (moveToDom.id == this.draggingPiece.position){
             console.log("moving to same tile as you're already on")
         } else if(moveToDom.style.backgroundColor == 'red'){
-            
-            this.stateChecks(this.draggingPiece.position, moveToDom.id)
 
-            this.boardLayout[moveToDom.id] = this.boardLayout[this.draggingPiece.position]
+            let toPos = moveToDom.id;
             
             let fromPos = this.draggingPiece.position;
+            
+            this.stateChecks(fromPos, toPos)
 
-            delete this.boardLayout[this.draggingPiece.position]
+            this.boardLayout[toPos] = this.boardLayout[fromPos]
 
-            this.draggingPiece.position = moveToDom.id
+            delete this.boardLayout[fromPos]
 
-            let toPos = this.draggingPiece.position;
+            this.boardLayout[toPos].position = toPos;
 
             let newTurn;
             if (this.currentTurn == "White") {

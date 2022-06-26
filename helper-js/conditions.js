@@ -75,7 +75,60 @@ export function noDiagonalBlocking({board, from, to}){
     return true;
 }
 
+export function noStraightBlocking({board, from, to}){
+    if (board == undefined || from == undefined || to == undefined){
+        console.log("incorrect args provided to noPiece")
+    }
+
+    let fromCoords = getVerticalAndHorizontal(from)
+    let fromVertical = fromCoords.vertical
+    let fromHorizontal = fromCoords.horizontal
+
+    let toCoords = getVerticalAndHorizontal(to)
+    let toVertical = toCoords.vertical
+    let toHorizontal = toCoords.horizontal
+
+    if (toVertical > fromVertical){
+        // straight up
+        for (let i = 1; i <= (toVertical-fromVertical); i++){
+            if (board[verticalAndHorizontalToID(
+                fromVertical+i, fromHorizontal
+            )] != undefined){
+                return false
+            }
+        }
+    } else if (toVertical < fromVertical){
+        // straight down
+        for (let i = 1; i <= (fromVertical-toVertical); i++){
+            if (board[verticalAndHorizontalToID(
+                fromVertical-i, fromHorizontal
+            )] != undefined){
+                return false
+            }
+        }
+    } else if (toHorizontal > fromHorizontal){
+        for (let i = 1; i <= (toHorizontal - fromHorizontal); i++){
+            if (board[verticalAndHorizontalToID(
+                fromVertical, fromHorizontal+i
+            )] != undefined){
+                return false
+            }
+        }
+    } else if (toHorizontal < fromHorizontal){
+        for (let i = 1; i <= (fromHorizontal - toHorizontal); i++){
+            if (board[verticalAndHorizontalToID(
+                fromVertical, fromHorizontal-i
+            )] != undefined){
+                return false
+            }
+        }
+    }
+
+    return true;
+}
+
 export function notSameType({board, from, to}){
+    console.log("from", from)
     if (board == undefined || from == undefined || to == undefined){
         console.log("incorrect args provided to noPiece")
     }
