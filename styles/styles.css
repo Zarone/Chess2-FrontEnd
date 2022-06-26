@@ -80,3 +80,7 @@ html, body {
     background-color: rgb(67, 113, 167);
     border-radius: 5px;
 }
+
+.logo {
+    width: 100%;
+}
