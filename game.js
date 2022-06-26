@@ -22,6 +22,9 @@ window.onload = async () => {
     let jail2_Dom = document.getElementById("jail-2")
     let chessBoard_Dom = document.getElementById("chess-board")
     let chessBoardContainer_Dom = document.getElementById("board-container")
+    let gameOverModal_Dom = document.getElementById("myModal")
+    let modalHeading_Dom = document.getElementById("modal-heading")
+    let gameOverModal = new bootstrap.Modal(gameOverModal_Dom, {keyboard: false})
 
     let isWhite = undefined;
     let playerID = undefined;
@@ -45,11 +48,15 @@ window.onload = async () => {
 
     })
 
-    socket.on('gameOver', winner=>{
-        if (playerID == winner){
-            alert("you win");
-        } else {
-            alert("you lose")
+    socket.on('gameOver', ({room, id})=>{
+        if (room == roomID){
+            if (playerID == id){
+                gameOverModal.toggle()
+                modalHeading_Dom.innerText = "You Win! 💯"
+            } else {
+                gameOverModal.toggle()
+                modalHeading_Dom.innerText = "You Lost. Better Luck Next Time 😊"
+            }
         }
     })
 
