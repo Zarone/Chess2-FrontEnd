@@ -17,5 +17,27 @@ export function getQuerystring() {
 }
 
 export const toID = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
+    null, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
 ]
+
+export const toNum = {
+    'a': 1,
+    'b': 2,
+    'c': 3,
+    'd': 4,
+    'e': 5,
+    'f': 6,
+    'g': 7,
+    'h': 8,
+}
+
+export function getVerticalAndHorizontal(id){
+    let individualCoords = id.split("")
+    let vertical = +individualCoords[1]
+    let horizontal = toNum[individualCoords[0]]
+    return {vertical, horizontal}
+}
+
+export function verticalAndHorizontalToID(vertical, horizontal){
+    return toID[horizontal] + vertical
+}

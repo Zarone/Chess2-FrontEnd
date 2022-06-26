@@ -1,6 +1,7 @@
 import {Rook} from "./pieces-js/Rook.js"
 import {Monkey} from "./pieces-js/Monkey.js"
 import {Fish} from "./pieces-js/Fish.js"
+import {FishQueen} from "./pieces-js/FishQueen.js"
 import {Queen} from "./pieces-js/Queen.js"
 import {King} from "./pieces-js/King.js"
 import {Elephant} from "./pieces-js/Elephant.js"
@@ -16,6 +17,13 @@ export class ChessBoard {
     draggingPieceWidth = null
     draggingPieceHeight = null
     draggingPieceDom = null
+
+    isWhite = undefined
+
+    rookActiveWhite = false;
+    rookActiveBlack = false;
+
+    currentTurn = "White"; // either "White", "Black", "White Jail", "Black Jail"
 
     makeMoveCallbackFunc = undefined;
 
@@ -73,15 +81,23 @@ export class ChessBoard {
     }
 
     dragStart(event){
+
+        let canMove = (this.isWhite && this.currentTurn == "White") || (!this.isWhite && this.currentTurn == "Black");
+        if (!canMove) return;
+        
         console.log("drag start", event.target)
         event.preventDefault();
+        
+        this.draggingPiece = this.boardLayout[event.srcElement.parentNode.id]
+        
+        let sameColorAsPlayer = (this.draggingPiece.isWhite == null || (this.isWhite && this.draggingPiece.isWhite) || (!this.isWhite && !this.draggingPiece.isWhite))
+        if (!sameColorAsPlayer) return;
 
         this.draggingPieceDom = event.target
         this.draggingPieceWidth = event.target.offsetWidth
         this.draggingPieceHeight = event.target.offsetHeight
-        this.draggingPiece = this.boardLayout[event.srcElement.parentNode.id]
         this.dragging = true
-
+        
         this.findAndRenderMoves(this.draggingPiece)
     }
 
@@ -101,7 +117,45 @@ export class ChessBoard {
 
         this.makeMove(attemptMoveTo)
     }
+    
+    updateRookActivity(toPos){
+        this.rookActiveBlack = false;
+        this.rookActiveWhite = false;
 
+        // if a piece was taken
+        if (this.boardLayout[toPos] != undefined){
+            if (this.boardLayout[toPos].isWhite){
+                this.rookActiveWhite = true;
+            } else if (this.boardLayout[toPos] != null){
+                this.rookActiveBlack = true;
+            }
+        }
+    }
+
+    checkFishPromotion(fromPos, toPos){
+        
+        // if the piece being moved is a fish
+        if ( this.boardLayout[fromPos].constructor.name == Fish.name ){
+
+            let rowName = toPos.split("")[1]
+            console.log("rowName", rowName)
+            console.log("isWhite", this.boardLayout[fromPos].isWhite)
+            if (
+                (this.boardLayout[fromPos].isWhite && rowName=="8") ||
+                (!this.boardLayout[fromPos].isWhite && rowName=="1")
+            ){
+                console.log("PROMOTE TO FISH QUEEN")
+                this.boardLayout[fromPos] = new FishQueen(fromPos, this.boardLayout[fromPos].isWhite)
+            }
+
+        }
+    }
+
+    stateChecks(fromPos, toPos){
+        this.updateRookActivity(toPos);
+        this.checkFishPromotion(fromPos, toPos);
+    }
+    
     makeMove(moveToDom){
         // console.log("move to", moveToDom.className.split(" ").includes())
         let classNames = moveToDom.className.split(" ")
@@ -112,7 +166,9 @@ export class ChessBoard {
             console.log("moving to same tile as you're already on")
         } else if(moveToDom.style.backgroundColor == 'red'){
             
-            this.boardLayout[moveToDom.id] = this.draggingPiece
+            this.stateChecks(this.draggingPiece.position, moveToDom.id)
+
+            this.boardLayout[moveToDom.id] = this.boardLayout[this.draggingPiece.position]
             
             let fromPos = this.draggingPiece.position;
 
@@ -122,7 +178,16 @@ export class ChessBoard {
 
             let toPos = this.draggingPiece.position;
 
-            this.makeMoveCallbackFunc({fromPos, toPos})
+            let newTurn;
+            if (this.currentTurn == "White") {
+                newTurn = "Black"
+            } else if (this.currentTurn == "Black") {
+                newTurn = "White"
+            }
+
+            this.currentTurn = newTurn
+
+            this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
 
         }
 
@@ -131,19 +196,26 @@ export class ChessBoard {
         this.updatePieces();
     }
 
-    filterImpossibleMoves(moves){
+    filterImpossibleMoves(moves, currentPos){
         return moves.filter((elem, index)=>{
-            return index != 0
+            for (let i = 0; i < elem.conditions.length; i++){
+                if (! elem.conditions[i]({ board: this.boardLayout, from: currentPos, to: elem.pos }) ) return false
+            }
+            return true
+
         })
     }
 
     makePreValidatedMove(fromPos, toPos){
+
+
+        this.stateChecks(fromPos, toPos)
+
         this.boardLayout[toPos] = this.boardLayout[fromPos]
 
         this.boardLayout[toPos].position = toPos
 
         delete this.boardLayout[fromPos]
-
 
         console.log(this.boardLayout, "after makePreValidatedMove")
 
@@ -161,12 +233,19 @@ export class ChessBoard {
     findMoves(piece){
         let movesFromPiece = piece.getMoves()
         console.log("movesFromPiece",movesFromPiece)
-        return this.filterImpossibleMoves(movesFromPiece)
+        return this.filterImpossibleMoves(movesFromPiece, piece.position)
     }
 
-    validateMove(currentPosition, newPosition){
+    validateMove(currentPosition, newPosition, newTurn){
+        console.log("new turn", newTurn)
+        
+        if (newTurn == this.currentTurn) {
+            console.error("new turn is invalid")
+            return false
+        }
+
         let thisPiece = this.boardLayout[currentPosition]
-        let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves())
+        let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves(), thisPiece.position)
         for (let i = 0; i < legalMoves.length; i++){
             if (legalMoves[i].pos == newPosition) return true;
         }
@@ -195,9 +274,9 @@ export class ChessBoard {
     }
 
     resetTiles(){
-        for (let i = 0; i < 8; i++){
-            for (let j = 0; j < 8; j++){
-                let id = toID[i]+(j+1);
+        for (let i = 1; i < 9; i++){
+            for (let j = 1; j < 9; j++){
+                let id = toID[i]+(j);
                 document.getElementById(id).style.backgroundColor = ''
             }
         }
@@ -207,35 +286,33 @@ export class ChessBoard {
         document.getElementById("y2").style.backgroundColor = ''
     }
 
-    updatePieces(){
-        let allPieces = Object.keys(this.boardLayout)
-        for (let i = 0; i < allPieces.length; i++){
-            let tileDom = document.getElementById(allPieces[i]);
-            let piece = this.boardLayout[allPieces[i]]
-            
+    updateSinglePiece(id){
+        let piece = this.boardLayout[id]
+        let tileDom = document.getElementById(id);
+
+        if (piece == undefined){
+            while (tileDom.hasChildNodes()) {
+                tileDom.removeChild(tileDom.lastChild);
+            }
+        } else {                
             this.renderPiece(tileDom, piece)
-            
+
             this.addPieceEvents(tileDom)
         }
-        
-        for (let i = 0; i < 8; i++){
-            for (let j = 0; j < 8; j++){
-                let id = toID[i]+(j+1);
-                let piece = this.boardLayout[id]
-                let tileDom = document.getElementById(id);
+    }
 
-                if (piece == undefined){
-                    while (tileDom.hasChildNodes()) {
-                        tileDom.removeChild(tileDom.lastChild);
-                    }
-                } else {                
-                    this.renderPiece(tileDom, piece)
-
-                    this.addPieceEvents(tileDom)
-                }
-
-                
+    updatePieces(){
+        for (let i = 1; i < 9; i++){
+            for (let j = 1; j < 9; j++){
+                let id = toID[i]+(j);
+                this.updateSinglePiece(id)
             }
         }
+
+        this.updateSinglePiece("x1")
+        this.updateSinglePiece("x2")
+        this.updateSinglePiece("y1")
+        this.updateSinglePiece("y2")
+        this.updateSinglePiece("z1")
     }
 }
