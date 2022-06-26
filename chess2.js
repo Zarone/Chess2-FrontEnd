@@ -8,7 +8,12 @@ import {Bear} from "./pieces-js/Bear.js"
 
 export class ChessBoard {
 
-    boardLayout = {}
+    boardLayout = {} // set in constructor
+    dragging = false
+    draggingPiece = null
+    draggingPieceWidth = null
+    draggingPieceHeight = null
+    draggingPieceDom = null
 
     constructor(){
         this.boardLayout = {
@@ -53,17 +58,58 @@ export class ChessBoard {
         }
     }
 
-    renderPieces(){
+    cursorMove(event){
+        if (this.dragging){
+            // console.log(event)
+            this.draggingPieceDom.style.left = (event.clientX - this.draggingPieceWidth/2 - 0) + "px"
+            this.draggingPieceDom.style.top = (event.clientY - this.draggingPieceHeight/2 - 0) + "px"
+        }
+    }
+
+    dragStart(event){
+        console.log("drag start", event.target)
+
+        this.draggingPieceDom = event.target
+        this.draggingPieceWidth = event.target.offsetWidth
+        this.draggingPieceHeight = event.target.offsetHeight
+        event.preventDefault();
+        this.draggingPiece = this.boardLayout[event.srcElement.parentNode.id]
+        this.dragging = true
+    }
+
+    dragEnd(event){
+        this.draggingPieceDom.parentNode.removeChild(this.draggingPieceDom.parentNode.lastChild)
+
+        
+        let attemptMoveTo = document.elementFromPoint(event.clientX, event.clientY)
+        console.log("drag end", attemptMoveTo)
+
+        this.dragging = false
+    }
+
+    renderPiece(tileDom, piece){
+        let imageDom = document.createElement("img");
+        imageDom.setAttribute("src", "./images/"+piece.getImageSrc());
+        imageDom.setAttribute("class", "piece-image");
+        while (tileDom.hasChildNodes()) {
+            tileDom.removeChild(tileDom.lastChild);
+        }
+        tileDom.appendChild(imageDom)
+    }
+
+    addPieceEvents(tileDom){
+        tileDom.addEventListener("dragstart", event => this.dragStart(event))
+    }
+
+    updatePieces(){
         let allPieces = Object.keys(this.boardLayout)
         for (let i = 0; i < allPieces.length; i++){
             let tileDom = document.getElementById(allPieces[i]);
-            let imageDom = document.createElement("img");
-            imageDom.setAttribute("src", "./images/"+this.boardLayout[allPieces[i]].getImageSrc());
-            imageDom.setAttribute("class", "piece-image");
-            while (tileDom.hasChildNodes()) {
-                tileDom.removeChild(tileDom.lastChild);
-            }
-            tileDom.appendChild(imageDom)
+            let piece = this.boardLayout[allPieces[i]]
+            
+            this.renderPiece(tileDom, piece)
+            
+            this.addPieceEvents(tileDom)
         }
     }
 }

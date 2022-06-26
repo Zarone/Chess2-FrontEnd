@@ -107,7 +107,15 @@ html, body {
 }
 
 .piece-image {
-    width: 100%;
+    width: min(
+        var(--tile-size-fixed), 
+        var(--tile-size-dynamic)
+    );
+    /* height: min(
+        var(--tile-size-fixed), 
+        var(--tile-size-dynamic)
+    ); */
+    position: fixed;
 }
 
 .bear-container {
@@ -123,8 +131,8 @@ html, body {
         var(--tile-size-dynamic)
     );
     position: absolute;
-    right: 50%;
-    transform: translateX(
+    /* right: 50%; */
+    /* transform: translateX(
         calc(
             min(
                 var(--tile-size-fixed), 
@@ -132,5 +140,12 @@ html, body {
             ) 
             / 2 
         )
-    );
+    ); */
+}
+
+.cursor-following-image{
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: darkviolet;
 }

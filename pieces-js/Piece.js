@@ -6,7 +6,6 @@ export class Piece {
     constructor(position, isWhite){
         this.isWhite = isWhite
         this.position = position
-        console.log("called Piece constructor")
     }
 
     getImageSrc(){

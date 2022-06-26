@@ -71,8 +71,10 @@ window.onload = async () => {
     })
 
     let chessBoard = new ChessBoard()
-    chessBoard.renderPieces()
-    chessBoard.renderPieces()
-    chessBoard.renderPieces()
+    chessBoard.updatePieces()
+
+    document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
+    document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
+
 
 }
