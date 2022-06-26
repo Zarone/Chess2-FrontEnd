@@ -1,4 +1,5 @@
 export const serverID = "http://localhost:8080"
+export const socketID = "ws://localhost:8080"
 
 export function getQuerystring() {
     let output={}

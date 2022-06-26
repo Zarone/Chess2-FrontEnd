@@ -2,6 +2,8 @@
     --bg-primary: #6895c9;
     --bg-secondary: #7d8ea1;
     --bg-tertiary: #28578d;
+    --tile-size-fixed: 75px;
+    --tile-size-dynamic: 6.5vw;
 }
 
 html, body {  
@@ -27,23 +29,41 @@ html, body {
 
 .chess-board {
     display: flex;
-    background-color: pink;
     padding: 0;
     margin: 0;
-    height: min(600px, 80vw);
-    width: min(600px, 80vw);
+    height: min(
+        calc(8*var(--tile-size-fixed)),
+        calc(8*var(--tile-size-dynamic))
+    );
+    width: min(
+        calc(8*var(--tile-size-fixed)),
+        calc(8*var(--tile-size-dynamic))
+    );
 }
 
 .jail-1, .jail-2 {
-    background-color: purple;
-    height: min(150px, 20vw);
-    width: min(75px, 10vw);
+    display: flex;
+    height: min(
+        calc(2*var(--tile-size-fixed)),
+        calc(2*var(--tile-size-dynamic))
+    );
+    width: min(
+        var(--tile-size-fixed),
+        var(--tile-size-dynamic)
+    );
 }
 
 .chess-box, .chess-jail-box {
-    height: min(75px, 10vw);
-    width: min(75px, 10vw);
+    height: min(
+        var(--tile-size-fixed), 
+        var(--tile-size-dynamic)
+    );
+    width: min(
+        var(--tile-size-fixed), 
+        var(--tile-size-dynamic)
+    );
     color:darkgoldenrod;
+    font-size: 2rem;
     margin: 0 auto;
     display: flex;
     justify-content: center;
@@ -53,8 +73,10 @@ html, body {
 
 .white-box {
     background-color: rgb(255, 255, 255);
+    border-radius: 5px;
 }
 
 .black-box {
     background-color: rgb(67, 113, 167);
+    border-radius: 5px;
 }
