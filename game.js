@@ -72,5 +72,7 @@ window.onload = async () => {
 
     let chessBoard = new ChessBoard()
     chessBoard.renderPieces()
+    chessBoard.renderPieces()
+    chessBoard.renderPieces()
 
 }

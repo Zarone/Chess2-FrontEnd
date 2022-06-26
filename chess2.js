@@ -4,6 +4,7 @@ import {Fish} from "./pieces-js/Fish.js"
 import {Queen} from "./pieces-js/Queen.js"
 import {King} from "./pieces-js/King.js"
 import {Elephant} from "./pieces-js/Elephant.js"
+import {Bear} from "./pieces-js/Bear.js"
 
 export class ChessBoard {
 
@@ -47,16 +48,22 @@ export class ChessBoard {
             "f2": new Elephant("f1", true),
             "g2": new Fish("g1", true),
             "h2": new Fish("h1", true),
+
+            "z1": new Bear("z1")
         }
     }
 
     renderPieces(){
         let allPieces = Object.keys(this.boardLayout)
         for (let i = 0; i < allPieces.length; i++){
+            let tileDom = document.getElementById(allPieces[i]);
             let imageDom = document.createElement("img");
             imageDom.setAttribute("src", "./images/"+this.boardLayout[allPieces[i]].getImageSrc());
             imageDom.setAttribute("class", "piece-image");
-            document.getElementById(allPieces[i]).appendChild(imageDom)
+            while (tileDom.hasChildNodes()) {
+                tileDom.removeChild(tileDom.lastChild);
+            }
+            tileDom.appendChild(imageDom)
         }
     }
 }

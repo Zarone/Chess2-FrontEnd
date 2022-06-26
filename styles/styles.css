@@ -30,7 +30,8 @@ html, body {
 .chess-box > p, .chess-jail-box > p {
     display: none;
     color:darkgoldenrod;
-    font-size: 2.5rem;}
+    font-size: 2.5rem;
+}
 
 .chess-board {
     display: flex;
@@ -74,6 +75,23 @@ html, body {
     background: radial-gradient(circle, rgba(255,255,255,0) 10%, rgba(194, 194, 194, 0.35) 90%);
 }
 
+.chess-jail-box{
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.0) 0 calc(min(
+            var(--tile-size-fixed),
+            var(--tile-size-dynamic)
+        )/4),
+        rgba(206, 210, 215, 1) calc(min(
+            var(--tile-size-fixed),
+            var(--tile-size-dynamic)
+        )/4) calc(min(
+            var(--tile-size-fixed),
+            var(--tile-size-dynamic)
+        )/2)
+    );
+}
+
 .white-box {
     background-color: rgb(255, 255, 255);
     border-radius: 5px;
@@ -90,4 +108,29 @@ html, body {
 
 .piece-image {
     width: 100%;
+}
+
+.bear-container {
+    background: radial-gradient(
+        circle, rgba(0,0,0,0.5) 15%, rgba(255,255,255,0) 75%
+    );
+    height: min(
+        var(--tile-size-fixed), 
+        var(--tile-size-dynamic)
+    );
+    width: min(
+        var(--tile-size-fixed), 
+        var(--tile-size-dynamic)
+    );
+    position: absolute;
+    right: 50%;
+    transform: translateX(
+        calc(
+            min(
+                var(--tile-size-fixed), 
+                var(--tile-size-dynamic)
+            ) 
+            / 2 
+        )
+    );
 }

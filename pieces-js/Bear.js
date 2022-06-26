@@ -1,8 +1,8 @@
 import {Piece} from "./Piece.js"
 
 export class Bear extends Piece {
-    constructor(position, isWhite){
-        super(position, isWhite);
+    constructor(position){
+        super(position, undefined);
     }
 
     getImageSrc(){
