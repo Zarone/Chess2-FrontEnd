@@ -1,10 +1,9 @@
+import { ChessBoard } from "./chess2.js";
 import {serverID, socketID} from "./helper-js/utils.js";
 import {getQuerystring} from "./helper-js/utils.js"
 
 window.onload = async () => {
     let {roomID, friendRoom} = getQuerystring()
-    console.log("RoomID", roomID)
-    console.log("Friend Room", friendRoom)
 
     let gameOverModal_Dom = document.getElementById("myModal")
     let modalHeading_Dom = document.getElementById("modal-heading")
@@ -70,5 +69,8 @@ window.onload = async () => {
             }
         }
     })
+
+    let chessBoard = new ChessBoard()
+    chessBoard.renderPieces()
 
 }
