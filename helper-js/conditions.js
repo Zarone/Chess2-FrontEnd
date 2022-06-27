@@ -143,10 +143,22 @@ export function rookActive({board, rookActiveWhite, rookActiveBlack, from}){
     return (board[from].isWhite && rookActiveWhite) || (!board[from].isWhite && rookActiveBlack)
 }
 
+function containsObject(obj, list) {
+    for (let i = 0; i < list.length; i++) {
+        if (list[i] === obj) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export function canMonkeyJump({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
         console.log("incorrect args provided to noPiece")
     }
+
+    console.log("can monkey jump?", from, to)
 
     let fromCoords = getVerticalAndHorizontal(from)
     let fromVertical = fromCoords.vertical
@@ -156,12 +168,115 @@ export function canMonkeyJump({board, from, to}){
     let toVertical = toCoords.vertical
     let toHorizontal = toCoords.horizontal
 
-    // construct a graph of current neighbors that the monkey can jump to
+    console.log(fromVertical, fromHorizontal)
 
+    // construct a graph of current neighbors that the monkey can jump to
     let toCheck = []
-    let hasChecked = []
-    
 
     // make a list of all nodes we've checked
+    let hasChecked = []
+
+    let addToLists = (inputVertical, inputHorizontal) => {
+
+        // REMINDER: make sure you can't move to tile with same color piece as you
+
+        let tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal)
+        if ((inputVertical + 2) < 9 && board[tempID] != undefined) {
+            let insertElement = {vert: inputVertical+2, hor: inputHorizontal}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+
+        tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal)
+        if ((inputVertical - 2) > 0 && board[tempID] != undefined){
+            let insertElement = {vert: inputVertical-2, hor: inputHorizontal}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+        tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal+1)
+        if ((inputHorizontal + 2) < 9 && board[tempID] != undefined) {
+            let insertElement = {vert: inputVertical, hor: inputHorizontal+2}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+        tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal-1)
+        if ((inputHorizontal - 2) > 0 && board[tempID] != undefined) {
+            let insertElement = {vert: inputVertical, hor: inputHorizontal-2}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+        
+        tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal+1)
+        if ((inputVertical + 2) < 9 && (inputHorizontal+2) < 9 && board[tempID] != undefined) {
+            let insertElement = {vert: inputVertical+2, hor: inputHorizontal+2}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+
+        tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal+1)
+        if ((inputVertical - 2) > 0 && (inputHorizontal+2) < 9 && board[tempID] != undefined){
+            let insertElement = {vert: inputVertical-2, hor: inputHorizontal+2}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+        tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal-1)
+        if ((inputHorizontal - 2) > 0 && (inputVertical+2) < 9 && board[tempID] != undefined) {
+            let insertElement = {vert: inputVertical+2, hor: inputHorizontal-2}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+
+        tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal-1)
+        if ((inputHorizontal - 2) > 0 && (inputVertical - 2) > 0 && board[tempID] != undefined) {
+            let insertElement = {vert: inputVertical-2, hor: inputHorizontal-2}
+            if (!containsObject(insertElement, hasChecked)){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                toCheck.push(insertElement);
+                hasChecked.push(insertElement);
+            }
+        }
+        return false
+    }
+
+    console.log("initial addToLists", addToLists(fromVertical, fromHorizontal));
+
+    console.log("toCheck start", JSON.stringify(toCheck))
+
     // on each neighbor, check other neighbors
+    while (toCheck.length > 0){
+        let checkingNode = toCheck.shift()
+        console.log("checkingNode",JSON.stringify(checkingNode))
+        if (addToLists(checkingNode.vert, checkingNode.hor)) return true
+    }
+    return false
+
 }
