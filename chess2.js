@@ -170,6 +170,14 @@ export class ChessBoard {
             
             let fromPos = this.draggingPiece.position;
             
+            let tookKingOrQueen = false;
+            if (
+                this.boardLayout[toPos].constructor.name == King.name || 
+                this.boardLayout[toPos].constructor.name == Queen.name
+            ){
+                tookKingOrQueen = true;
+            }
+
             this.stateChecks(fromPos, toPos)
 
             this.boardLayout[toPos] = this.boardLayout[fromPos]
@@ -180,9 +188,17 @@ export class ChessBoard {
 
             let newTurn;
             if (this.currentTurn == "White") {
-                newTurn = "Black"
+                if (tookKingOrQueen) {
+                    newTurn = "White Jail"
+                } else {
+                    newTurn = "Black"
+                }
             } else if (this.currentTurn == "Black") {
-                newTurn = "White"
+                if (tookKingOrQueen) {
+                    newTurn = "Black Jail"
+                } else {
+                    newTurn = "White"
+                }
             }
 
             this.currentTurn = newTurn
@@ -219,8 +235,6 @@ export class ChessBoard {
     }
 
     makePreValidatedMove(fromPos, toPos){
-
-
         this.stateChecks(fromPos, toPos)
 
         this.boardLayout[toPos] = this.boardLayout[fromPos]
@@ -249,12 +263,20 @@ export class ChessBoard {
 
     validateMove(currentPosition, newPosition, newTurn){
         console.log("new turn", newTurn)
-        
-        if (newTurn == this.currentTurn) {
+        if (
+            (newTurn == "White" && this.currentTurn == "Black") ||
+            (newTurn == "Black" && this.currentTurn == "White") || (
+                ( this.boardLayout[newPosition].constructor.name == Queen.name || this.boardLayout[newPosition].constructor.name == King.name ) &&
+                (
+                    (newTurn == "White Jail" && this.currentTurn == "White") ||
+                    (newTurn == "Black Jail" && this.currentTurn == "Black")
+                )
+            )
+        ) {
+            this.currentTurn = newTurn
+        } else {
             console.error("new turn is invalid")
             return false
-        } else {
-            this.currentTurn = newTurn
         }
 
         let thisPiece = this.boardLayout[currentPosition]

@@ -3,7 +3,7 @@
     --bg-secondary: #7d8ea1;
     --bg-tertiary: #28578d;
     --tile-size-fixed: 75px;
-    --tile-size-dynamic: 6.5vw;
+    --tile-size-dynamic: min(7vw, 6vh);
 }
 
 html, body {  
