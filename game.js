@@ -13,7 +13,6 @@ window.onload = async () => {
         let openRoomRaw = await fetch(serverID+"/getOpenRoom")
         let openRoomJson = await openRoomRaw.json()
         let openRoom = openRoomJson.roomID
-        console.log(openRoom)
         if (openRoom == null){
             gameOverModal.toggle();
             modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
@@ -49,7 +48,6 @@ window.onload = async () => {
     })
 
     socket.on('player', (playerInfo)=>{
-        // console.log(playerInfo)
         playerID = playerInfo.pid;
 
         chessBoard.isWhite = playerInfo.isWhite
@@ -84,8 +82,6 @@ window.onload = async () => {
     chessBoard.updatePieces()
 
     socket.on("registeredMove", args=>{
-        console.log("registered move")
-        console.log(args, roomID, playerID)
         if (roomID == args.room && playerID != args.player){
             if (chessBoard.validateMove(args.moveInfo.fromPos, args.moveInfo.toPos, args.moveInfo.newTurn)){
                 chessBoard.makePreValidatedMove(args.moveInfo.fromPos, args.moveInfo.toPos);

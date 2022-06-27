@@ -174,6 +174,9 @@ export class ChessBoard {
         this.draggingPieceWidth = this.draggingPieceDom.offsetWidth
         this.draggingPieceHeight = this.draggingPieceDom.offsetHeight
         this.dragging = true
+        this.draggingRoyalty = true
+
+        this.draggingPiece = piece;
 
         this.renderMovesForTakenKingQueen()
     }
@@ -232,6 +235,7 @@ export class ChessBoard {
                 ){
                     tookKingOrQueen = true;
                     pieceTaken = this.boardLayout[toPos]
+                    this.boardLayout["KO"] = pieceTaken
                 }
     
                 this.stateChecks(fromPos, toPos)
@@ -297,6 +301,8 @@ export class ChessBoard {
     makePreValidatedMove(fromPos, toPos){
         this.stateChecks(fromPos, toPos)
 
+        if (this.boardLayout[toPos] != undefined) this.boardLayout["KO"] = this.boardLayout[toPos]
+
         this.boardLayout[toPos] = this.boardLayout[fromPos]
 
         this.boardLayout[toPos].position = toPos
@@ -325,13 +331,16 @@ export class ChessBoard {
         
         if (
             (newTurn == "White" && this.currentTurn == "Black") ||
-            (newTurn == "Black" && this.currentTurn == "White") || (
-                ( this.boardLayout[newPosition].constructor.name == Queen.name || this.boardLayout[newPosition].constructor.name == King.name ) &&
+            (newTurn == "Black" && this.currentTurn == "White") ||
+            (
+                ( this.boardLayout[newPosition] && (this.boardLayout[newPosition].constructor.name == Queen.name || this.boardLayout[newPosition].constructor.name == King.name) ) &&
                 (
                     (newTurn == "White Jail" && this.currentTurn == "White") ||
                     (newTurn == "Black Jail" && this.currentTurn == "Black")
                 )
-            )
+            ) ||
+            (this.currentTurn == "White Jail" && newTurn == "Black") ||
+            (this.currentTurn == "Black Jail" && newTurn == "White")
         ) {
             this.currentTurn = newTurn
         } else {

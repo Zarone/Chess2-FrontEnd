@@ -12,4 +12,12 @@ export class Queen extends FishQueen {
             return "Black Queen.png"
         }
     }
+
+    getMoves(){
+        if (this.position[0] == "x" || this.position[0] == "y"){
+            return []
+        } else {
+            return super.getMoves()
+        }
+    }
 }
