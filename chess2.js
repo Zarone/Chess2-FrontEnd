@@ -150,17 +150,20 @@ export class ChessBoard {
     }
     
     renderMovesForTakenKingQueen(){
-        if (this.boardLayout["x1"] == undefined) {
-            document.getElementById("x1").style.backgroundColor = 'red'
-        }
-        if (this.boardLayout["x2"] == undefined) {
-            document.getElementById("x2").style.backgroundColor = 'red'
-        }
-        if (this.boardLayout["y1"] == undefined) {
-            document.getElementById("y1").style.backgroundColor = 'red'
-        }
-        if (this.boardLayout["y2"] == undefined) {
-            document.getElementById("y2").style.backgroundColor = 'red'
+        if (this.isWhite){
+            if (this.boardLayout["y1"] == undefined) {
+                document.getElementById("y1").style.backgroundColor = 'red'
+            }
+            if (this.boardLayout["y2"] == undefined) {
+                document.getElementById("y2").style.backgroundColor = 'red'
+            }
+        } else {
+            if (this.boardLayout["x1"] == undefined) {
+                document.getElementById("x1").style.backgroundColor = 'red'
+            }
+            if (this.boardLayout["x2"] == undefined) {
+                document.getElementById("x2").style.backgroundColor = 'red'
+            }
         }
     }
 
@@ -349,7 +352,14 @@ export class ChessBoard {
         }
 
         if (jailMoves){
-            return (currentPosition == "KO" && this.boardLayout[newPosition] == undefined)
+            return (
+                currentPosition == "KO" && 
+                this.boardLayout[newPosition] == undefined && 
+                (
+                    (this.boardLayout["KO"].isWhite && newPosition.split("")[0] == "x") || 
+                    (!this.boardLayout["KO"].isWhite && newPosition.split("")[0] == "y")
+                )
+            )
         } else {
             let thisPiece = this.boardLayout[currentPosition]
             let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves(), thisPiece.position)
