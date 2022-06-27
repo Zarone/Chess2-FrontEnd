@@ -45,7 +45,7 @@ window.onload = async () => {
     
     let chessBoard = new ChessBoard((moveInfo)=>{
         socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
-        // turn_Dom.innerText = "...Waiting for player to join"
+        turn_Dom.innerText = "Turn: "+chessBoard.currentTurn
     })
 
     socket.on('player', (playerInfo)=>{

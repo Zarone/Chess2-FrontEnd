@@ -253,6 +253,8 @@ export class ChessBoard {
         if (newTurn == this.currentTurn) {
             console.error("new turn is invalid")
             return false
+        } else {
+            this.currentTurn = newTurn
         }
 
         let thisPiece = this.boardLayout[currentPosition]

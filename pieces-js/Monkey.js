@@ -1,6 +1,6 @@
 import {Piece} from "./Piece.js"
 import { getVerticalAndHorizontal, verticalAndHorizontalToID } from "../helper-js/utils.js";
-import { canMonkeyJump, notSameType } from "../helper-js/conditions.js";
+import { canMonkeyJump, notSameType, noPiece } from "../helper-js/conditions.js";
 
 export class Monkey extends Piece {
     constructor(position, isWhite){
@@ -66,7 +66,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical+1, horizontal), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
@@ -74,7 +74,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical, horizontal+1), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
@@ -82,7 +82,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical-1, horizontal), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
@@ -90,7 +90,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical, horizontal-1), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
@@ -100,7 +100,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical+1, horizontal+1), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
@@ -109,7 +109,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical-1, horizontal-1), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
@@ -118,7 +118,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical+1, horizontal-1), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
@@ -127,7 +127,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical-1, horizontal+1), 
-                    conditions: [notSameType]
+                    conditions: [noPiece]
                 }
             )
         }
