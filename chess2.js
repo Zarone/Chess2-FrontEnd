@@ -13,6 +13,7 @@ export class ChessBoard {
 
     boardLayout = {} // set in constructor
     dragging = false
+    draggingRoyalty = false
     draggingPiece = null
     draggingPieceWidth = null
     draggingPieceHeight = null
@@ -74,18 +75,15 @@ export class ChessBoard {
 
     cursorMove(event){
         if (this.dragging){
-            // console.log(event)
             this.draggingPieceDom.style.left = (event.clientX - this.draggingPieceWidth/2) + "px"
             this.draggingPieceDom.style.top = (event.clientY - this.draggingPieceHeight/2) + "px"
         }
     }
 
     dragStart(event){
-
         let canMove = (this.isWhite && this.currentTurn == "White") || (!this.isWhite && this.currentTurn == "Black");
         if (!canMove) return;
         
-        console.log("drag start", event.target)
         event.preventDefault();
         
         this.draggingPiece = this.boardLayout[event.srcElement.parentNode.id]
@@ -105,11 +103,9 @@ export class ChessBoard {
 
         if (!this.dragging) return
 
-        console.log("this.draggingPieceDom", this.draggingPieceDom)
         this.draggingPieceDom.parentNode.removeChild(this.draggingPieceDom.parentNode.lastChild)
 
         let attemptMoveTo = document.elementFromPoint(event.clientX, event.clientY)
-        // console.log("drag end", attemptMoveTo.nodeName)
 
         if (attemptMoveTo.nodeName == "IMG"){
             attemptMoveTo = attemptMoveTo.parentElement
@@ -138,13 +134,10 @@ export class ChessBoard {
         if ( this.boardLayout[fromPos].constructor.name == Fish.name ){
 
             let rowName = toPos.split("")[1]
-            console.log("rowName", rowName)
-            console.log("isWhite", this.boardLayout[fromPos].isWhite)
             if (
                 (this.boardLayout[fromPos].isWhite && rowName=="8") ||
                 (!this.boardLayout[fromPos].isWhite && rowName=="1")
             ){
-                console.log("PROMOTE TO FISH QUEEN")
                 this.boardLayout[fromPos] = new FishQueen(fromPos, this.boardLayout[fromPos].isWhite)
             }
 
@@ -156,60 +149,127 @@ export class ChessBoard {
         this.checkFishPromotion(fromPos, toPos);
     }
     
+    renderMovesForTakenKingQueen(){
+        if (this.boardLayout["x1"] == undefined) {
+            document.getElementById("x1").style.backgroundColor = 'red'
+        }
+        if (this.boardLayout["x2"] == undefined) {
+            document.getElementById("x2").style.backgroundColor = 'red'
+        }
+        if (this.boardLayout["y1"] == undefined) {
+            document.getElementById("y1").style.backgroundColor = 'red'
+        }
+        if (this.boardLayout["y2"] == undefined) {
+            document.getElementById("y2").style.backgroundColor = 'red'
+        }
+    }
+
+    manageTakeKingOrQueen(piece){
+        this.draggingPieceDom = document.createElement('img');
+        this.draggingPieceDom.setAttribute("src", "./images/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("class", "piece-image");
+
+        document.getElementById("x1").appendChild(this.draggingPieceDom);
+
+        this.draggingPieceWidth = this.draggingPieceDom.offsetWidth
+        this.draggingPieceHeight = this.draggingPieceDom.offsetHeight
+        this.dragging = true
+
+        this.renderMovesForTakenKingQueen()
+    }
+
     makeMove(moveToDom){
-        // console.log("move to", moveToDom.className.split(" ").includes())
         let classNames = moveToDom.className.split(" ")
+        
+        if (this.draggingRoyalty){
 
-        if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
-            console.log("not a tile on the game board")
-        } else if (moveToDom.id == this.draggingPiece.position){
-            console.log("moving to same tile as you're already on")
-        } else if(moveToDom.style.backgroundColor == 'red'){
+            if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
+                console.log("not a tile on the game board")
+            } else if (moveToDom.id == this.draggingPiece.position){
+                console.log("moving to same tile as you're already on")
+            } else if (moveToDom.style.backgroundColor == 'red'){
+                
+                let toPos = moveToDom.id;
+                this.boardLayout[toPos] = this.draggingPiece
+                this.boardLayout[toPos].position = this.boardLayout[toPos];
+                
+                this.draggingRoyalty = false;
+                this.dragging = false
+                this.resetTiles();
+                this.updatePieces();
 
-            let toPos = moveToDom.id;
-            
-            let fromPos = this.draggingPiece.position;
-            
-            let tookKingOrQueen = false;
-            if (
-                this.boardLayout[toPos].constructor.name == King.name || 
-                this.boardLayout[toPos].constructor.name == Queen.name
-            ){
-                tookKingOrQueen = true;
-            }
-
-            this.stateChecks(fromPos, toPos)
-
-            this.boardLayout[toPos] = this.boardLayout[fromPos]
-
-            delete this.boardLayout[fromPos]
-
-            this.boardLayout[toPos].position = toPos;
-
-            let newTurn;
-            if (this.currentTurn == "White") {
-                if (tookKingOrQueen) {
-                    newTurn = "White Jail"
-                } else {
+                let newTurn;
+                if (this.currentTurn == "White Jail") {
                     newTurn = "Black"
-                }
-            } else if (this.currentTurn == "Black") {
-                if (tookKingOrQueen) {
-                    newTurn = "Black Jail"
-                } else {
+                } else if (this.currentTurn == "Black Jail") {
                     newTurn = "White"
                 }
+    
+                this.currentTurn = newTurn
+    
+                this.makeMoveCallbackFunc({fromPos: "KO", toPos, newTurn})
             }
-
-            this.currentTurn = newTurn
-
-            this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
-
+            
+        } else {
+            
+            let tookKingOrQueen = false;
+            let pieceTaken = undefined
+    
+            if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
+                console.log("not a tile on the game board")
+            } else if (moveToDom.id == this.draggingPiece.position){
+                console.log("moving to same tile as you're already on")
+            } else if(moveToDom.style.backgroundColor == 'red'){
+    
+                let toPos = moveToDom.id;
+                
+                let fromPos = this.draggingPiece.position;
+                
+                if (
+                    this.boardLayout[toPos] &&
+                    (this.boardLayout[toPos].constructor.name == King.name || 
+                    this.boardLayout[toPos].constructor.name == Queen.name)
+                ){
+                    tookKingOrQueen = true;
+                    pieceTaken = this.boardLayout[toPos]
+                }
+    
+                this.stateChecks(fromPos, toPos)
+    
+                this.boardLayout[toPos] = this.boardLayout[fromPos]
+    
+                delete this.boardLayout[fromPos]
+    
+                this.boardLayout[toPos].position = toPos;
+    
+                let newTurn;
+                if (this.currentTurn == "White") {
+                    if (tookKingOrQueen) {
+                        newTurn = "White Jail"
+                    } else {
+                        newTurn = "Black"
+                    }
+                } else if (this.currentTurn == "Black") {
+                    if (tookKingOrQueen) {
+                        newTurn = "Black Jail"
+                    } else {
+                        newTurn = "White"
+                    }
+                }
+    
+                this.currentTurn = newTurn
+    
+                this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
+                
+            }
+            
+            this.dragging = false
+            this.resetTiles();
+            this.updatePieces();
+    
+            if (tookKingOrQueen) this.manageTakeKingOrQueen(pieceTaken);
         }
 
-        this.dragging = false
-        this.resetTiles();
-        this.updatePieces();
     }
 
     filterImpossibleMoves(moves, currentPos){
@@ -249,7 +309,6 @@ export class ChessBoard {
 
     renderMoves(moves){
         for (let i = 0; i < moves.length; i++){
-            console.log("render move", moves[i])
             let editTileDom = document.getElementById(moves[i].pos);
             editTileDom.style.backgroundColor = 'red'
         }
@@ -257,12 +316,13 @@ export class ChessBoard {
 
     findMoves(piece){
         let movesFromPiece = piece.getMoves()
-        console.log("movesFromPiece",movesFromPiece)
         return this.filterImpossibleMoves(movesFromPiece, piece.position)
     }
 
     validateMove(currentPosition, newPosition, newTurn){
-        console.log("new turn", newTurn)
+        
+        let jailMoves = (this.currentTurn == "Black Jail" && this.isWhite) || (this.currentTurn == "White Jail" && !this.isWhite);
+        
         if (
             (newTurn == "White" && this.currentTurn == "Black") ||
             (newTurn == "Black" && this.currentTurn == "White") || (
@@ -279,18 +339,22 @@ export class ChessBoard {
             return false
         }
 
-        let thisPiece = this.boardLayout[currentPosition]
-        let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves(), thisPiece.position)
-        for (let i = 0; i < legalMoves.length; i++){
-            if (legalMoves[i].pos == newPosition) return true;
+        if (jailMoves){
+            return (currentPosition == "KO" && this.boardLayout[newPosition] == undefined)
+        } else {
+            let thisPiece = this.boardLayout[currentPosition]
+            let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves(), thisPiece.position)
+    
+            for (let i = 0; i < legalMoves.length; i++){
+                if (legalMoves[i].pos == newPosition) return true;
+            }
+            console.error("received invalid move")
+            return false
         }
-        console.log("received invalid move")
-        return false
     }
 
     findAndRenderMoves(piece){
         let movesToRender = this.findMoves(piece)
-        console.log("movesToRender", movesToRender)
         this.renderMoves(movesToRender)
     }
 

@@ -108,7 +108,7 @@ html, body {
 
 .piece-image {
     width: min(
-        var(--tile-size-fixed), 
+        var(--tile-size-fixed),
         var(--tile-size-dynamic)
     );
     /* height: min(

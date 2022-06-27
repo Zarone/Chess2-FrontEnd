@@ -2,17 +2,15 @@ import { getVerticalAndHorizontal, verticalAndHorizontalToID } from "./utils.js"
 
 export function noPiece({board, to}){
     if (board == undefined || to == undefined){
-        console.log("incorrect args provided to noPiece")
+        console.error("incorrect args provided to noPiece")
     }
-    if (board[to] != undefined){
-        console.log("piece on", to)
-    }
+    
     return (board[to] == undefined)
 }
 
 export function noDiagonalBlocking({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
-        console.log("incorrect args provided to noPiece")
+        console.error("incorrect args provided to noPiece")
     }
     
     let fromCoords = getVerticalAndHorizontal(from)
@@ -31,7 +29,6 @@ export function noDiagonalBlocking({board, from, to}){
                         fromVertical+i, fromHorizontal+i
                     )] != undefined
                 ) {
-                    console.log("checking", fromVertical+i, fromHorizontal+i)
                     return false;
                 }
             }
@@ -42,7 +39,6 @@ export function noDiagonalBlocking({board, from, to}){
                         fromVertical-i, fromHorizontal+i
                     )] != undefined
                 ) {
-                    console.log("checking", fromVertical-i, fromHorizontal+i)
                     return false
                 }
             }
@@ -55,7 +51,6 @@ export function noDiagonalBlocking({board, from, to}){
                         fromVertical+i, fromHorizontal-i
                     )] != undefined
                 ) {
-                    console.log("checking", fromVertical+i, fromHorizontal-i)
                     return false
                 }
             }
@@ -66,7 +61,6 @@ export function noDiagonalBlocking({board, from, to}){
                         fromVertical-i, fromHorizontal-i
                     )] != undefined
                 ) {
-                    console.log("checking", fromVertical-i, fromHorizontal-i)
                     return false
                 }
             }
@@ -77,7 +71,7 @@ export function noDiagonalBlocking({board, from, to}){
 
 export function noStraightBlocking({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
-        console.log("incorrect args provided to noPiece")
+        console.error("incorrect args provided to noPiece")
     }
 
     let fromCoords = getVerticalAndHorizontal(from)
@@ -88,7 +82,6 @@ export function noStraightBlocking({board, from, to}){
     let toVertical = toCoords.vertical
     let toHorizontal = toCoords.horizontal
 
-    console.log("noStraightBlocking", from, to)
 
     if (toVertical > fromVertical){
         // straight up
@@ -96,7 +89,6 @@ export function noStraightBlocking({board, from, to}){
             if (board[verticalAndHorizontalToID(
                 fromVertical+i, fromHorizontal
             )] != undefined){
-                console.log("straight blocking returned false: toVertical > fromVertical")
                 return false
             }
         }
@@ -106,7 +98,6 @@ export function noStraightBlocking({board, from, to}){
             if (board[verticalAndHorizontalToID(
                 fromVertical-i, fromHorizontal
             )] != undefined){
-                console.log("straight blocking returned false: toVertical < fromVertical")
                 return false
             }
         }
@@ -115,7 +106,6 @@ export function noStraightBlocking({board, from, to}){
             if (board[verticalAndHorizontalToID(
                 fromVertical, fromHorizontal+i
             )] != undefined){
-                console.log("straight blocking returned false: toHorizontal > fromHorizontal")
                 return false
             }
         }
@@ -124,19 +114,17 @@ export function noStraightBlocking({board, from, to}){
             if (board[verticalAndHorizontalToID(
                 fromVertical, fromHorizontal-i
             )] != undefined){
-                console.log("straight blocking returned false: toHorizontal < fromHorizontal")
                 return false
             }
         }
     }
 
-    console.log("straight blocking returned true")
     return true;
 }
 
 export function notSameType({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
-        console.log("incorrect args provided to noPiece")
+        console.error("incorrect args provided to noPiece")
     }
     return (board[to] == undefined || board[from].isWhite != board[to].isWhite)
 }
@@ -145,14 +133,13 @@ export function rookActive({board, rookActiveWhite, rookActiveBlack, from}){
     if (board == undefined || from == undefined || rookActiveWhite == undefined || 
         rookActiveBlack == undefined
     ){
-        console.log("incorrect args provided to noPiece")
+        console.error("incorrect args provided to noPiece")
     }
     return (board[from].isWhite && rookActiveWhite) || (!board[from].isWhite && rookActiveBlack)
 }
 
 function containsObject(obj, list) {
     for (let i = 0; i < list.length; i++) {
-        console.log(list[i], obj, list[i].hor===obj.hor && list[i].vert == obj.vert)
         if (list[i].hor === obj.hor && list[i].vert === obj.vert) {
             return true;
         }
@@ -163,10 +150,8 @@ function containsObject(obj, list) {
 
 export function canMonkeyJump({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
-        console.log("incorrect args provided to noPiece")
+        console.error("incorrect args provided to noPiece")
     }
-
-    console.log("can monkey jump?", from, to)
 
     let fromCoords = getVerticalAndHorizontal(from)
     let fromVertical = fromCoords.vertical
@@ -175,8 +160,6 @@ export function canMonkeyJump({board, from, to}){
     let toCoords = getVerticalAndHorizontal(to)
     let toVertical = toCoords.vertical
     let toHorizontal = toCoords.horizontal
-
-    console.log(fromVertical, fromHorizontal)
 
     // construct a graph of current neighbors that the monkey can jump to
     let toCheck = []
@@ -329,18 +312,13 @@ export function canMonkeyJump({board, from, to}){
     }
 
     let addToListsResult = addToLists(fromVertical, fromHorizontal);
-    console.log("initial addToLists", addToListsResult);
     if (addToListsResult) return true
 
-    console.log("toCheck start", JSON.stringify(toCheck))
 
     // on each neighbor, check other neighbors
     while (toCheck.length > 0){
         let checkingNode = toCheck.shift()
-        console.log("hasChecked", JSON.stringify(hasChecked))
-        console.log("checkingNode",JSON.stringify(checkingNode))
         if (addToLists(checkingNode.vert, checkingNode.hor)) return true
-        console.log("toCheck", JSON.stringify(toCheck))
     }
     return false
 
