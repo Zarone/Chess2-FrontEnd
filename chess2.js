@@ -7,13 +7,14 @@ import {King} from "./pieces-js/King.js"
 import {Elephant} from "./pieces-js/Elephant.js"
 import {Bear} from "./pieces-js/Bear.js"
 
-import {toID} from "./helper-js/utils.js"
+import {nextToJail, toID} from "./helper-js/utils.js"
 
 export class ChessBoard {
 
     boardLayout = {} // set in constructor
     dragging = false
     draggingRoyalty = false
+    draggingMonkey = false
     draggingPiece = null
     draggingPieceWidth = null
     draggingPieceHeight = null
@@ -24,7 +25,7 @@ export class ChessBoard {
     rookActiveWhite = false;
     rookActiveBlack = false;
 
-    currentTurn = "White"; // either "White", "Black", "White Jail", "Black Jail"
+    currentTurn = "White"; // either "White", "Black", "White Jail", "Black Jail", "White Monkey", "Black Monkey"
 
     makeMoveCallbackFunc = undefined;
 
@@ -34,7 +35,7 @@ export class ChessBoard {
             "b8": new Monkey("b8", false),
             "c8": new Fish("c8", false),
             "d8": new Queen("d8", false),
-            "e8": new King("e8", false),
+            // "e8": new King("e8", false),
             "f8": new Fish("f8", false),
             "g8": new Monkey("g8", false),
             "h8": new Rook("h8", false),
@@ -53,7 +54,7 @@ export class ChessBoard {
             "b1": new Monkey("b1", true),
             "c1": new Fish("c1", true),
             "d1": new Queen("d1", true),
-            "e1": new King("e1", true),
+            // "e1": new King("e1", true),
             "f1": new Fish("f1", true),
             "g1": new Monkey("g1", true),
             "h1": new Rook("h1", true),
@@ -67,7 +68,10 @@ export class ChessBoard {
             "g2": new Fish("g2", true),
             "h2": new Fish("h2", true),
 
-            "z1": new Bear("z1")
+            "z1": new Bear("z1"),
+
+            "x1": new King("x1", true),
+            "y1": new King("y1", false)
         }
 
         this.makeMoveCallbackFunc = callback;
@@ -167,6 +171,11 @@ export class ChessBoard {
         }
     }
 
+    renderMovesForJumpingMonkey(piece){
+        this.boardLayout["TEMP"].position = piece.position
+        this.renderMoves(this.boardLayout["TEMP"].getMoves())
+    }
+
     manageTakeKingOrQueen(piece){
         this.draggingPieceDom = document.createElement('img');
         this.draggingPieceDom.setAttribute("src", "./images/"+piece.getImageSrc());
@@ -182,6 +191,26 @@ export class ChessBoard {
         this.draggingPiece = piece;
 
         this.renderMovesForTakenKingQueen()
+    }
+
+    manageMonkeyJumping(piece){
+        this.draggingPieceDom = document.createElement('img');
+
+        console.log("this.boardLayout[\"TEMP\"]", this.boardLayout["TEMP"])
+
+        this.draggingPieceDom.setAttribute("src", "./images/"+this.boardLayout["TEMP"].getImageSrc());
+        this.draggingPieceDom.setAttribute("class", "piece-image");
+
+        document.getElementById("x1").appendChild(this.draggingPieceDom);
+
+        this.draggingPieceWidth = this.draggingPieceDom.offsetWidth
+        this.draggingPieceHeight = this.draggingPieceDom.offsetHeight
+        this.dragging = true
+        this.draggingMonkey = true
+
+        this.draggingPiece = this.boardLayout["TEMP"];
+
+        this.renderMovesForJumpingMonkey(piece)
     }
 
     makeMove(moveToDom){
@@ -213,14 +242,16 @@ export class ChessBoard {
     
                 this.currentTurn = newTurn
     
-                this.makeMoveCallbackFunc({fromPos: "KO", toPos, newTurn})
+                this.makeMoveCallbackFunc({fromPos: "TEMP", toPos, newTurn})
             }
             
         } else {
             
             let tookKingOrQueen = false;
-            let pieceTaken = undefined
-    
+            let monkeyJumping = false;
+            
+            let tempPiece = undefined;
+
             if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
                 console.log("not a tile on the game board")
             } else if (moveToDom.id == this.draggingPiece.position){
@@ -230,43 +261,69 @@ export class ChessBoard {
                 let toPos = moveToDom.id;
                 
                 let fromPos = this.draggingPiece.position;
-                
-                if (
-                    this.boardLayout[toPos] &&
-                    (this.boardLayout[toPos].constructor.name == King.name || 
-                    this.boardLayout[toPos].constructor.name == Queen.name)
-                ){
-                    tookKingOrQueen = true;
-                    pieceTaken = this.boardLayout[toPos]
-                    this.boardLayout["KO"] = pieceTaken
+    
+                let column = toPos.split("")[0]
+
+                // if monkey prison break
+                if (column == "x" || column == "y"){
+                    monkeyJumping = true;
+
+                    let nextTo = nextToJail(toPos)
+
+                    this.boardLayout[nextTo] = this.boardLayout[toPos]
+                    this.boardLayout[nextTo].position = nextTo
+
+                    tempPiece = this.boardLayout[toPos]
+                    this.boardLayout["TEMP"] = this.boardLayout[fromPos]
+                    console.log("set to", this.boardLayout["TEMP"])
+                    delete this.boardLayout[fromPos]
+
+                    let newTurn;
+                    if (this.currentTurn == "White") {
+                        newTurn = "White Monkey"
+                    } else if (this.currentTurn == "Black") {
+                        newTurn = "Black Monkey"
+                    }
+                    this.currentTurn = newTurn
+                    this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
+
+                } else {
+                    if (
+                        this.boardLayout[toPos] &&
+                        (this.boardLayout[toPos].constructor.name == King.name || 
+                        this.boardLayout[toPos].constructor.name == Queen.name)
+                    ){
+                        tookKingOrQueen = true;
+                        tempPiece = this.boardLayout[toPos]
+                        this.boardLayout["TEMP"] = tempPiece
+                    }
+        
+                    this.stateChecks(fromPos, toPos)
+        
+                    this.boardLayout[toPos] = this.boardLayout[fromPos]
+        
+                    delete this.boardLayout[fromPos]
+        
+                    this.boardLayout[toPos].position = toPos;
+        
+                    let newTurn;
+                    if (this.currentTurn == "White") {
+                        if (tookKingOrQueen) {
+                            newTurn = "White Jail"
+                        } else {
+                            newTurn = "Black"
+                        }
+                    } else if (this.currentTurn == "Black") {
+                        if (tookKingOrQueen) {
+                            newTurn = "Black Jail"
+                        } else {
+                            newTurn = "White"
+                        }
+                    }
+                    this.currentTurn = newTurn
+                    this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
                 }
     
-                this.stateChecks(fromPos, toPos)
-    
-                this.boardLayout[toPos] = this.boardLayout[fromPos]
-    
-                delete this.boardLayout[fromPos]
-    
-                this.boardLayout[toPos].position = toPos;
-    
-                let newTurn;
-                if (this.currentTurn == "White") {
-                    if (tookKingOrQueen) {
-                        newTurn = "White Jail"
-                    } else {
-                        newTurn = "Black"
-                    }
-                } else if (this.currentTurn == "Black") {
-                    if (tookKingOrQueen) {
-                        newTurn = "Black Jail"
-                    } else {
-                        newTurn = "White"
-                    }
-                }
-    
-                this.currentTurn = newTurn
-    
-                this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
                 
             }
             
@@ -274,7 +331,8 @@ export class ChessBoard {
             this.resetTiles();
             this.updatePieces();
     
-            if (tookKingOrQueen) this.manageTakeKingOrQueen(pieceTaken);
+            if (tookKingOrQueen) this.manageTakeKingOrQueen(tempPiece);
+            if (monkeyJumping) this.manageMonkeyJumping(tempPiece);
         }
 
     }
@@ -304,7 +362,7 @@ export class ChessBoard {
     makePreValidatedMove(fromPos, toPos){
         this.stateChecks(fromPos, toPos)
 
-        if (this.boardLayout[toPos] != undefined) this.boardLayout["KO"] = this.boardLayout[toPos]
+        if (this.boardLayout[toPos] != undefined) this.boardLayout["TEMP"] = this.boardLayout[toPos]
 
         this.boardLayout[toPos] = this.boardLayout[fromPos]
 
@@ -353,11 +411,11 @@ export class ChessBoard {
 
         if (jailMoves){
             return (
-                currentPosition == "KO" && 
+                currentPosition == "TEMP" && 
                 this.boardLayout[newPosition] == undefined && 
                 (
-                    (this.boardLayout["KO"].isWhite && newPosition.split("")[0] == "x") || 
-                    (!this.boardLayout["KO"].isWhite && newPosition.split("")[0] == "y")
+                    (this.boardLayout["TEMP"].isWhite && newPosition.split("")[0] == "x") || 
+                    (!this.boardLayout["TEMP"].isWhite && newPosition.split("")[0] == "y")
                 )
             )
         } else {

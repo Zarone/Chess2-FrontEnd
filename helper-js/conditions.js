@@ -1,4 +1,4 @@
-import { getVerticalAndHorizontal, verticalAndHorizontalToID } from "./utils.js"
+import { getVerticalAndHorizontal, nextToJail, verticalAndHorizontalToID } from "./utils.js"
 
 export function noPiece({board, to}){
     if (board == undefined || to == undefined){
@@ -148,6 +148,150 @@ function containsObject(obj, list) {
     return false;
 }
 
+function addToLists(board, from, toVertical, toHorizontal, outputPushRef, hasCheckedRef, inputVertical, inputHorizontal) {
+
+    let tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal)
+    let tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal)
+    if ((inputVertical + 2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical+2, hor: inputHorizontal}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal)
+    tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal)
+    if ((inputVertical - 2) > 0 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ){
+        let insertElement = {vert: inputVertical-2, hor: inputHorizontal}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal+1)
+    tempToID = verticalAndHorizontalToID(inputVertical, inputHorizontal+2)
+    if ((inputHorizontal + 2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical, hor: inputHorizontal+2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal-1)
+    tempToID = verticalAndHorizontalToID(inputVertical, inputHorizontal-2)
+    if ((inputHorizontal - 2) > 0 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical, hor: inputHorizontal-2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+    
+    tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal+1)
+    tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal+2)
+    if ((inputVertical + 2) < 9 && 
+        (inputHorizontal+2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical+2, hor: inputHorizontal+2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal+1)
+    tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal+2)
+    if ((inputVertical - 2) > 0 && 
+        (inputHorizontal+2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ){
+        let insertElement = {vert: inputVertical-2, hor: inputHorizontal+2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal-1)
+    tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal-2)
+    if ((inputHorizontal - 2) > 0 && 
+        (inputVertical+2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical+2, hor: inputHorizontal-2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal-1)
+    tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal-2)
+    if ((inputHorizontal - 2) > 0 && 
+        (inputVertical - 2) > 0 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical-2, hor: inputHorizontal-2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                return true
+            if (board[tempToID] == undefined){
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+    return false
+}
+
 export function canMonkeyJump({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
         console.error("incorrect args provided to noPiece")
@@ -167,159 +311,203 @@ export function canMonkeyJump({board, from, to}){
     // make a list of all nodes we've checked
     let hasChecked = []
 
-    let addToLists = (inputVertical, inputHorizontal) => {
-
-        let tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal)
-        let tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal)
-        if ((inputVertical + 2) < 9 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ) {
-            let insertElement = {vert: inputVertical+2, hor: inputHorizontal}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-
-        tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal)
-        tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal)
-        if ((inputVertical - 2) > 0 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ){
-            let insertElement = {vert: inputVertical-2, hor: inputHorizontal}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-
-        tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal+1)
-        tempToID = verticalAndHorizontalToID(inputVertical, inputHorizontal+2)
-        if ((inputHorizontal + 2) < 9 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ) {
-            let insertElement = {vert: inputVertical, hor: inputHorizontal+2}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-
-        tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal-1)
-        tempToID = verticalAndHorizontalToID(inputVertical, inputHorizontal-2)
-        if ((inputHorizontal - 2) > 0 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ) {
-            let insertElement = {vert: inputVertical, hor: inputHorizontal-2}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-        
-        tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal+1)
-        tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal+2)
-        if ((inputVertical + 2) < 9 && 
-            (inputHorizontal+2) < 9 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ) {
-            let insertElement = {vert: inputVertical+2, hor: inputHorizontal+2}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-
-        tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal+1)
-        tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal+2)
-        if ((inputVertical - 2) > 0 && 
-            (inputHorizontal+2) < 9 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ){
-            let insertElement = {vert: inputVertical-2, hor: inputHorizontal+2}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-
-        tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal-1)
-        tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal-2)
-        if ((inputHorizontal - 2) > 0 && 
-            (inputVertical+2) < 9 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ) {
-            let insertElement = {vert: inputVertical+2, hor: inputHorizontal-2}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-
-        tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal-1)
-        tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal-2)
-        if ((inputHorizontal - 2) > 0 && 
-            (inputVertical - 2) > 0 && 
-            board[tempID] != undefined && 
-            (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
-        ) {
-            let insertElement = {vert: inputVertical-2, hor: inputHorizontal-2}
-            if (!containsObject(insertElement, hasChecked)){
-                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
-                    return true
-                if (board[tempToID] == undefined){
-                    toCheck.push(insertElement);
-                    hasChecked.push(insertElement);
-                }
-            }
-        }
-        return false
-    }
-
-    let addToListsResult = addToLists(fromVertical, fromHorizontal);
+    let addToListsResult = addToLists(board, from, toVertical, toHorizontal, toCheck, hasChecked, fromVertical, fromHorizontal);
     if (addToListsResult) return true
-
 
     // on each neighbor, check other neighbors
     while (toCheck.length > 0){
         let checkingNode = toCheck.shift()
-        if (addToLists(checkingNode.vert, checkingNode.hor)) return true
+        if (addToLists(board, from, fromVertical, fromHorizontal, toCheck, hasChecked, checkingNode.vert, checkingNode.hor)) return true
     }
     return false
 
+}
+
+function addToListsForceEmpty(board, from, toVertical, toHorizontal, outputPushRef, hasCheckedRef, inputVertical, inputHorizontal) {
+
+    let tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal)
+    let tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal)
+    if ((inputVertical + 2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical+2, hor: inputHorizontal}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal)
+    tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal)
+    if ((inputVertical - 2) > 0 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ){
+        let insertElement = {vert: inputVertical-2, hor: inputHorizontal}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal+1)
+    tempToID = verticalAndHorizontalToID(inputVertical, inputHorizontal+2)
+    if ((inputHorizontal + 2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical, hor: inputHorizontal+2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical, inputHorizontal-1)
+    tempToID = verticalAndHorizontalToID(inputVertical, inputHorizontal-2)
+    if ((inputHorizontal - 2) > 0 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical, hor: inputHorizontal-2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+    
+    tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal+1)
+    tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal+2)
+    if ((inputVertical + 2) < 9 && 
+        (inputHorizontal+2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical+2, hor: inputHorizontal+2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal+1)
+    tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal+2)
+    if ((inputVertical - 2) > 0 && 
+        (inputHorizontal+2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ){
+        let insertElement = {vert: inputVertical-2, hor: inputHorizontal+2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical+1, inputHorizontal-1)
+    tempToID = verticalAndHorizontalToID(inputVertical+2, inputHorizontal-2)
+    if ((inputHorizontal - 2) > 0 && 
+        (inputVertical+2) < 9 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical+2, hor: inputHorizontal-2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+
+    tempID = verticalAndHorizontalToID(inputVertical-1, inputHorizontal-1)
+    tempToID = verticalAndHorizontalToID(inputVertical-2, inputHorizontal-2)
+    if ((inputHorizontal - 2) > 0 && 
+        (inputVertical - 2) > 0 && 
+        board[tempID] != undefined && 
+        (board[tempToID] == undefined || board[tempToID].isWhite != board[from].isWhite || board[tempToID].isWhite == null)
+    ) {
+        let insertElement = {vert: inputVertical-2, hor: inputHorizontal-2}
+        if (!containsObject(insertElement, hasCheckedRef)){
+            if (board[tempToID] == undefined){
+                if (insertElement.vert == toVertical && insertElement.hor == toHorizontal) 
+                    return true
+                outputPushRef.push(insertElement);
+                hasCheckedRef.push(insertElement);
+            }
+        }
+    }
+    return false
+}
+
+export function canMonkeyPrisonJump({board, from, to}){
+
+    if (board == undefined || from == undefined || to == undefined){
+        console.error("incorrect args provided to noPiece")
+    }
+
+    if (board[to] && !board[to].hasBanana) return false;
+
+    let fromCoords = getVerticalAndHorizontal(from)
+    let fromVertical = fromCoords.vertical
+    let fromHorizontal = fromCoords.horizontal
+
+    let secondaryLocation = nextToJail(to);
+    
+    let toCoords = getVerticalAndHorizontal(secondaryLocation)
+    let toVertical = toCoords.vertical
+    let toHorizontal = toCoords.horizontal
+
+    if (fromHorizontal == toHorizontal && fromVertical == toVertical){
+        let output = []
+        addToListsForceEmpty(board, from, -1, -1, output, [], fromVertical, fromHorizontal)
+        if (output.length > 0){
+            return true
+        } else {
+            return false
+        }
+    }
+
+    // construct a graph of current neighbors that the monkey can jump to
+    let toCheck = []
+
+    // make a list of all nodes we've checked
+    let hasChecked = []
+
+    let addToListsResult = addToListsForceEmpty(board, from, toVertical, toHorizontal, toCheck, hasChecked, fromVertical, fromHorizontal);
+    if (addToListsResult) return true
+
+    // on each neighbor, check other neighbors
+    while (toCheck.length > 0){
+        let checkingNode = toCheck.shift()
+        if (addToListsForceEmpty(board, from, fromVertical, fromHorizontal, toCheck, hasChecked, checkingNode.vert, checkingNode.hor)) return true
+    }
+    return false
 }

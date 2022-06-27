@@ -41,3 +41,17 @@ export function getVerticalAndHorizontal(id){
 export function verticalAndHorizontalToID(vertical, horizontal){
     return toID[horizontal] + vertical
 }
+
+export function nextToJail(id){
+    let nextTo = null;
+    if (id == "x1"){
+        nextTo = "a4"
+    } else if (id == "x2"){
+        nextTo = "a5"
+    } else if (id == "y1"){
+        nextTo = "h4"
+    } else if (id == "y2"){
+        nextTo = "h5"
+    }
+    return nextTo
+}
