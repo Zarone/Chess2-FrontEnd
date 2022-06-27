@@ -199,7 +199,19 @@ export class ChessBoard {
     filterImpossibleMoves(moves, currentPos){
         return moves.filter((elem, index)=>{
             for (let i = 0; i < elem.conditions.length; i++){
-                if (! elem.conditions[i]({ board: this.boardLayout, from: currentPos, to: elem.pos }) ) return false
+                if (
+                    !elem.conditions[i](
+                        { 
+                            board: this.boardLayout, 
+                            from: currentPos, 
+                            to: elem.pos,
+                            rookActiveWhite: this.rookActiveWhite,
+                            rookActiveBlack: this.rookActiveBlack
+                        }
+                    ) 
+                ) {
+                    return false
+                }
             }
             return true
 
@@ -217,14 +229,13 @@ export class ChessBoard {
 
         delete this.boardLayout[fromPos]
 
-        console.log(this.boardLayout, "after makePreValidatedMove")
-
         this.resetTiles();
         this.updatePieces();
     }
 
     renderMoves(moves){
         for (let i = 0; i < moves.length; i++){
+            console.log("render move", moves[i])
             let editTileDom = document.getElementById(moves[i].pos);
             editTileDom.style.backgroundColor = 'red'
         }

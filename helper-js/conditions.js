@@ -128,9 +128,40 @@ export function noStraightBlocking({board, from, to}){
 }
 
 export function notSameType({board, from, to}){
-    console.log("from", from)
     if (board == undefined || from == undefined || to == undefined){
         console.log("incorrect args provided to noPiece")
     }
     return (board[to] == undefined || board[from].isWhite != board[to].isWhite)
+}
+
+export function rookActive({board, rookActiveWhite, rookActiveBlack, from}){
+    if (board == undefined || from == undefined || rookActiveWhite == undefined || 
+        rookActiveBlack == undefined
+    ){
+        console.log("incorrect args provided to noPiece")
+    }
+    return (board[from].isWhite && rookActiveWhite) || (!board[from].isWhite && rookActiveBlack)
+}
+
+export function canMonkeyJump({board, from, to}){
+    if (board == undefined || from == undefined || to == undefined){
+        console.log("incorrect args provided to noPiece")
+    }
+
+    let fromCoords = getVerticalAndHorizontal(from)
+    let fromVertical = fromCoords.vertical
+    let fromHorizontal = fromCoords.horizontal
+
+    let toCoords = getVerticalAndHorizontal(to)
+    let toVertical = toCoords.vertical
+    let toHorizontal = toCoords.horizontal
+
+    // construct a graph of current neighbors that the monkey can jump to
+
+    let toCheck = []
+    let hasChecked = []
+    
+
+    // make a list of all nodes we've checked
+    // on each neighbor, check other neighbors
 }

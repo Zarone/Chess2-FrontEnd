@@ -1,4 +1,3 @@
-import {Piece} from "./Piece.js"
 import { FishQueen } from "./FishQueen.js";
 
 export class Queen extends FishQueen {
