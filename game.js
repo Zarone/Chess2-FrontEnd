@@ -10,7 +10,7 @@ window.onload = async () => {
     let gameOverModal = new bootstrap.Modal(gameOverModal_Dom, {keyboard: false})
 
     if (roomID == undefined){
-        let openRoomRaw = await fetch(serverID+"/getOpenRoom")
+        let openRoomRaw = await fetch(serverID()+"/getOpenRoom")
         let openRoomJson = await openRoomRaw.json()
         let openRoom = openRoomJson.roomID
         if (openRoom == null){
@@ -33,7 +33,7 @@ window.onload = async () => {
 
     let playerID = undefined;
 
-    let socket = io(socketID)
+    let socket = io(socketID())
 
     socket.emit('joined', {roomID, friendRoom: friendRoom == "true" ? true : false});
 

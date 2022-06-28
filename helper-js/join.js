@@ -14,7 +14,7 @@ window.onload = async () => {
     })
 
     let roomsCount_Dom = document.getElementById("rooms-count")
-    let roomsCountRaw = await fetch(serverID+"/getRoomCount")
+    let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
     let roomsCountJson = await roomsCountRaw.json();
 
     roomsCount_Dom.innerText = "Rooms: " + roomsCountJson.roomCount;

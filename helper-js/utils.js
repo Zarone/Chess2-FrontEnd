@@ -1,5 +1,21 @@
-export const serverID = "https://chess2-api.herokuapp.com"
-export const socketID = "ws://chess2-api.herokuapp.com"
+const herokuServerID = "https://chess2-api.herokuapp.com"
+const herokuSocketID = "ws://chess2-api.herokuapp.com"
+const localServerID = "http://127.0.0.1:8080"
+const localSocketID = "ws://127.0.0.1:8080"
+
+export function serverID(){
+    if (window.location.href.split(":")[1] == "//127.0.0.1"){
+        return localServerID
+    }
+    return herokuServerID
+}
+
+export function socketID(){
+    if (window.location.href.split(":")[1] == "//127.0.0.1"){
+        return localSocketID
+    }
+    return herokuSocketID
+}
 
 export function getQuerystring() {
     let output={}
