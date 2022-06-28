@@ -173,7 +173,10 @@ export class ChessBoard {
 
     renderMovesForJumpingMonkey(piece){
         this.boardLayout["TEMP"].position = piece.position
-        this.renderMoves(this.boardLayout["TEMP"].getMoves())
+        this.boardLayout[piece.position] = this.boardLayout["TEMP"]
+        let foundMoves = this.boardLayout["TEMP"].getMoves()
+        this.renderMoves( this.filterImpossibleMoves(foundMoves, piece.position) )
+        this.boardLayout[piece.position] = piece
     }
 
     manageTakeKingOrQueen(piece){
@@ -216,7 +219,37 @@ export class ChessBoard {
     makeMove(moveToDom){
         let classNames = moveToDom.className.split(" ")
         
-        if (this.draggingRoyalty){
+        if (this.draggingMonkey){
+
+            if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
+                console.log("not a tile on the game board")
+            } else if (moveToDom.id == this.draggingPiece.position){
+                console.log("moving to same tile as you're already on")
+            } else if (moveToDom.style.backgroundColor == 'red'){
+                
+                debugger
+                let toPos = moveToDom.id;
+                this.boardLayout[toPos] = this.draggingPiece
+                this.boardLayout[toPos].position = toPos;
+                
+                this.draggingMonkey = false;
+                this.dragging = false
+                this.resetTiles();
+                this.updatePieces();
+
+                let newTurn;
+                if (this.currentTurn == "White Monkey") {
+                    newTurn = "Black"
+                } else if (this.currentTurn == "Black Monkey") {
+                    newTurn = "White"
+                }
+    
+                this.currentTurn = newTurn
+    
+                this.makeMoveCallbackFunc({fromPos: "TEMP", toPos, newTurn})
+            }
+            
+        } else if (this.draggingRoyalty){
 
             if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
                 console.log("not a tile on the game board")
@@ -226,7 +259,7 @@ export class ChessBoard {
                 
                 let toPos = moveToDom.id;
                 this.boardLayout[toPos] = this.draggingPiece
-                this.boardLayout[toPos].position = this.boardLayout[toPos];
+                this.boardLayout[toPos].position = toPos;
                 
                 this.draggingRoyalty = false;
                 this.dragging = false
@@ -270,13 +303,15 @@ export class ChessBoard {
 
                     let nextTo = nextToJail(toPos)
 
+                    tempPiece = this.boardLayout[toPos]
+                    this.boardLayout["TEMP"] = this.boardLayout[fromPos]
+
+                    delete this.boardLayout[fromPos]
+
                     this.boardLayout[nextTo] = this.boardLayout[toPos]
                     this.boardLayout[nextTo].position = nextTo
 
-                    tempPiece = this.boardLayout[toPos]
-                    this.boardLayout["TEMP"] = this.boardLayout[fromPos]
-                    console.log("set to", this.boardLayout["TEMP"])
-                    delete this.boardLayout[fromPos]
+                    delete this.boardLayout[toPos]
 
                     let newTurn;
                     if (this.currentTurn == "White") {

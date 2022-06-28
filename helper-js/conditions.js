@@ -124,7 +124,7 @@ export function noStraightBlocking({board, from, to}){
 
 export function notSameType({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
-        console.error("incorrect args provided to noPiece")
+        console.error("incorrect args provided to notSameType")
     }
     return (board[to] == undefined || board[from].isWhite != board[to].isWhite)
 }
@@ -294,7 +294,7 @@ function addToLists(board, from, toVertical, toHorizontal, outputPushRef, hasChe
 
 export function canMonkeyJump({board, from, to}){
     if (board == undefined || from == undefined || to == undefined){
-        console.error("incorrect args provided to noPiece")
+        console.error("incorrect args provided to canMonkeyJump")
     }
 
     let fromCoords = getVerticalAndHorizontal(from)
@@ -473,7 +473,7 @@ export function canMonkeyPrisonJump({board, from, to}){
         console.error("incorrect args provided to noPiece")
     }
 
-    if (board[to] && !board[to].hasBanana) return false;
+    if (!board[to] || !board[to].hasBanana) return false;
 
     let fromCoords = getVerticalAndHorizontal(from)
     let fromVertical = fromCoords.vertical
