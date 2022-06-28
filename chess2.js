@@ -28,8 +28,9 @@ export class ChessBoard {
     currentTurn = "White"; // either "White", "Black", "White Jail", "Black Jail", "White Monkey", "Black Monkey"
 
     makeMoveCallbackFunc = undefined;
+    gameOverCallbackFunc = undefined;
 
-    constructor(callback){
+    constructor(makeMoveCallback, gameOverCallback){
         this.boardLayout = {
             "a8": new Rook("a8", false),
             "b8": new Monkey("b8", false),
@@ -74,7 +75,8 @@ export class ChessBoard {
             "y1": new King("y1", false)
         }
 
-        this.makeMoveCallbackFunc = callback;
+        this.makeMoveCallbackFunc = makeMoveCallback;
+        this.gameOverCallbackFunc = gameOverCallback;
     }
 
     cursorMove(event){
@@ -396,7 +398,7 @@ export class ChessBoard {
         let column = toPos.split("")[0]
         
         // if starting a monkey jump
-        if (column == "x" || column == "y"){
+        if ((column == "x" || column == "y") && this.boardLayout[fromPos].constructor.name == Monkey.name){
             let nextTo = nextToJail(toPos)
 
             this.boardLayout["TEMP"] = this.boardLayout[fromPos];
@@ -419,9 +421,20 @@ export class ChessBoard {
             delete this.boardLayout[fromPos]
         }
         
-
+        if (this.checkLoseCondition()) {
+            console.log("calling game over callback function")
+            this.gameOverCallbackFunc();
+        }
         this.resetTiles();
         this.updatePieces();
+    }
+
+    checkLoseCondition(){
+        if (this.isWhite){
+            return ( this.boardLayout["x1"] && this.boardLayout["x2"] )
+        } else {
+            return ( this.boardLayout["y1"] && this.boardLayout["y2"] )
+        }
     }
 
     renderMoves(moves){

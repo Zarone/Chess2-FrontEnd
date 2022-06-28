@@ -42,10 +42,15 @@ window.onload = async () => {
         modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
     })
     
-    let chessBoard = new ChessBoard((moveInfo)=>{
-        socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
-        turn_Dom.innerText = "Turn: "+chessBoard.currentTurn
-    })
+    let chessBoard = new ChessBoard(
+        (moveInfo)=>{
+            socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
+            turn_Dom.innerText = "Turn: "+chessBoard.currentTurn
+        },
+        ()=>{
+            socket.disconnect()
+        }
+    )
 
     socket.on('player', (playerInfo)=>{
         playerID = playerInfo.pid;
