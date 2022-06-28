@@ -36,7 +36,7 @@ export class ChessBoard {
             "b8": new Monkey("b8", false),
             "c8": new Fish("c8", false),
             "d8": new Queen("d8", false),
-            // "e8": new King("e8", false),
+            "e8": new King("e8", false),
             "f8": new Fish("f8", false),
             "g8": new Monkey("g8", false),
             "h8": new Rook("h8", false),
@@ -55,7 +55,7 @@ export class ChessBoard {
             "b1": new Monkey("b1", true),
             "c1": new Fish("c1", true),
             "d1": new Queen("d1", true),
-            // "e1": new King("e1", true),
+            "e1": new King("e1", true),
             "f1": new Fish("f1", true),
             "g1": new Monkey("g1", true),
             "h1": new Rook("h1", true),
@@ -70,9 +70,6 @@ export class ChessBoard {
             "h2": new Fish("h2", true),
 
             "z1": new Bear("z1"),
-
-            "x1": new King("x1", true),
-            "y1": new King("y1", false)
         }
 
         this.makeMoveCallbackFunc = makeMoveCallback;
