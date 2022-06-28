@@ -17,7 +17,7 @@ window.onload = async () => {
             gameOverModal.toggle();
             modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
         } else {
-            window.location.href="../client/game.html?roomID="+openRoom.toString();
+            window.location.href="../game.html?roomID="+openRoom.toString();
         }
         return
     }
