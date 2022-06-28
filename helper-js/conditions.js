@@ -313,12 +313,11 @@ export function canMonkeyJump({board, from, to}){
 
     let addToListsResult = addToLists(board, from, toVertical, toHorizontal, toCheck, hasChecked, fromVertical, fromHorizontal);
     if (addToListsResult) return true
-
+    
     // on each neighbor, check other neighbors
     while (toCheck.length > 0){
-        debugger
         let checkingNode = toCheck.shift()
-        if (addToLists(board, from, fromVertical, fromHorizontal, toCheck, hasChecked, checkingNode.vert, checkingNode.hor)) return true
+        if (addToLists(board, from, toVertical, toHorizontal, toCheck, hasChecked, checkingNode.vert, checkingNode.hor)) return true
     }
     return false
 
@@ -508,7 +507,7 @@ export function canMonkeyPrisonJump({board, from, to}){
     // on each neighbor, check other neighbors
     while (toCheck.length > 0){
         let checkingNode = toCheck.shift()
-        if (addToListsForceEmpty(board, from, fromVertical, fromHorizontal, toCheck, hasChecked, checkingNode.vert, checkingNode.hor)) return true
+        if (addToListsForceEmpty(board, from, toVertical, toHorizontal, toCheck, hasChecked, checkingNode.vert, checkingNode.hor)) return true
     }
     return false
 }
