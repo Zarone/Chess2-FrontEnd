@@ -263,8 +263,10 @@ export class ChessBoard {
 
                 let newTurn;
                 if (this.currentTurn == "White Jail") {
+                    this.rookActiveBlack = true;
                     newTurn = "Black"
                 } else if (this.currentTurn == "Black Jail") {
+                    this.rookActiveWhite = true;
                     newTurn = "White"
                 }
     
@@ -408,6 +410,14 @@ export class ChessBoard {
 
         } else {
             this.stateChecks(fromPos, toPos)
+
+            if (column == "x" || column == "y"){
+                if (this.boardLayout[fromPos].isWhite){
+                    this.rookActiveBlack = false;
+                } else {
+                    this.rookActiveBlack = true;
+                }
+            }
     
             if (this.boardLayout[toPos] != undefined) this.boardLayout["TEMP"] = this.boardLayout[toPos]
     
