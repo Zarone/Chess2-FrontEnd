@@ -49,6 +49,8 @@ window.onload = async () => {
         },
         ()=>{
             socket.disconnect()
+            gameOverModal.toggle()
+            modalHeading_Dom.innerText = "You Lost. Better Luck Next Time 😊"
         }
     )
 
