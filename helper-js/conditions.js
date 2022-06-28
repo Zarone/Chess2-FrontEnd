@@ -316,6 +316,7 @@ export function canMonkeyJump({board, from, to}){
 
     // on each neighbor, check other neighbors
     while (toCheck.length > 0){
+        debugger
         let checkingNode = toCheck.shift()
         if (addToLists(board, from, fromVertical, fromHorizontal, toCheck, hasChecked, checkingNode.vert, checkingNode.hor)) return true
     }
