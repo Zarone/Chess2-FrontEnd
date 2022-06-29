@@ -180,7 +180,7 @@ export class ChessBoard {
 
     manageTakeKingOrQueen(piece){
         this.draggingPieceDom = document.createElement('img');
-        this.draggingPieceDom.setAttribute("src", "./images/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+piece.getImageSrc());
         this.draggingPieceDom.setAttribute("class", "piece-image");
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -198,7 +198,7 @@ export class ChessBoard {
     manageMonkeyJumping(piece){
         this.draggingPieceDom = document.createElement('img');
 
-        this.draggingPieceDom.setAttribute("src", "./images/"+this.boardLayout["TEMP"].getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.boardLayout["TEMP"].getImageSrc());
         this.draggingPieceDom.setAttribute("class", "piece-image");
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -211,6 +211,12 @@ export class ChessBoard {
         this.draggingPiece = this.boardLayout["TEMP"];
 
         this.renderMovesForJumpingMonkey(piece)
+    }
+
+    playChessSound(){
+        let audio = new Audio('./assets/chess-sound.mp3');
+        audio.loop = false;
+        audio.play(); 
     }
 
     makeMove(moveToDom){
@@ -368,6 +374,7 @@ export class ChessBoard {
             if (monkeyJumping) this.manageMonkeyJumping(tempPiece);
         }
 
+        this.playChessSound();
     }
 
     filterImpossibleMoves(moves, currentPos){
@@ -434,6 +441,7 @@ export class ChessBoard {
         }
         this.resetTiles();
         this.updatePieces();
+        this.playChessSound();
     }
 
     checkLoseCondition(){
@@ -535,7 +543,7 @@ export class ChessBoard {
 
     renderPiece(tileDom, piece){
         let imageDom = document.createElement("img");
-        imageDom.setAttribute("src", "./images/"+piece.getImageSrc());
+        imageDom.setAttribute("src", "./assets/"+piece.getImageSrc());
         imageDom.setAttribute("class", "piece-image");
         while (tileDom.hasChildNodes()) {
             tileDom.removeChild(tileDom.lastChild);
