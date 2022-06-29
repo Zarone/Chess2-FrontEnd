@@ -10,20 +10,20 @@ window.onload = async () => {
     let gameOverModal = new bootstrap.Modal(gameOverModal_Dom, {keyboard: false})
 
     if (roomID == undefined){
-        let openRoomRaw = await fetch(serverID()+"/getOpenRoom")
-        let openRoomJson = await openRoomRaw.json()
-        let openRoom = openRoomJson.roomID
-        if (openRoom == null){
-            gameOverModal.toggle();
-            modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
-        } else {
-            window.location.href="../game.html?roomID="+openRoom.toString();
-        }
-        return
+        roomID = null
+        // let openRoomRaw = await fetch(serverID()+"/getOpenRoom")
+        // let openRoomJson = await openRoomRaw.json()
+        // let openRoom = openRoomJson.roomID
+        // if (openRoom == null){
+        //     gameOverModal.toggle();
+        //     modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
+        // } else {
+        //     window.location.href="../game.html?roomID="+openRoom.toString();
+        // }
+        // return
     }
 
     let roomID_Dom = document.getElementById("roomID")
-    roomID_Dom.innerText = "Room ID: " + roomID
     let turn_Dom = document.getElementById("turn")
 
     let jail1_Dom = document.getElementById("jail-1")
@@ -57,6 +57,9 @@ window.onload = async () => {
     socket.on('player', (playerInfo)=>{
         playerID = playerInfo.pid;
 
+        roomID = playerInfo.roomID
+        roomID_Dom.innerText = "Room ID: " + playerInfo.roomID
+
         chessBoard.isWhite = playerInfo.isWhite
         turn_Dom.innerText = "...Waiting for player to join"
         
@@ -70,8 +73,11 @@ window.onload = async () => {
 
     })
 
-    socket.on("twoPlayers", ()=>{
-        turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+    socket.on("twoPlayers", (sentRoomID)=>{
+        if (roomID == sentRoomID){
+            chessBoard.currentTurn = "White"
+            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+        }
     })
 
     socket.on('gameOver', ({room, id})=>{

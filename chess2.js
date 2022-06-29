@@ -25,7 +25,7 @@ export class ChessBoard {
     rookActiveWhite = false;
     rookActiveBlack = false;
 
-    currentTurn = "White"; // either "White", "Black", "White Jail", "Black Jail", "White Monkey", "Black Monkey"
+    currentTurn = "Not Started"; // either "Not Started", "White", "Black", "White Jail", "Black Jail", "White Monkey", "Black Monkey"
 
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
