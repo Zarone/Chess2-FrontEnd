@@ -88,6 +88,8 @@ export class ChessBoard {
         if (!canMove) return;
         
         event.preventDefault();
+
+        if (event.srcElement.nodeName != "IMG") return;
         
         this.draggingPiece = this.boardLayout[event.srcElement.parentNode.id]
         
@@ -214,7 +216,7 @@ export class ChessBoard {
     }
 
     playChessSound(){
-        let audio = new Audio('./assets/chess-sound.mp3');
+        let audio = new Audio('./assets/Chess Sound.mp3');
         audio.loop = false;
         audio.play(); 
     }
