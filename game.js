@@ -41,6 +41,11 @@ window.onload = async () => {
         gameOverModal.toggle();
         modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
     })
+
+    socket.on("fullRoom", ()=>{
+        gameOverModal.toggle();
+        modalHeading_Dom.innerText = "The room you tried to join is full."
+    })
     
     let chessBoard = new ChessBoard(
         (moveInfo)=>{
