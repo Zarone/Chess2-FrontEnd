@@ -224,13 +224,15 @@ export class ChessBoard {
     makeMove(moveToDom){
         let classNames = moveToDom.className.split(" ")
         
+        let isMoveableTile = moveToDom.style.backgroundColor == 'red'
+
         if (this.draggingMonkey){
 
             if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
                 console.log("not a tile on the game board")
             } else if (moveToDom.id == this.draggingPiece.position){
                 console.log("moving to same tile as you're already on")
-            } else if (moveToDom.style.backgroundColor == 'red'){
+            } else if (isMoveableTile){
                 let toPos = moveToDom.id;
                 this.boardLayout[toPos] = this.draggingPiece
                 this.boardLayout[toPos].position = toPos;
@@ -258,7 +260,7 @@ export class ChessBoard {
                 console.log("not a tile on the game board")
             } else if (moveToDom.id == this.draggingPiece.position){
                 console.log("moving to same tile as you're already on")
-            } else if (moveToDom.style.backgroundColor == 'red'){
+            } else if (isMoveableTile){
                 
                 let toPos = moveToDom.id;
                 this.boardLayout[toPos] = this.draggingPiece
@@ -294,7 +296,7 @@ export class ChessBoard {
                 console.log("not a tile on the game board")
             } else if (moveToDom.id == this.draggingPiece.position){
                 console.log("moving to same tile as you're already on")
-            } else if(moveToDom.style.backgroundColor == 'red'){
+            } else if(isMoveableTile){
     
                 let toPos = moveToDom.id;
                 
@@ -376,7 +378,7 @@ export class ChessBoard {
             if (monkeyJumping) this.manageMonkeyJumping(tempPiece);
         }
 
-        this.playChessSound();
+        if (isMoveableTile) this.playChessSound();
     }
 
     filterImpossibleMoves(moves, currentPos){
@@ -414,6 +416,7 @@ export class ChessBoard {
 
             this.boardLayout[nextTo] = this.boardLayout[toPos]
             this.boardLayout[nextTo].hasBanana = false;
+            this.boardLayout[nextTo].position = nextTo;
 
             delete this.boardLayout[toPos]
 
@@ -533,6 +536,7 @@ export class ChessBoard {
             for (let i = 0; i < legalMoves.length; i++){
                 if (legalMoves[i].pos == newPosition) return true;
             }
+            debugger
             console.error("received invalid move")
             return false
         }
