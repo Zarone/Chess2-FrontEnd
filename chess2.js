@@ -559,6 +559,7 @@ export class ChessBoard {
 
     addPieceEvents(tileDom){
         tileDom.addEventListener("dragstart", event => this.dragStart(event))
+        tileDom.addEventListener("click", event => this.dragStart(event))
     }
 
     resetTiles(){
