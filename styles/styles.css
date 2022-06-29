@@ -116,6 +116,7 @@ html, body {
         var(--tile-size-dynamic)
     ); */
     position: fixed;
+    pointer-events: all;
 }
 
 .bear-container {
@@ -132,6 +133,7 @@ html, body {
         var(--tile-size-dynamic)
     );
     position: absolute;
+    pointer-events: none;
     /* right: 50%; */
     /* transform: translateX(
         calc(
