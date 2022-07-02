@@ -229,9 +229,11 @@ export class ChessBoard {
         if (this.draggingMonkey){
 
             if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
-                console.log("not a tile on the game board")
+                console.log("Dragging Monkey: not a tile on the game board")
+                document.getElementById("x1").appendChild(this.draggingPieceDom);
             } else if (moveToDom.id == this.draggingPiece.position){
-                console.log("moving to same tile as you're already on")
+                console.log("Dragging Monkey: moving to same tile as you're already on")
+                document.getElementById("x1").appendChild(this.draggingPieceDom);
             } else if (isMoveableTile){
                 let toPos = moveToDom.id;
                 this.boardLayout[toPos] = this.draggingPiece
@@ -252,14 +254,18 @@ export class ChessBoard {
                 this.currentTurn = newTurn
     
                 this.makeMoveCallbackFunc({fromPos: "TEMP", toPos, newTurn})
+            } else {
+                document.getElementById("x1").appendChild(this.draggingPieceDom);
             }
             
         } else if (this.draggingRoyalty){
 
             if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
-                console.log("not a tile on the game board")
+                console.log("draggingRoyalty: not a tile on the game board")
+                document.getElementById("x1").appendChild(this.draggingPieceDom);
             } else if (moveToDom.id == this.draggingPiece.position){
-                console.log("moving to same tile as you're already on")
+                console.log("draggingRoyalty: moving to same tile as you're already on")
+                document.getElementById("x1").appendChild(this.draggingPieceDom);
             } else if (isMoveableTile){
                 
                 let toPos = moveToDom.id;
@@ -283,6 +289,8 @@ export class ChessBoard {
                 this.currentTurn = newTurn
     
                 this.makeMoveCallbackFunc({fromPos: "TEMP", toPos, newTurn})
+            } else {
+                document.getElementById("x1").appendChild(this.draggingPieceDom);
             }
             
         } else {

@@ -1,5 +1,5 @@
 import { ChessBoard } from "./chess2.js";
-import {serverID, socketID} from "./helper-js/utils.js";
+import {serverID, socketID , LOSE_TEXT, WIN_TEXT, disconnectText, DISCONNECT_TIMER_START} from "./helper-js/utils.js";
 import {getQuerystring} from "./helper-js/utils.js"
 import {Cookie} from "./helper-js/cookieManager.js"
 import { Bear } from "./pieces-js/Bear.js";
@@ -47,6 +47,22 @@ window.onload = async () => {
 
     let socket = io(socketID())
 
+    let disconnectTimer = DISCONNECT_TIMER_START
+    socket.on("disconnect", () => {
+        gameOverModal.toggle()
+        disconnectTimer = DISCONNECT_TIMER_START
+        modalHeading_Dom.innerText = disconnectText(disconnectTimer)
+
+        let timer = setInterval(()=>{
+            if (disconnectTimer < 0){
+                modalHeading_Dom.innerText = LOSE_TEXT
+            } else {
+                disconnectTimer -= 1;
+                modalHeading_Dom.innerText = disconnectText(disconnectTimer)
+            }
+        }, 1000)
+    })
+
     socket.emit('joined', {roomID, friendRoom: friendRoom == "true" ? true : false, playerID});
 
     socket.on("maximumPlayers", ()=>{
@@ -65,9 +81,9 @@ window.onload = async () => {
             turn_Dom.innerText = "Turn: "+chessBoard.currentTurn
         },
         ()=>{
-            socket.disconnect()
+            socket.emit("admitDefeat")
             gameOverModal.toggle()
-            modalHeading_Dom.innerText = "You Lost. Better Luck Next Time 😊"
+            modalHeading_Dom.innerText = LOSE_TEXT
         }
     )
 
@@ -75,7 +91,6 @@ window.onload = async () => {
         playerID = playerInfo.pid;
         if (cookie.pid != playerID){
             cookie.pid = playerID;
-            console.log("cookie", cookie)
             cookie.setCookie()
         }
 
@@ -105,10 +120,10 @@ window.onload = async () => {
         if (room == roomID){
             if (playerID == id){
                 gameOverModal.toggle()
-                modalHeading_Dom.innerText = "You Win! 💯"
+                modalHeading_Dom.innerText = WIN_TEXT
             } else {
                 gameOverModal.toggle()
-                modalHeading_Dom.innerText = "You Lost. Better Luck Next Time 😊"
+                modalHeading_Dom.innerText = LOSE_TEXT
             }
         }
     })
@@ -128,7 +143,6 @@ window.onload = async () => {
     })
     
     socket.on("needReconnectData", args=>{
-        console.log("on needReconnectData")
         if (roomID == args.roomID && playerID != args.playerID){
             socket.emit("reconnectData", {
                 layout: Object.keys(chessBoard.boardLayout).map((val, index)=>{
@@ -142,11 +156,10 @@ window.onload = async () => {
     })
 
     socket.on("partialReconnect", playerInfo=>{
-        console.log("on partialReconnect")
+
         playerID = playerInfo.pid;
         if (cookie.pid != playerID){
             cookie.pid = playerID;
-            console.log("cookie", cookie)
             cookie.setCookie()
         }
 
@@ -165,9 +178,10 @@ window.onload = async () => {
     })
 
     socket.on("establishReconnection", (args)=>{
-        console.log("on establishReconnection")
+        
+        gameOverModal.hide()
+
         if (args.roomID == roomID && args.pid != playerID){
-            console.log("args", args)
             chessBoard.boardLayout = {};
             for (let i = 0; i < args.layout.length; i++){
                 switch (args.layout[i].type) {
@@ -199,7 +213,6 @@ window.onload = async () => {
                             new Queen(args.layout[i].position, args.layout[i].isWhite)
                         break;
                     case Rook.name:
-                        console.log(args.layout[i], args.layout[i].position, args.layout[i].isWhite)
                         chessBoard.boardLayout[args.layout[i].position] = 
                             new Rook(args.layout[i].position, args.layout[i].isWhite)
                         break;
@@ -207,7 +220,6 @@ window.onload = async () => {
                         break;
                 }
             }
-            console.log("boardLayout", chessBoard.boardLayout)
             chessBoard.rookActiveWhite = args.rookActiveWhite;
             chessBoard.rookActiveBlack = args.rookActiveBlack;
             chessBoard.currentTurn = args.currentTurn;

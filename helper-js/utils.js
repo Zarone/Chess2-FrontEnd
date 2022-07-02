@@ -3,6 +3,15 @@ const herokuSocketID = "ws://chess2-api.herokuapp.com"
 const localServerID = "http://127.0.0.1:8080"
 const localSocketID = "ws://127.0.0.1:8080"
 
+export const DISCONNECT_TIMER_START = 30
+
+export const LOSE_TEXT = "You Lost. Better Luck Next Time! 😊"
+export const WIN_TEXT = "You Win! 💯"
+
+export function disconnectText(secondRemaining){
+    return "You've disconnect 😥 You have " + secondRemaining.toString() + " seconds to reconnect. Try reload the page."
+}
+
 export function serverID(){
     if (window.location.href.split(":")[1] == "//127.0.0.1"){
         return localServerID
