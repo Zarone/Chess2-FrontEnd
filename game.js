@@ -252,6 +252,7 @@ window.onload = async () => {
 
     socket.on("partialReconnect", playerInfo=>{
 
+        console.log("playerInfo", playerInfo)
         playerID = playerInfo.pid;
         if (cookie.pid !== playerID){
             cookie.pid = playerID.toString();
@@ -361,6 +362,9 @@ window.onload = async () => {
                 chessBoard.manageMonkeyJumping(chessBoard.boardLayout[location])
             }
             
+            whiteTimer = finalTimeLimit - args.timeWhite;
+            blackTimer = finalTimeLimit - args.timeBlack;
+
             if (finalTimeLimit <= 60*60){
                 if (chessBoard.currentTurn == "Black" || chessBoard.currentTurn == "Black Jail" || chessBoard.currentTurn == "Black Monkey") blackTimer -= args.timeSinceLastMove
                 if (chessBoard.currentTurn == "White" || chessBoard.currentTurn == "White Jail" || chessBoard.currentTurn == "White Monkey") whiteTimer -= args.timeSinceLastMove
