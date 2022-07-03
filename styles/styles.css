@@ -112,10 +112,10 @@ html, body {
         var(--tile-size-fixed),
         var(--tile-size-dynamic)
     );
-    /* height: min(
+    height: min(
         var(--tile-size-fixed), 
         var(--tile-size-dynamic)
-    ); */
+    );
     position: fixed;
     pointer-events: all;
 }

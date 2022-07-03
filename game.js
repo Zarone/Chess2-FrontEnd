@@ -88,9 +88,12 @@ window.onload = async () => {
     )
 
     socket.on('player', (playerInfo)=>{
+
+        console.log("on player")
+
         playerID = playerInfo.pid;
-        if (cookie.pid != playerID){
-            cookie.pid = playerID;
+        if (cookie.pid !== playerID){
+            cookie.pid = playerID.toString();
             cookie.setCookie()
         }
 
@@ -146,7 +149,7 @@ window.onload = async () => {
         if (roomID == args.roomID && playerID != args.playerID){
             socket.emit("reconnectData", {
                 layout: Object.keys(chessBoard.boardLayout).map((val, index)=>{
-                    return {position: val, isWhite: chessBoard.boardLayout[val].isWhite, type: chessBoard.boardLayout[val].constructor.name }
+                    return {position: val, isWhite: chessBoard.boardLayout[val].isWhite, type: chessBoard.boardLayout[val].constructor.name, hasBanana: chessBoard.boardLayout[val].hasBanana }
                 }), 
                 rookActiveWhite: chessBoard.rookActiveWhite,
                 rookActiveBlack: chessBoard.rookActiveBlack,
@@ -158,8 +161,8 @@ window.onload = async () => {
     socket.on("partialReconnect", playerInfo=>{
 
         playerID = playerInfo.pid;
-        if (cookie.pid != playerID){
-            cookie.pid = playerID;
+        if (cookie.pid !== playerID){
+            cookie.pid = playerID.toString();
             cookie.setCookie()
         }
 
@@ -182,6 +185,7 @@ window.onload = async () => {
         gameOverModal.hide()
 
         if (args.roomID == roomID && args.pid != playerID){
+                        
             chessBoard.boardLayout = {};
             for (let i = 0; i < args.layout.length; i++){
                 switch (args.layout[i].type) {
@@ -203,6 +207,7 @@ window.onload = async () => {
                     case King.name:
                         chessBoard.boardLayout[args.layout[i].position] = 
                             new King(args.layout[i].position, args.layout[i].isWhite)
+                        chessBoard.boardLayout[args.layout[i].position].hasBanana = args.layout[i].hasBanana
                         break;
                     case Monkey.name:
                         chessBoard.boardLayout[args.layout[i].position] = 
@@ -224,7 +229,45 @@ window.onload = async () => {
             chessBoard.rookActiveBlack = args.rookActiveBlack;
             chessBoard.currentTurn = args.currentTurn;
             turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+
             chessBoard.updatePieces();
+            debugger
+            
+            // if the player was holding royalty piece when they disconnected
+            if(
+                chessBoard.boardLayout["TEMP"] &&
+                (chessBoard.boardLayout["TEMP"].constructor.name == Queen.name || chessBoard.boardLayout["TEMP"].constructor.name == King.name) &&
+                (
+                    (chessBoard.currentTurn == "White Jail" && chessBoard.isWhite) ||
+                    (chessBoard.currentTurn == "Black Jail" && !chessBoard.isWhite)
+                )
+            ){
+                chessBoard.manageTakeKingOrQueen(chessBoard.boardLayout["TEMP"])
+            } else if (
+                chessBoard.boardLayout["TEMP"] &&
+                chessBoard.boardLayout["TEMP"].constructor.name == Monkey.name &&
+                (
+                    (chessBoard.currentTurn == "White Monkey" && chessBoard.isWhite) ||
+                    (chessBoard.currentTurn == "Black Monkey" && !chessBoard.isWhite)
+                )
+            ){
+                let location = null;
+                if (chessBoard.isWhite){
+                    if (chessBoard.boardLayout["a4"] && chessBoard.boardLayout["a4"].constructor.name == King.name){
+                        location = "a4"
+                    } else if (chessBoard.boardLayout["a5"] && chessBoard.boardLayout["a5"].constructor.name == King.name){
+                        location = "a5"
+                    }
+                } else {
+                    if (chessBoard.boardLayout["h4"] && chessBoard.boardLayout["h4"].constructor.name == King.name){
+                        location = "h4"
+                    } else if (chessBoard.boardLayout["h5"] && chessBoard.boardLayout["h5"].constructor.name == King.name){
+                        location = "h5"
+                    }
+                }
+                chessBoard.manageMonkeyJumping(chessBoard.boardLayout[location])
+            }
+            
         }
     })
     
