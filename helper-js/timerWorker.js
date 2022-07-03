@@ -1,0 +1,3 @@
+setInterval(()=>{
+    postMessage('');
+}, 100);

@@ -3,7 +3,7 @@
     --bg-secondary: #7d8ea1;
     --bg-tertiary: #28578d;
     --tile-size-fixed: 75px;
-    --tile-size-dynamic: min(7vw, 6vh);
+    --tile-size-dynamic: min(6.1vw, 5.8vh);
 }
 
 html, body {  
@@ -73,7 +73,17 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: radial-gradient(circle, rgba(255,255,255,0) 10%, rgba(194, 194, 194, 0.35) 90%);
+    background-image: radial-gradient(circle, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.2) 80%);
+}
+
+.white-box {
+    background-color: rgb(255, 255, 255);
+    border-radius: 5px;
+}
+
+.black-box {
+    background-color: rgb(100, 139, 183);
+    border-radius: 5px;
 }
 
 .chess-jail-box{
@@ -90,17 +100,7 @@ html, body {
             var(--tile-size-fixed),
             var(--tile-size-dynamic)
         )/3)
-    );
-}
-
-.white-box {
-    background-color: rgb(255, 255, 255);
-    border-radius: 5px;
-}
-
-.black-box {
-    background-color: rgb(67, 113, 167);
-    border-radius: 5px;
+    ), radial-gradient(circle, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0.1) 80%);
 }
 
 .logo {
@@ -116,7 +116,7 @@ html, body {
         var(--tile-size-fixed), 
         var(--tile-size-dynamic)
     );
-    position: fixed;
+    position: relative;
     pointer-events: all;
 }
 
@@ -152,4 +152,18 @@ html, body {
     width: 20px;
     height: 20px;
     background-color: darkviolet;
+}
+
+.timer-container{
+    width: 50%; 
+    margin: 1rem auto; 
+    border-radius: 5px;
+}
+
+.timer-top{
+    text-align: end;
+}
+
+.timer-bottom{
+    text-align: start;
 }

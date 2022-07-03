@@ -6,6 +6,8 @@ const localSocketID = "ws://127.0.0.1:8080"
 export const canMoveColor = "red"
 export const prevMoveColor = "green"
 
+// export const START_TIME = 60 * 5
+
 export const DISCONNECT_TIMER_START = 30
 
 export const LOSE_TEXT = "You Lost. Better Luck Next Time! 😊"

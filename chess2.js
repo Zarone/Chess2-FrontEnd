@@ -97,6 +97,7 @@ export class ChessBoard {
         if (!sameColorAsPlayer) return;
 
         this.draggingPieceDom = event.target
+        this.draggingPieceDom.style.position = "fixed"
         this.draggingPieceWidth = event.target.offsetWidth
         this.draggingPieceHeight = event.target.offsetHeight
         this.dragging = true
@@ -187,6 +188,7 @@ export class ChessBoard {
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
+        this.draggingPieceDom.style.position = "fixed"
         this.draggingPieceWidth = this.draggingPieceDom.offsetWidth
         this.draggingPieceHeight = this.draggingPieceDom.offsetHeight
         this.dragging = true
@@ -205,6 +207,7 @@ export class ChessBoard {
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
+        this.draggingPieceDom.style.position = "fixed"
         this.draggingPieceWidth = this.draggingPieceDom.offsetWidth
         this.draggingPieceHeight = this.draggingPieceDom.offsetHeight
         this.dragging = true
@@ -460,7 +463,9 @@ export class ChessBoard {
     }
 
     setPrevColor(toPos){
-        document.getElementById(toPos).style.backgroundColor = prevMoveColor
+        if (toPos != "TEMP"){
+            document.getElementById(toPos).style.backgroundColor = prevMoveColor
+        }
     }
 
     checkLoseCondition(){
@@ -472,6 +477,24 @@ export class ChessBoard {
     }
 
     renderMoves(moves){
+
+        // this is to deal with a specific problem on safari.
+        // for whatever reason, the boxes resize on update, so if I
+        // only update the red tiles, then they're a different
+        // size than everything else.
+        let elements = document.getElementsByClassName("chess-box")
+        for (let i = 0; i < elements.length; i++){
+            let element = elements[i];
+            element.style.backgroundColor = "red";
+            element.style.backgroundColor = "";
+        }
+        elements = document.getElementsByClassName("chess-jail-box")
+        for (let i = 0; i < elements.length; i++){
+            let element = elements[i];
+            element.style.backgroundColor = "red";
+            element.style.backgroundColor = "";
+        }
+
         for (let i = 0; i < moves.length; i++){
             let editTileDom = document.getElementById(moves[i].pos);
             editTileDom.style.backgroundColor = canMoveColor

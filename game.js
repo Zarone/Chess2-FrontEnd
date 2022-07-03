@@ -12,7 +12,9 @@ import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 
 window.onload = async () => {
-    let {roomID, friendRoom} = getQuerystring()
+    let {roomID, friendRoom, timeLimit} = getQuerystring()
+
+    let finalTimeLimit = 100 * 60;
 
     let cookie = new Cookie();
 
@@ -63,7 +65,7 @@ window.onload = async () => {
         }, 1000)
     })
 
-    socket.emit('joined', {roomID, friendRoom: friendRoom == "true" ? true : false, playerID});
+    socket.emit('joined', {roomID, friendRoom: friendRoom == "true" ? true : false, playerID, timeLimit});
 
     socket.on("maximumPlayers", ()=>{
         gameOverModal.toggle();
@@ -112,12 +114,102 @@ window.onload = async () => {
 
     })
 
-    socket.on("twoPlayers", (sentRoomID)=>{
-        if (roomID == sentRoomID){
+    let whiteTimer = finalTimeLimit;
+    let blackTimer = finalTimeLimit;
+    let topTimer_Dom = document.getElementById("timer-top")
+    let bottomTimer_Dom = document.getElementById("timer-bottom")
+
+    function displayTimer(){
+        if (chessBoard.isWhite){
+            let secondsW = (whiteTimer%60)
+            let secondsB = (blackTimer%60)
+            bottomTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (secondsW < 10 ? ":0" : ":") + secondsW.toFixed(1)
+            topTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (secondsB < 10 ? ":0" : ":") + secondsB.toFixed(1)
+        } else {
+            let secondsW = (whiteTimer%60)
+            let secondsB = (blackTimer%60)
+            topTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (secondsW < 10 ? ":0" : ":") + secondsW.toFixed(1)
+            bottomTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (secondsB < 10 ? ":0" : ":") + secondsB.toFixed(1)
+        }
+    }
+
+    socket.on("twoPlayers", (args)=>{
+        if (roomID == args.thisRoomID){
+
+            finalTimeLimit = args.finalTimeLimit*60;
+
+            whiteTimer = finalTimeLimit;
+            blackTimer = finalTimeLimit;
+
             chessBoard.currentTurn = "White"
             turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+
+            displayTimer()
         }
     })
+
+    let timerWorker = new Worker("./helper-js/timerWorker.js")
+
+    timerWorker.onmessage = () => {
+
+        if (chessBoard.currentTurn != "Not Started" && finalTimeLimit > 60*60) {
+            timerWorker.terminate();
+            return
+        }
+        
+        if (chessBoard.currentTurn == "Not Started"){
+            return
+        } else if (
+            chessBoard.currentTurn == "White" ||
+            chessBoard.currentTurn == "White Jail" ||
+            chessBoard.currentTurn == "White Monkey"
+        ) {
+            if (chessBoard.isWhite){
+
+                if (whiteTimer < 0){
+                    socket.emit("admitDefeat")
+                    gameOverModal.toggle()
+                    modalHeading_Dom.innerText = "You Lost. Better Luck Next Time 😊"
+                    timerWorker.terminate();
+                    return
+                }
+
+                let seconds = (whiteTimer%60)
+                bottomTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
+            } else {
+
+                if (whiteTimer < 0) return;
+
+                let seconds = (whiteTimer%60)
+                topTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
+            }
+            whiteTimer -= 0.1
+        } else if (
+            chessBoard.currentTurn == "Black" ||
+            chessBoard.currentTurn == "Black Jail" ||
+            chessBoard.currentTurn == "Black Monkey"
+        ) {
+            if (chessBoard.isWhite){
+                if (blackTimer < 0) return;
+
+                let seconds = (blackTimer%60)
+                topTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
+            } else {
+
+                if (blackTimer < 0){
+                    socket.emit("admitDefeat")
+                    gameOverModal.toggle()
+                    modalHeading_Dom.innerText = "You Lost. Better Luck Next Time 😊"
+                    timerWorker.terminate();
+                    return
+                }
+
+                let seconds = (blackTimer%60)
+                bottomTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
+            }
+            blackTimer -= 0.1
+        }
+    }
 
     socket.on('gameOver', ({room, id})=>{
         if (room == roomID){
@@ -170,6 +262,8 @@ window.onload = async () => {
         roomID_Dom.innerText = "Room ID: " + playerInfo.roomID
 
         chessBoard.isWhite = playerInfo.isWhite
+        console.log(playerInfo)
+        finalTimeLimit = playerInfo.timeLimit*60
         
         if (!playerInfo.isWhite){
             jail1_Dom.style.flexWrap = "wrap-reverse"
@@ -267,6 +361,12 @@ window.onload = async () => {
                 chessBoard.manageMonkeyJumping(chessBoard.boardLayout[location])
             }
             
+            if (finalTimeLimit <= 60*60){
+                if (chessBoard.currentTurn == "Black" || chessBoard.currentTurn == "Black Jail" || chessBoard.currentTurn == "Black Monkey") blackTimer -= args.timeSinceLastMove
+                if (chessBoard.currentTurn == "White" || chessBoard.currentTurn == "White Jail" || chessBoard.currentTurn == "White Monkey") whiteTimer -= args.timeSinceLastMove
+            } 
+
+            displayTimer();
         }
     })
     

@@ -50,15 +50,22 @@
                         <div class="container custom-bg-tertiary rounded pt-3 pb-3">
                             <div><p class="h2 text-center" id="rooms-count">Loading room count...</p></div>
                             <div class="d-grid">
-                                <button type="button" id="raw-join" class="btn btn-primary btn-block">Play</button>
+                                <button type="button" id="raw-join" class="btn btn-primary btn-block">Play (un-timed)</button>
                                 <p>
                                     Press this button if you just want to jump into an online game!
+                                </p>
+                            </div>
+                            <div class="d-grid">
+                                <button type="button" id="raw-join-timed" class="btn btn-primary btn-block">Play (timed 15 minutes)</button>
+                                <p>
+                                    Press this button if you just want to jump into a timed online game!
                                 </p>
                             </div>
                             <div>
                                 <div class="d-flex">
                                     <button type="button" id="room-join" class="btn btn-primary btn-block">Play With Friends</button>
                                     <input class="form-control" id ="room-id" type="text" placeholder="Room ID">
+                                    <input class="form-control" id ="room-time" type="number" placeholder="Time Per Player">
                                 </div>
                                 <p>
                                     If you want to play with friends, you can enter a custom room ID! Please use an uncommon room name so that you're 
