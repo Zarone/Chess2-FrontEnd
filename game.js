@@ -231,7 +231,6 @@ window.onload = async () => {
             turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
 
             chessBoard.updatePieces();
-            debugger
             
             // if the player was holding royalty piece when they disconnected
             if(

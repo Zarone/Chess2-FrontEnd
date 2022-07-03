@@ -3,6 +3,9 @@ const herokuSocketID = "ws://chess2-api.herokuapp.com"
 const localServerID = "http://127.0.0.1:8080"
 const localSocketID = "ws://127.0.0.1:8080"
 
+export const canMoveColor = "red"
+export const prevMoveColor = "green"
+
 export const DISCONNECT_TIMER_START = 30
 
 export const LOSE_TEXT = "You Lost. Better Luck Next Time! 😊"

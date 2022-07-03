@@ -7,7 +7,7 @@ import {King} from "./pieces-js/King.js"
 import {Elephant} from "./pieces-js/Elephant.js"
 import {Bear} from "./pieces-js/Bear.js"
 
-import {nextToJail, toID} from "./helper-js/utils.js"
+import {nextToJail, toID, canMoveColor, prevMoveColor} from "./helper-js/utils.js"
 
 export class ChessBoard {
 
@@ -157,17 +157,17 @@ export class ChessBoard {
     renderMovesForTakenKingQueen(){
         if (this.isWhite){
             if (this.boardLayout["y1"] == undefined) {
-                document.getElementById("y1").style.backgroundColor = 'red'
+                document.getElementById("y1").style.backgroundColor = canMoveColor
             }
             if (this.boardLayout["y2"] == undefined) {
-                document.getElementById("y2").style.backgroundColor = 'red'
+                document.getElementById("y2").style.backgroundColor = canMoveColor
             }
         } else {
             if (this.boardLayout["x1"] == undefined) {
-                document.getElementById("x1").style.backgroundColor = 'red'
+                document.getElementById("x1").style.backgroundColor = canMoveColor
             }
             if (this.boardLayout["x2"] == undefined) {
-                document.getElementById("x2").style.backgroundColor = 'red'
+                document.getElementById("x2").style.backgroundColor = canMoveColor
             }
         }
     }
@@ -224,7 +224,7 @@ export class ChessBoard {
     makeMove(moveToDom){
         let classNames = moveToDom.className.split(" ")
         
-        let isMoveableTile = moveToDom.style.backgroundColor == 'red'
+        let isMoveableTile = moveToDom.style.backgroundColor == canMoveColor
 
         if (this.draggingMonkey){
 
@@ -454,7 +454,13 @@ export class ChessBoard {
         }
         this.resetTiles();
         this.updatePieces();
+        this.setPrevColor(fromPos)
+        this.setPrevColor(toPos)
         this.playChessSound();
+    }
+
+    setPrevColor(toPos){
+        document.getElementById(toPos).style.backgroundColor = prevMoveColor
     }
 
     checkLoseCondition(){
@@ -468,7 +474,7 @@ export class ChessBoard {
     renderMoves(moves){
         for (let i = 0; i < moves.length; i++){
             let editTileDom = document.getElementById(moves[i].pos);
-            editTileDom.style.backgroundColor = 'red'
+            editTileDom.style.backgroundColor = canMoveColor
         }
     }
 
