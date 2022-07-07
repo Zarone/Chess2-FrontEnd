@@ -610,6 +610,7 @@ export class ChessBoard {
         document.getElementById("x2").style.backgroundColor = ''
         document.getElementById("y1").style.backgroundColor = ''
         document.getElementById("y2").style.backgroundColor = ''
+        document.getElementById("z1").style.backgroundColor = ''
     }
 
     updateSinglePiece(id){
