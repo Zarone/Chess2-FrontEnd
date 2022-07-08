@@ -204,7 +204,8 @@ window.onload = async () => {
         } else if (
             chessBoard.currentTurn == "White" ||
             chessBoard.currentTurn == "White Jail" ||
-            chessBoard.currentTurn == "White Rescue"
+            chessBoard.currentTurn == "White Rescue" ||
+            chessBoard.currentTurn == "White Jumping"
         ) {
             if (chessBoard.isWhite){
 
@@ -229,7 +230,8 @@ window.onload = async () => {
         } else if (
             chessBoard.currentTurn == "Black" ||
             chessBoard.currentTurn == "Black Jail" ||
-            chessBoard.currentTurn == "Black Rescue"
+            chessBoard.currentTurn == "Black Rescue" ||
+            chessBoard.currentTurn == "Black Jumping"
         ) {
             if (chessBoard.isWhite){
                 if (blackTimer < 0) return;
