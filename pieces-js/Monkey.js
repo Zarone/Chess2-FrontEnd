@@ -1,6 +1,6 @@
 import {Piece} from "./Piece.js"
 import { getVerticalAndHorizontal, verticalAndHorizontalToID } from "../helper-js/utils.js";
-import { canMonkeyJump, notSameType, noPiece, canMonkeyPrisonJump } from "../helper-js/conditions.js";
+import { canMonkeyPrisonJump, notSameType, noPiece, sameMonkeyTurn, straightBlocking, diagonalBlocking } from "../helper-js/conditions.js";
 
 export class Monkey extends Piece {
     constructor(position, isWhite){
@@ -19,47 +19,76 @@ export class Monkey extends Piece {
         let {vertical, horizontal} = getVerticalAndHorizontal(this.position)
             
         let output = []
-        for (let i = 0; i < 4; i++){
-            for (let j = 0; j < 4; j++){
-                
-                if (i == 0 && j == 0) continue;
-                
-                if ((vertical + i*2) < 9 && (horizontal + j*2) < 9){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical+i*2, horizontal+j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        if ((vertical + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical+2, horizontal), 
+                    conditions: [notSameType, straightBlocking]
                 }
+            )
+        }
 
-                if ((vertical - i*2) > 0 && (horizontal - j*2) > 0){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical-i*2, horizontal-j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        if ((vertical - 2) > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical-2, horizontal), 
+                    conditions: [notSameType, straightBlocking]
                 }
+            )
+        }
 
-                if ((vertical + i*2) < 9 && (horizontal - j*2) > 0){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical+i*2, horizontal-j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        if ((horizontal + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical, horizontal+2), 
+                    conditions: [notSameType, straightBlocking]
                 }
+            )
+        }
 
-                if ((vertical - i*2) > 0 && (horizontal + j*2) < 9){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical-i*2, horizontal+j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        if ((horizontal - 2) > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical, horizontal-2), 
+                    conditions: [notSameType, straightBlocking]
                 }
-            }
+            )
+        }
+
+        if ((vertical - 2) > 0 && (horizontal + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical-2, horizontal+2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
+        }
+
+        if ((vertical + 2) < 9 && (horizontal + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical + 2, horizontal + 2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
+        }
+
+        if ((vertical + 2) < 9 && (horizontal - 2) > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical+2, horizontal-2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
+        }
+
+        if ((vertical - 2) > 0 && (horizontal - 2)  > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical-2, horizontal-2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
         }
 
         if ((vertical + 1) < 9){
@@ -129,6 +158,13 @@ export class Monkey extends Piece {
             )
         }
 
+        // if (this.isWhite){
+        //     if (vertical % 2 == 0 && horizontal % 2 == 1) output.push({pos: "x1", conditions: [canMonkeyPrisonJump]})
+        //     if (vertical % 2 == 1 && horizontal % 2 == 1) output.push({pos: "x2", conditions: [canMonkeyPrisonJump]})
+        // } else {
+        //     if (vertical % 2 == 0 && horizontal % 2 == 0) output.push({pos: "y1", conditions: [canMonkeyPrisonJump]})
+        //     if (vertical % 2 == 1 && horizontal % 2 == 0) output.push({pos: "y2", conditions: [canMonkeyPrisonJump]})
+        // }
         if (this.isWhite){
             if (vertical % 2 == 0 && horizontal % 2 == 1) output.push({pos: "x1", conditions: [canMonkeyPrisonJump]})
             if (vertical % 2 == 1 && horizontal % 2 == 1) output.push({pos: "x2", conditions: [canMonkeyPrisonJump]})
@@ -144,47 +180,100 @@ export class Monkey extends Piece {
         let {vertical, horizontal} = getVerticalAndHorizontal(this.position)
             
         let output = []
-        for (let i = 0; i < 4; i++){
-            for (let j = 0; j < 4; j++){
+
+        output.push({
+            pos: this.position,
+            conditions: [sameMonkeyTurn]
+        })
+
+        // for (let i = 0; i < 4; i++){
+        //     for (let j = 0; j < 4; j++){
+        // for (let i = 0; i < 1; i++){
+        //     for (let j = 0; j < 1; j++){
                 
-                if (i == 0 && j == 0) continue;
-                
-                if ((vertical + i*2) < 9 && (horizontal + j*2) < 9){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical+i*2, horizontal+j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        // if (i == 0 && j == 0) continue;
+        
+        if ((vertical + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical+2, horizontal), 
+                    conditions: [notSameType, straightBlocking]
                 }
+            )
+        }
 
-                if ((vertical - i*2) > 0 && (horizontal - j*2) > 0){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical-i*2, horizontal-j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        if ((vertical - 2) > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical-2, horizontal), 
+                    conditions: [notSameType, straightBlocking]
                 }
+            )
+        }
 
-                if ((vertical + i*2) < 9 && (horizontal - j*2) > 0){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical+i*2, horizontal-j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        if ((horizontal + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical, horizontal+2), 
+                    conditions: [notSameType, straightBlocking]
                 }
+            )
+        }
 
-                if ((vertical - i*2) > 0 && (horizontal + j*2) < 9){
-                    output.push(
-                        {
-                            pos: verticalAndHorizontalToID(vertical-i*2, horizontal+j*2), 
-                            conditions: [notSameType, canMonkeyJump]
-                        }
-                    )
+        if ((horizontal - 2) > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical, horizontal-2), 
+                    conditions: [notSameType, straightBlocking]
                 }
-            }
+            )
+        }
+
+        if ((vertical - 2) > 0 && (horizontal + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical-2, horizontal+2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
+        }
+
+        if ((vertical + 2) < 9 && (horizontal + 2) < 9){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical + 2, horizontal + 2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
+        }
+
+        if ((vertical + 2) < 9 && (horizontal - 2) > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical+2, horizontal-2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
+        }
+
+        if ((vertical - 2) > 0 && (horizontal - 2)  > 0){
+            output.push(
+                {
+                    pos: verticalAndHorizontalToID(vertical-2, horizontal-2), 
+                    conditions: [notSameType, diagonalBlocking]
+                }
+            )
+        }
+
+        //     }
+        // }
+
+        if (this.isWhite){
+            if (vertical % 2 == 0 && horizontal % 2 == 1) output.push({pos: "x1", conditions: [canMonkeyPrisonJump]})
+            if (vertical % 2 == 1 && horizontal % 2 == 1) output.push({pos: "x2", conditions: [canMonkeyPrisonJump]})
+        } else {
+            if (vertical % 2 == 0 && horizontal % 2 == 0) output.push({pos: "y1", conditions: [canMonkeyPrisonJump]})
+            if (vertical % 2 == 1 && horizontal % 2 == 0) output.push({pos: "y2", conditions: [canMonkeyPrisonJump]})
         }
 
         return output

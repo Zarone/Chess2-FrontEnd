@@ -10,6 +10,7 @@ import { Fish } from "./pieces-js/Fish.js";
 import { King } from "./pieces-js/King.js";
 import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
+import { Position } from "./helper-js/board.js"
 
 window.onload = async () => {
 
@@ -80,32 +81,50 @@ window.onload = async () => {
         modalHeading_Dom.innerText = "The room you tried to join is full."
     })
    
-    function recolorTurn(){
+    function updateTurnDom(){
         if (
             chessBoard.currentTurn == "White" ||
             chessBoard.currentTurn == "White Jail" ||
-            chessBoard.currentTurn == "White Monkey"
-        ) {
+            chessBoard.currentTurn == "White Rescue" ||
+            chessBoard.currentTurn == "White Jumping"
+        ) 
+        {
             turn_Dom.style.backgroundColor = "white";
             turn_Dom.style.color = "black";
         } else if (
             chessBoard.currentTurn == "Black" ||
             chessBoard.currentTurn == "Black Jail" ||
-            chessBoard.currentTurn == "Black Monkey"
-        ) {
+            chessBoard.currentTurn == "Black Rescue" ||
+            chessBoard.currentTurn == "Black Jumping"
+        ) 
+        {
             turn_Dom.style.backgroundColor = "black";
             turn_Dom.style.color = "white";
-        } else {
+        } else 
+        {
             turn_Dom.style.backgroundColor = "white";
             turn_Dom.style.color = "blue";
+        }
+
+        if (chessBoard.currentTurn != "White Jumping" && chessBoard.currentTurn != "Black Jumping"){
+            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+        } else {
+            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn + " - Double Click Tile to Stop"
         }
     }
 
     let chessBoard = new ChessBoard(
         (moveInfo)=>{
+
+            // TODO: MoveInfo class to encapsulate serialize/deserialize logic
+            if ( moveInfo.toPos ) moveInfo.toPos = moveInfo.toPos?.id || moveInfo.toPos;
+            if ( moveInfo.fromPos ) moveInfo.fromPos = moveInfo.fromPos?.id || moveInfo.fromPos;
+
+            console.log('EMIT', moveInfo)
+            if (moveInfo.newTurn === undefined) debugger
+
             socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
-            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
-            recolorTurn()
+            updateTurnDom()
         },
         ()=>{
             socket.emit("admitDefeat")
@@ -115,8 +134,6 @@ window.onload = async () => {
     )
 
     socket.on('player', (playerInfo)=>{
-
-        console.log("on player")
 
         playerID = playerInfo.pid;
         if (cookie.pid !== playerID){
@@ -167,8 +184,7 @@ window.onload = async () => {
             blackTimer = finalTimeLimit;
 
             chessBoard.currentTurn = "White"
-            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
-            recolorTurn()
+            updateTurnDom()
 
             displayTimer()
         }
@@ -188,7 +204,7 @@ window.onload = async () => {
         } else if (
             chessBoard.currentTurn == "White" ||
             chessBoard.currentTurn == "White Jail" ||
-            chessBoard.currentTurn == "White Monkey"
+            chessBoard.currentTurn == "White Rescue"
         ) {
             if (chessBoard.isWhite){
 
@@ -213,7 +229,7 @@ window.onload = async () => {
         } else if (
             chessBoard.currentTurn == "Black" ||
             chessBoard.currentTurn == "Black Jail" ||
-            chessBoard.currentTurn == "Black Monkey"
+            chessBoard.currentTurn == "Black Rescue"
         ) {
             if (chessBoard.isWhite){
                 if (blackTimer < 0) return;
@@ -252,12 +268,18 @@ window.onload = async () => {
     chessBoard.updatePieces()
 
     socket.on("registeredMove", args=>{
+        console.log('REGISTER', args)
+        // TODO: MoveInfo class to encapsulate serialize/deserialize logic
+        if ( args.moveInfo.toPos )
+            args.moveInfo.toPos = new Position(args.moveInfo.toPos);
+        if ( args.moveInfo.fromPos )
+            args.moveInfo.fromPos = new Position(args.moveInfo.fromPos);
+
         if (roomID == args.room && playerID != args.player){
             if (chessBoard.validateMove(args.moveInfo.fromPos, args.moveInfo.toPos, args.moveInfo.newTurn)){
                 chessBoard.makePreValidatedMove(args.moveInfo.fromPos, args.moveInfo.toPos);
                 chessBoard.currentTurn = args.moveInfo.newTurn
-                turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
-                recolorTurn()
+                updateTurnDom()
             } else {
                 console.error("move is not allowed")
             }
@@ -268,7 +290,13 @@ window.onload = async () => {
         if (roomID == args.roomID && playerID != args.playerID){
             socket.emit("reconnectData", {
                 layout: Object.keys(chessBoard.boardLayout).map((val, index)=>{
-                    return {position: val, isWhite: chessBoard.boardLayout[val].isWhite, type: chessBoard.boardLayout[val].constructor.name, hasBanana: chessBoard.boardLayout[val].hasBanana }
+                    return {
+                        position: chessBoard.boardLayout[val].position.id, 
+                        isWhite: chessBoard.boardLayout[val].isWhite, 
+                        type: chessBoard.boardLayout[val].constructor.name, 
+                        hasBanana: chessBoard.boardLayout[val].hasBanana,
+                        key: val
+                    }
                 }), 
                 rookActiveWhite: chessBoard.rookActiveWhite,
                 rookActiveBlack: chessBoard.rookActiveBlack,
@@ -279,7 +307,6 @@ window.onload = async () => {
 
     socket.on("partialReconnect", playerInfo=>{
 
-        console.log("playerInfo", playerInfo)
         playerID = playerInfo.pid;
         if (cookie.pid !== playerID){
             cookie.pid = playerID.toString();
@@ -290,7 +317,6 @@ window.onload = async () => {
         roomID_Dom.innerText = "Room ID: " + playerInfo.roomID
 
         chessBoard.isWhite = playerInfo.isWhite
-        console.log(playerInfo)
         finalTimeLimit = playerInfo.timeLimit*60
         
         if (!playerInfo.isWhite){
@@ -312,49 +338,49 @@ window.onload = async () => {
             for (let i = 0; i < args.layout.length; i++){
                 switch (args.layout[i].type) {
                     case Bear.name:
-                        chessBoard.boardLayout[args.layout[i].position] = new Bear(args.layout[i].position)
+                        chessBoard.boardLayout[args.layout[i].key] = new Bear(args.layout[i].position)
                         break;
                     case Elephant.name:
-                        chessBoard.boardLayout[args.layout[i].position] = 
+                        chessBoard.boardLayout[args.layout[i].key] = 
                             new Elephant(args.layout[i].position, args.layout[i].isWhite)
                         break;
                     case Fish.name:
-                        chessBoard.boardLayout[args.layout[i].position] = 
+                        chessBoard.boardLayout[args.layout[i].key] = 
                             new Fish(args.layout[i].position, args.layout[i].isWhite)
                         break;
                     case FishQueen.name:
-                        chessBoard.boardLayout[args.layout[i].position] = 
+                        chessBoard.boardLayout[args.layout[i].key] = 
                             new FishQueen(args.layout[i].position, args.layout[i].isWhite)
                         break;
                     case King.name:
-                        chessBoard.boardLayout[args.layout[i].position] = 
+                        chessBoard.boardLayout[args.layout[i].key] = 
                             new King(args.layout[i].position, args.layout[i].isWhite)
-                        chessBoard.boardLayout[args.layout[i].position].hasBanana = args.layout[i].hasBanana
+                        chessBoard.boardLayout[args.layout[i].key].hasBanana = args.layout[i].hasBanana
                         break;
                     case Monkey.name:
-                        chessBoard.boardLayout[args.layout[i].position] = 
+                        chessBoard.boardLayout[args.layout[i].key] = 
                             new Monkey(args.layout[i].position, args.layout[i].isWhite)
                         break;
                     case Queen.name:
-                        chessBoard.boardLayout[args.layout[i].position] = 
+                        chessBoard.boardLayout[args.layout[i].key] = 
                             new Queen(args.layout[i].position, args.layout[i].isWhite)
                         break;
                     case Rook.name:
-                        chessBoard.boardLayout[args.layout[i].position] = 
+                        chessBoard.boardLayout[args.layout[i].key] = 
                             new Rook(args.layout[i].position, args.layout[i].isWhite)
                         break;
                     default:
                         break;
                 }
             }
+
             chessBoard.rookActiveWhite = args.rookActiveWhite;
             chessBoard.rookActiveBlack = args.rookActiveBlack;
             chessBoard.currentTurn = args.currentTurn;
-            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
-            recolorTurn()
+            updateTurnDom()
 
             chessBoard.updatePieces();
-            
+
             // if the player was holding royalty piece when they disconnected
             if(
                 chessBoard.boardLayout["TEMP"] &&
@@ -367,35 +393,43 @@ window.onload = async () => {
                 chessBoard.manageTakeKingOrQueen(chessBoard.boardLayout["TEMP"])
             } else if (
                 chessBoard.boardLayout["TEMP"] &&
-                chessBoard.boardLayout["TEMP"].constructor.name == Monkey.name &&
-                (
-                    (chessBoard.currentTurn == "White Monkey" && chessBoard.isWhite) ||
-                    (chessBoard.currentTurn == "Black Monkey" && !chessBoard.isWhite)
-                )
+                chessBoard.boardLayout["TEMP"].constructor.name == Monkey.name
+                
             ){
-                let location = null;
-                if (chessBoard.isWhite){
-                    if (chessBoard.boardLayout["a4"] && chessBoard.boardLayout["a4"].constructor.name == King.name){
-                        location = "a4"
-                    } else if (chessBoard.boardLayout["a5"] && chessBoard.boardLayout["a5"].constructor.name == King.name){
-                        location = "a5"
+
+                if (
+                    (chessBoard.currentTurn == "White Rescue" && chessBoard.isWhite) ||
+                    (chessBoard.currentTurn == "Black Rescue" && !chessBoard.isWhite)
+                ){
+                    let location = null;
+                    if (chessBoard.isWhite){
+                        if (chessBoard.boardLayout["a4"] && chessBoard.boardLayout["a4"].constructor.name == King.name){
+                            location = "a4"
+                        } else if (chessBoard.boardLayout["a5"] && chessBoard.boardLayout["a5"].constructor.name == King.name){
+                            location = "a5"
+                        }
+                    } else {
+                        if (chessBoard.boardLayout["h4"] && chessBoard.boardLayout["h4"].constructor.name == King.name){
+                            location = "h4"
+                        } else if (chessBoard.boardLayout["h5"] && chessBoard.boardLayout["h5"].constructor.name == King.name){
+                            location = "h5"
+                        }
                     }
-                } else {
-                    if (chessBoard.boardLayout["h4"] && chessBoard.boardLayout["h4"].constructor.name == King.name){
-                        location = "h4"
-                    } else if (chessBoard.boardLayout["h5"] && chessBoard.boardLayout["h5"].constructor.name == King.name){
-                        location = "h5"
-                    }
+                    chessBoard.manageMonkeyJumping(chessBoard.boardLayout[location])
+                } else if (
+                    (chessBoard.currentTurn == "White Jumping" && chessBoard.isWhite) ||
+                    (chessBoard.currentTurn == "Black Jumping" && !chessBoard.isWhite)
+                ) {
+                    chessBoard.manageMonkeyJumpingNonRescue()
                 }
-                chessBoard.manageMonkeyJumping(chessBoard.boardLayout[location])
             }
             
             whiteTimer = finalTimeLimit - args.timeWhite;
             blackTimer = finalTimeLimit - args.timeBlack;
 
             if (finalTimeLimit <= 60*60){
-                if (chessBoard.currentTurn == "Black" || chessBoard.currentTurn == "Black Jail" || chessBoard.currentTurn == "Black Monkey") blackTimer -= args.timeSinceLastMove
-                if (chessBoard.currentTurn == "White" || chessBoard.currentTurn == "White Jail" || chessBoard.currentTurn == "White Monkey") whiteTimer -= args.timeSinceLastMove
+                if (chessBoard.currentTurn == "Black" || chessBoard.currentTurn == "Black Jail" || chessBoard.currentTurn == "Black Rescue") blackTimer -= args.timeSinceLastMove
+                if (chessBoard.currentTurn == "White" || chessBoard.currentTurn == "White Jail" || chessBoard.currentTurn == "White Rescue") whiteTimer -= args.timeSinceLastMove
             } 
 
             displayTimer();
