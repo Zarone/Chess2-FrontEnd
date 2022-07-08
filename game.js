@@ -12,6 +12,7 @@ import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 
 window.onload = async () => {
+
     let {roomID, friendRoom, timeLimit} = getQuerystring()
 
     let finalTimeLimit = 100 * 60;
@@ -41,7 +42,9 @@ window.onload = async () => {
     let roomID_Dom = document.getElementById("roomID")
     let turn_Dom = document.getElementById("turn")
     turn_Dom.innerText = "...Waiting for player to join"
+    turn_Dom.style.backgroundColor = 'white'
 
+    
     let jail1_Dom = document.getElementById("jail-1")
     let jail2_Dom = document.getElementById("jail-2")
     let chessBoard_Dom = document.getElementById("chess-board")
@@ -76,11 +79,33 @@ window.onload = async () => {
         gameOverModal.toggle();
         modalHeading_Dom.innerText = "The room you tried to join is full."
     })
-    
+   
+    function recolorTurn(){
+        if (
+            chessBoard.currentTurn == "White" ||
+            chessBoard.currentTurn == "White Jail" ||
+            chessBoard.currentTurn == "White Monkey"
+        ) {
+            turn_Dom.style.backgroundColor = "white";
+            turn_Dom.style.color = "black";
+        } else if (
+            chessBoard.currentTurn == "Black" ||
+            chessBoard.currentTurn == "Black Jail" ||
+            chessBoard.currentTurn == "Black Monkey"
+        ) {
+            turn_Dom.style.backgroundColor = "black";
+            turn_Dom.style.color = "white";
+        } else {
+            turn_Dom.style.backgroundColor = "white";
+            turn_Dom.style.color = "blue";
+        }
+    }
+
     let chessBoard = new ChessBoard(
         (moveInfo)=>{
             socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
-            turn_Dom.innerText = "Turn: "+chessBoard.currentTurn
+            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+            recolorTurn()
         },
         ()=>{
             socket.emit("admitDefeat")
@@ -143,6 +168,7 @@ window.onload = async () => {
 
             chessBoard.currentTurn = "White"
             turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+            recolorTurn()
 
             displayTimer()
         }
@@ -231,6 +257,7 @@ window.onload = async () => {
                 chessBoard.makePreValidatedMove(args.moveInfo.fromPos, args.moveInfo.toPos);
                 chessBoard.currentTurn = args.moveInfo.newTurn
                 turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+                recolorTurn()
             } else {
                 console.error("move is not allowed")
             }
@@ -324,6 +351,7 @@ window.onload = async () => {
             chessBoard.rookActiveBlack = args.rookActiveBlack;
             chessBoard.currentTurn = args.currentTurn;
             turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
+            recolorTurn()
 
             chessBoard.updatePieces();
             
