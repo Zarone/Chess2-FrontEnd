@@ -10,6 +10,7 @@ import { Fish } from "./pieces-js/Fish.js";
 import { King } from "./pieces-js/King.js";
 import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
+import { Position } from "./helper-js/board.js";
 
 window.onload = async () => {
     let {roomID, friendRoom, timeLimit} = getQuerystring()
@@ -79,6 +80,12 @@ window.onload = async () => {
     
     let chessBoard = new ChessBoard(
         (moveInfo)=>{
+            // TODO: MoveInfo class to encapsulate serialize/deserialize logic
+            if ( moveInfo.toPos ) moveInfo.toPos = moveInfo.toPos?.id || moveInfo.toPos;
+            if ( moveInfo.fromPos ) moveInfo.fromPos = moveInfo.fromPos?.id || moveInfo.fromPos;
+
+            console.log('EMIT', moveInfo)
+
             socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
             turn_Dom.innerText = "Turn: "+chessBoard.currentTurn
         },
@@ -226,6 +233,13 @@ window.onload = async () => {
     chessBoard.updatePieces()
 
     socket.on("registeredMove", args=>{
+        console.log('REGISTER', args)
+        // TODO: MoveInfo class to encapsulate serialize/deserialize logic
+        if ( args.moveInfo.toPos )
+            args.moveInfo.toPos = new Position(args.moveInfo.toPos);
+        if ( args.moveInfo.fromPos )
+            args.moveInfo.fromPos = new Position(args.moveInfo.fromPos);
+
         if (roomID == args.room && playerID != args.player){
             if (chessBoard.validateMove(args.moveInfo.fromPos, args.moveInfo.toPos, args.moveInfo.newTurn)){
                 chessBoard.makePreValidatedMove(args.moveInfo.fromPos, args.moveInfo.toPos);

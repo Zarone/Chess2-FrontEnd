@@ -8,6 +8,7 @@ import {Elephant} from "./pieces-js/Elephant.js"
 import {Bear} from "./pieces-js/Bear.js"
 
 import {nextToJail, toID, canMoveColor, prevMoveColor} from "./helper-js/utils.js"
+import { Position } from "./helper-js/board.js"
 
 export class ChessBoard {
 
@@ -139,7 +140,7 @@ export class ChessBoard {
         // if the piece being moved is a fish
         if ( this.boardLayout[fromPos].constructor.name == Fish.name ){
 
-            let rowName = toPos.split("")[1]
+            let rowName = toPos.row;
             if (
                 (this.boardLayout[fromPos].isWhite && rowName=="8") ||
                 (!this.boardLayout[fromPos].isWhite && rowName=="1")
@@ -238,7 +239,7 @@ export class ChessBoard {
                 console.log("Dragging Monkey: moving to same tile as you're already on")
                 document.getElementById("x1").appendChild(this.draggingPieceDom);
             } else if (isMoveableTile){
-                let toPos = moveToDom.id;
+                let toPos = new Position(moveToDom.id);
                 this.boardLayout[toPos] = this.draggingPiece
                 this.boardLayout[toPos].position = toPos;
                 
@@ -266,12 +267,12 @@ export class ChessBoard {
             if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
                 console.log("draggingRoyalty: not a tile on the game board")
                 document.getElementById("x1").appendChild(this.draggingPieceDom);
-            } else if (moveToDom.id == this.draggingPiece.position){
+            } else if (moveToDom.id == this.draggingPiece.position.id){
                 console.log("draggingRoyalty: moving to same tile as you're already on")
                 document.getElementById("x1").appendChild(this.draggingPieceDom);
             } else if (isMoveableTile){
                 
-                let toPos = moveToDom.id;
+                let toPos = new Position(moveToDom.id);
                 this.boardLayout[toPos] = this.draggingPiece
                 this.boardLayout[toPos].position = toPos;
                 
@@ -309,14 +310,12 @@ export class ChessBoard {
                 console.log("moving to same tile as you're already on")
             } else if(isMoveableTile){
     
-                let toPos = moveToDom.id;
+                let toPos = new Position(moveToDom.id);
                 
                 let fromPos = this.draggingPiece.position;
     
-                let column = toPos.split("")[0]
-
                 // if monkey prison break
-                if (column == "x" || column == "y"){
+                if (toPos.isJail()){
                     monkeyJumping = true;
 
                     let nextTo = nextToJail(toPos)
@@ -416,10 +415,8 @@ export class ChessBoard {
 
     makePreValidatedMove(fromPos, toPos){
         
-        let column = toPos.split("")[0]
-        
         // if starting a monkey jump
-        if ((column == "x" || column == "y") && this.boardLayout[fromPos].constructor.name == Monkey.name){
+        if (toPos.isJail() && this.boardLayout[fromPos].constructor.name == Monkey.name){
             let nextTo = nextToJail(toPos)
 
             this.boardLayout["TEMP"] = this.boardLayout[fromPos];
@@ -434,7 +431,7 @@ export class ChessBoard {
         } else {
             this.stateChecks(fromPos, toPos)
 
-            if (column == "x" || column == "y"){
+            if ( toPos.isJail() ) {
                 if (this.boardLayout[fromPos].isWhite){
                     this.rookActiveBlack = false;
                 } else {
@@ -542,11 +539,11 @@ export class ChessBoard {
 
         if (jailMoves){
             return (
-                currentPosition == "TEMP" && 
+                currentPosition?.isTemp() && 
                 this.boardLayout[newPosition] == undefined && 
                 (
-                    (this.boardLayout["TEMP"].isWhite && newPosition.split("")[0] == "x") || 
-                    (!this.boardLayout["TEMP"].isWhite && newPosition.split("")[0] == "y")
+                    (this.boardLayout["TEMP"].isWhite && newPosition.column == "x") || 
+                    (!this.boardLayout["TEMP"].isWhite && newPosition.column == "y")
                 )
             )
         } else if (monkeyMoves){

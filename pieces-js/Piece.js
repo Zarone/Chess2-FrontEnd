@@ -1,3 +1,5 @@
+import { Position } from "../helper-js/board.js"
+
 export class Piece {
     
     isWhite = false
@@ -5,7 +7,8 @@ export class Piece {
     
     constructor(position, isWhite){
         this.isWhite = isWhite
-        this.position = position
+        this.position = position instanceof Position ?
+            position : new Position(position);
     }
 
     getImageSrc(){
