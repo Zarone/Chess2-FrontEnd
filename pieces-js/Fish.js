@@ -15,26 +15,14 @@ export class Fish extends Piece {
         }
     }
 
-    getMoves(){
-        let {vertical, horizontal} = getVerticalAndHorizontal(this.position)
-            
-        let output = []
-
-        if (horizontal + 1 < 9) output.push( {pos: verticalAndHorizontalToID(vertical, horizontal+1), conditions: [noPiece]} )
-        if (horizontal - 1 > 0) output.push( {pos: verticalAndHorizontalToID(vertical, horizontal-1), conditions: [noPiece]} )
-        
-        if (this.isWhite){
-            if (vertical + 1 < 9) output.push( {pos: verticalAndHorizontalToID(vertical+1, horizontal), conditions: [noPiece]} )
-            if (horizontal - 1 > 0 && vertical + 1 < 9) output.push( {pos: verticalAndHorizontalToID(vertical+1, horizontal-1), conditions: [notSameType]} )
-            if (horizontal + 1 < 9 && vertical + 1 < 9) output.push( {pos: verticalAndHorizontalToID(vertical+1, horizontal+1), conditions: [notSameType]} )
-        } else {
-            if (vertical - 1 > 0) output.push( {pos: verticalAndHorizontalToID(vertical-1, horizontal), conditions: [noPiece]} )
-            if (horizontal - 1 > 0 && vertical - 1 > 0) output.push( {pos: verticalAndHorizontalToID(vertical-1, horizontal-1), conditions: [notSameType]} )
-            if (horizontal + 1 < 9 && vertical - 1 > 0) output.push( {pos: verticalAndHorizontalToID(vertical-1, horizontal+1), conditions: [notSameType]} )
-        }
-
-        
-
-        return output
-    }
+    static moves = [
+        // sideways
+        { type: 'place', pos: [ 0, -1], conditions: [noPiece] },
+        { type: 'place', pos: [ 0,  1], conditions: [noPiece] },
+        // forward
+        { type: 'place', pos: [ 1,  0], conditions: [noPiece] },
+        // forward + attack
+        { type: 'place', pos: [ 1, -1], conditions: [notSameType] },
+        { type: 'place', pos: [ 1,  1], conditions: [notSameType] },
+    ]
 }

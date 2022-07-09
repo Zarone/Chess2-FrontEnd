@@ -65,9 +65,36 @@ export class Position {
         return ['x', 'y'].includes(this.column);
     }
 
+    isWithinBounds() {
+        // TEMP has no row position, so just return true
+        if ( this.isTemp() ) return true;
+
+        // only valid 'z' position is 'z1'
+        if ( this.column == 'z' ) return this.row == 1;
+
+        // For jail row must be 1 or 2
+        if ( this.isJail() ) return this.row == 1 || this.row == 2;
+        
+        // If this code is reached the piece must be on the board
+        const { vertical, horizontal } = this.coords;
+        if ( vertical < 1 || vertical > 8 ) return false;
+        if ( horizontal < 1 || horizontal > 8 ) return false;
+        return true;
+    }
+
     // Defining toString allows this to be used as the index for boardLayout
     toString() {
         return this.id;
+    }
+
+    // Adds an array of [vertical, horizontal] (called "vector") to this
+    // position, returning a new position as the result.
+    plus (vector) {
+        const coords = this.coords;
+        return new Position({
+            vertical: coords.vertical + vector[0],
+            horizontal: coords.horizontal + vector[1]
+        });
     }
 
     static toID = [
