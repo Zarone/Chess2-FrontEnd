@@ -533,7 +533,7 @@ export class ChessBoard {
 
             if (toPos.isJail()){
                 if (this.boardLayout[fromPos].isWhite){
-                    this.rookActiveBlack = false;
+                    this.rookActiveWhite = true;
                 } else {
                     this.rookActiveBlack = true;
                 }
