@@ -122,7 +122,9 @@ export class Position {
     }
 
     static verticalAndHorizontalToID(vertical, horizontal) {
-        return Position.toID[horizontal] + vertical
+        // if toID returns undefined, you still need a character
+        // or else id.split just crashes
+        return (Position.toID[horizontal] || "!") + vertical
     }
 
     
