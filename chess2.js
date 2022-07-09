@@ -263,231 +263,138 @@ export class ChessBoard {
         
         let isMoveableTile = moveToDom.style.backgroundColor == canMoveColor
 
-        if (this.draggingMonkey){
+        const postHooks = [];
 
-            if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
-                console.log("Dragging Monkey: not a tile on the game board")
-                document.getElementById("x1").appendChild(this.draggingPieceDom);
-            } else if (moveToDom.id == this.draggingPiece.position.id){
-                console.log("Dragging Monkey: moving to same tile as you're already on")
-                document.getElementById("x1").appendChild(this.draggingPieceDom);
-            } else if (isMoveableTile){
-                let toPos = new Position(moveToDom.id)
-                this.boardLayout[toPos] = this.draggingPiece
-                this.boardLayout[toPos].position = toPos;
-                
-                this.draggingMonkey = false;
-                this.dragging = false
-                this.resetTiles();
-                this.updatePieces();
-
-                let newTurn;
-                if (this.currentTurn == "White Rescue") {
-                    newTurn = "Black"
-                } else if (this.currentTurn == "Black Rescue") {
-                    newTurn = "White"
-                }
-    
-                this.currentTurn = newTurn
-    
-                this.makeMoveCallbackFunc({fromPos: "TEMP", toPos, newTurn})
-            } else {
-                document.getElementById("x1").appendChild(this.draggingPieceDom);
-            }
-            
-        } else if (this.draggingRoyalty){
-
-            if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
-                console.log("draggingRoyalty: not a tile on the game board")
-                document.getElementById("x1").appendChild(this.draggingPieceDom);
-            } else if (moveToDom.id == this.draggingPiece.position.id){
-                console.log("draggingRoyalty: moving to same tile as you're already on")
-                document.getElementById("x1").appendChild(this.draggingPieceDom);
-            } else if (isMoveableTile){
-                
-                let toPos = new Position(moveToDom.id)
-                this.boardLayout[toPos] = this.draggingPiece
-                this.boardLayout[toPos].position = toPos;
-                
-                this.draggingRoyalty = false;
-                this.dragging = false
-                this.resetTiles();
-                this.updatePieces();
-
-                let newTurn;
-                if (this.currentTurn == "White Jail") {
-                    this.rookActiveBlack = true;
-                    newTurn = "Black"
-                } else if (this.currentTurn == "Black Jail") {
-                    this.rookActiveWhite = true;
-                    newTurn = "White"
-                }
-    
-                this.currentTurn = newTurn
-    
-                this.makeMoveCallbackFunc({fromPos: "TEMP", toPos, newTurn})
-            } else {
-                document.getElementById("x1").appendChild(this.draggingPieceDom);
-            }
-            
-        } else {
-            
-            let tookKingOrQueen = false;
-            let monkeyJumping = false; // only for when monkey is rescuing king
-            let monkeyJumpingNonRescue = false; // only when monkey is not-rescuing king
-            
-            let tempPiece = undefined;
-
-            let toPos = new Position(moveToDom.id);
-                
-            let fromPos = this.draggingPiece.position;
-
-            if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
-                console.log("not a tile on the game board")
-                if (this.draggingJumpingMoney){
-                    document.getElementById("x1").appendChild(this.draggingPieceDom);
-                    monkeyJumpingNonRescue = true;
-                    this.boardLayout["TEMP"] = this.boardLayout[fromPos]
-                    this.boardLayout["TEMP"].position = fromPos
-                }
-            } else if (moveToDom.id == this.draggingPiece.position.id){
-                console.log("moving to same tile as you're already on")
-                if (this.draggingJumpingMoney) {
-                    let newTurn;
-                    if (this.currentTurn == "White Jumping") {
-                        newTurn = "Black"
-                    } else if (this.currentTurn == "Black Jumping") {
-                        newTurn = "White"
-                    }
-                    this.currentTurn = newTurn
-
-                    this.draggingJumpingMoney = false
-                    this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
-
-                }
-            } else if(isMoveableTile){
-                let {vertical: verticalFrom, horizontal: horizontalFrom} = getVerticalAndHorizontal(fromPos)
-                let {vertical: verticalTo, horizontal: horizontalTo} = getVerticalAndHorizontal(toPos)
-
-                let oldToPos = this.boardLayout[toPos]
-                let oldFromPos = this.boardLayout[fromPos]
-                this.boardLayout[toPos] = new Monkey(toPos, oldFromPos.isWhite)
-                delete this.boardLayout[fromPos]
-                // if the monkey jumps
-                if (
-                    oldFromPos.constructor.name == Monkey.name && 
-                    !oldToPos &&
-                    (Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo) > 1) &&
-                    this.findJumpingMoves(
-                        this.boardLayout[toPos]
-                    ).length > 0
-                ){
-                    monkeyJumpingNonRescue = true;
-                }
-                this.draggingJumpingMoney = false
-                this.boardLayout[toPos] = oldToPos;
-                this.boardLayout[fromPos] = oldFromPos;
-
-                                
-                // if monkey prison break
-                if (toPos.isJail()){
-                    monkeyJumping = true;
-
-                    let nextTo = nextToJail(toPos)
-
-                    tempPiece = this.boardLayout[toPos]
-                    this.boardLayout["TEMP"] = this.boardLayout[fromPos]
-
-                    delete this.boardLayout[fromPos]
-
-                    this.boardLayout[nextTo] = this.boardLayout[toPos]
-                    this.boardLayout[nextTo].position = nextTo
-                    this.boardLayout[nextTo].hasBanana = false;
-
-                    delete this.boardLayout[toPos]
-
-                    let newTurn;
-                    if (this.currentTurn == "White" || this.currentTurn == "White Jumping") {
-                        newTurn = "White Rescue"
-                    } else if (this.currentTurn == "Black" || this.currentTurn == "Black Jumping") {
-                        newTurn = "Black Rescue"
-                    }
-                    this.currentTurn = newTurn
-                    this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
-                } 
-                // if the monkey jumps
-                else if (monkeyJumpingNonRescue){
-
-                    monkeyJumpingNonRescue = true;
-
-                    this.boardLayout[toPos] = this.boardLayout[fromPos]
-                    delete this.boardLayout[fromPos]
-                    this.boardLayout[toPos].position = toPos;
-                    this.boardLayout["TEMP"] = this.boardLayout[toPos]
-
-                    let newTurn;
-                    if (this.currentTurn == "White" || this.currentTurn == "White Jumping") {
-                        newTurn = "White Jumping"
-                    } else if (this.currentTurn == "Black" || this.currentTurn == "Black Jumping") {
-                        newTurn = "Black Jumping"
-                    }
-                    this.currentTurn = newTurn
-                    this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
-                } else {
-                    if (
-                        this.boardLayout[toPos] &&
-                        (this.boardLayout[toPos].constructor.name == King.name || 
-                        this.boardLayout[toPos].constructor.name == Queen.name)
-                    ){
-                        tookKingOrQueen = true;
-                        tempPiece = this.boardLayout[toPos]
-                        this.boardLayout["TEMP"] = tempPiece
-                    }
-        
-                    this.stateChecks(fromPos, toPos)
-        
-                    this.boardLayout[toPos] = this.boardLayout[fromPos]
-        
-                    delete this.boardLayout[fromPos]
-        
-                    this.boardLayout[toPos].position = toPos;
-        
-                    let newTurn;
-                    if (this.currentTurn == "White" || this.currentTurn == "White Jumping") {
-                        if (tookKingOrQueen) {
-                            newTurn = "White Jail"
-                        } else {
-                            newTurn = "Black"
-                        }
-                    } else if (this.currentTurn == "Black" || this.currentTurn == "Black Jumping") {
-                        if (tookKingOrQueen) {
-                            newTurn = "Black Jail"
-                        } else {
-                            newTurn = "White"
-                        }
-                    }
-                    this.currentTurn = newTurn
-                    this.makeMoveCallbackFunc({fromPos, toPos, newTurn})
-                }
-    
-                
-            } else if (this.draggingJumpingMoney){
-                document.getElementById("x1").appendChild(this.draggingPieceDom);
+        // === Start: Internal functions of makeMove ===
+        const abortMove = (msg) => {
+            console.log(msg);
+            document.getElementById("x1").appendChild(this.draggingPieceDom);
+            if ( this.draggingJumpingMoney ) {
                 monkeyJumpingNonRescue = true;
                 this.boardLayout["TEMP"] = this.boardLayout[fromPos]
                 this.boardLayout["TEMP"].position = fromPos
             }
-            
-            this.dragging = false
-            this.resetTiles();
-            this.updatePieces();
-    
-            if (tookKingOrQueen) this.manageTakeKingOrQueen(tempPiece, event);
-            if (monkeyJumping) this.manageMonkeyJumping(tempPiece, event);
-            if (monkeyJumpingNonRescue) this.manageMonkeyJumpingNonRescue(event);
+        };
+
+        const nextTurn = (changePlayer, phase) => {
+            let currentPlayer = this.currentTurn.startsWith('White') ?
+                'White' : 'Black';
+            let otherPlayer = currentPlayer == 'White' ? 'Black' : 'White';
+            let nextPlayer = changePlayer ? otherPlayer : currentPlayer;
+            this.currentTurn = nextPlayer + (phase ? ' ' + phase : '');
+        };
+        // === End: Internal functions of makeMove ===
+
+        // Placing a piece outside the game board
+        if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
+            abortMove("not a tile on game board");
+            return;
         }
 
-        if (isMoveableTile) this.playChessSound();
+        const toPos = new Position(moveToDom.id);
+        const fromPos = ( this.draggingMonkey || this.draggingRoyalty ) ?
+            "TEMP" : this.draggingPiece.position;
+
+        // Placing a piece in the position it's already in
+        if (toPos.id == this.draggingPiece.position.id) {
+            // For jumping monkey, this action ends the turn
+            if ( this.draggingJumpingMoney ) {
+                this.draggingJumpingMoney = false
+                nextTurn(true);
+                this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn})
+                this.playChessSound();
+            } else {
+                abortMove("moving to same tile as you're already on");
+            }
+            return;
+        }
+
+        if ( ! isMoveableTile ) {
+            abortMove("not a moveable tile");
+            return;
+        }
+
+        let tookKingOrQueen = false;
+        let monkeyJumping = false;
+        let monkeyJumpingNonRescue = false;
+        let tempPiece = undefined;
+
+        if ( this.boardLayout[fromPos].constructor.name == Monkey.name ) {
+            let {vertical: verticalFrom, horizontal: horizontalFrom} = getVerticalAndHorizontal(fromPos)
+            let {vertical: verticalTo, horizontal: horizontalTo} = getVerticalAndHorizontal(toPos)
+            let oldToPos = this.boardLayout[toPos]
+            let oldFromPos = this.boardLayout[fromPos]
+            this.boardLayout[toPos] = new Monkey(toPos, oldFromPos.isWhite)
+            delete this.boardLayout[fromPos]
+            if (
+                ! oldToPos &&
+                (Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo) > 1) &&
+                this.findJumpingMoves(this.boardLayout[toPos]).length > 0
+            ) {
+                monkeyJumpingNonRescue = true;
+            }
+            this.boardLayout[toPos] = oldToPos;
+            this.boardLayout[fromPos] = oldFromPos;
+        }
+        this.draggingJumpingMoney = false;
+
+        if ( toPos.isJail() && ! this.draggingRoyalty ) {
+            monkeyJumping = true;
+
+            let nextTo = nextToJail(toPos)
+
+            tempPiece = this.boardLayout[toPos]
+            this.boardLayout["TEMP"] = this.boardLayout[fromPos]
+
+            delete this.boardLayout[fromPos]
+
+            this.boardLayout[nextTo] = this.boardLayout[toPos]
+            this.boardLayout[nextTo].position = nextTo
+            this.boardLayout[nextTo].hasBanana = false;
+
+            delete this.boardLayout[toPos]
+
+            nextTurn(false, 'Rescue');
+            this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn});
+        } else if ( monkeyJumpingNonRescue ) {
+            this.boardLayout[toPos] = this.boardLayout[fromPos]
+            delete this.boardLayout[fromPos]
+            this.boardLayout[toPos].position = toPos;
+            this.boardLayout["TEMP"] = this.boardLayout[toPos]
+            nextTurn(false, 'Jumping');
+            this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn});
+        } else {
+            if (
+                this.boardLayout[toPos] &&
+                (this.boardLayout[toPos].constructor.name == King.name || 
+                this.boardLayout[toPos].constructor.name == Queen.name)
+            ){
+                tookKingOrQueen = true;
+                tempPiece = this.boardLayout[toPos]
+                this.boardLayout["TEMP"] = tempPiece
+            }
+
+            this.stateChecks(fromPos, toPos)
+
+            this.boardLayout[toPos] = this.boardLayout[fromPos]
+
+            delete this.boardLayout[fromPos]
+
+            this.boardLayout[toPos].position = toPos;
+
+            nextTurn(! tookKingOrQueen, tookKingOrQueen && 'Jail');
+
+            this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn});
+        }
+
+        this.draggingMonkey = false;
+        this.draggingRoyalty = false;
+        this.dragging = false;
+        this.resetTiles();
+        this.updatePieces();
+        if (tookKingOrQueen) this.manageTakeKingOrQueen(tempPiece, event);
+        if (monkeyJumping) this.manageMonkeyJumping(tempPiece, event);
+        if (monkeyJumpingNonRescue) this.manageMonkeyJumpingNonRescue(event);
     }
 
     filterImpossibleMoves(moves, currentPos){
