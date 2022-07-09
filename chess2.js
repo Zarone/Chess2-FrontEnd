@@ -263,17 +263,33 @@ export class ChessBoard {
         
         let isMoveableTile = moveToDom.style.backgroundColor == canMoveColor
 
-        const postHooks = [];
+        let monkeyJumpingNonRescue = false;
+
+        const toPos = new Position(moveToDom.id);
+        const fromPos = ( this.draggingMonkey || this.draggingRoyalty ) ?
+            "TEMP" : this.draggingPiece.position;
 
         // === Start: Internal functions of makeMove ===
         const abortMove = (msg) => {
             console.log(msg);
             document.getElementById("x1").appendChild(this.draggingPieceDom);
+            
             if ( this.draggingJumpingMoney ) {
                 monkeyJumpingNonRescue = true;
                 this.boardLayout["TEMP"] = this.boardLayout[fromPos]
                 this.boardLayout["TEMP"].position = fromPos
+                return;
             }
+
+            // if there's no state to revert back to, then don't
+            if ( this.draggingMonkey || this.draggingRoyalty ) return;
+
+            this.draggingMonkey = false;
+            this.draggingRoyalty = false;
+            this.dragging = false;
+            this.resetTiles();
+            this.updatePieces();
+
         };
 
         const nextTurn = (changePlayer, phase) => {
@@ -291,17 +307,15 @@ export class ChessBoard {
             return;
         }
 
-        const toPos = new Position(moveToDom.id);
-        const fromPos = ( this.draggingMonkey || this.draggingRoyalty ) ?
-            "TEMP" : this.draggingPiece.position;
-
         // Placing a piece in the position it's already in
         if (toPos.id == this.draggingPiece.position.id) {
             // For jumping monkey, this action ends the turn
             if ( this.draggingJumpingMoney ) {
                 this.draggingJumpingMoney = false
+                this.dragging = false;
                 nextTurn(true);
                 this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn})
+                this.resetTiles();
                 this.playChessSound();
             } else {
                 abortMove("moving to same tile as you're already on");
@@ -316,7 +330,6 @@ export class ChessBoard {
 
         let tookKingOrQueen = false;
         let monkeyJumping = false;
-        let monkeyJumpingNonRescue = false;
         let tempPiece = undefined;
 
         if ( this.boardLayout[fromPos].constructor.name == Monkey.name ) {
