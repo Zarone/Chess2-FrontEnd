@@ -395,6 +395,7 @@ export class ChessBoard {
         if (tookKingOrQueen) this.manageTakeKingOrQueen(tempPiece, event);
         if (monkeyJumping) this.manageMonkeyJumping(tempPiece, event);
         if (monkeyJumpingNonRescue) this.manageMonkeyJumpingNonRescue(event);
+        this.playChessSound();
     }
 
     filterImpossibleMoves(moves, currentPos){
