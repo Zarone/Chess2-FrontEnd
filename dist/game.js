@@ -1,7 +1,7 @@
 import { ChessBoard } from "./chess2.js";
-import {serverID, socketID , LOSE_TEXT, WIN_TEXT, disconnectText, DISCONNECT_TIMER_START} from "./helper-js/utils.js";
-import {getQuerystring} from "./helper-js/utils.js"
-import {Cookie} from "./helper-js/cookieManager.js"
+import { socketID , LOSE_TEXT, WIN_TEXT, disconnectText, DISCONNECT_TIMER_START } from "./helper-js/utils.js";
+import { getQuerystring } from "./helper-js/utils.js"
+import { Cookie } from "./helper-js/cookieManager.js"
 import { Bear } from "./pieces-js/Bear.js";
 import { Elephant } from "./pieces-js/Elephant.js";
 import { FishQueen } from "./pieces-js/FishQueen.js";
@@ -12,7 +12,7 @@ import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 import { Position } from "./helper-js/board.js"
 
-window.onload = async () => {
+export const onLoad = async () => {
 
     let {roomID, friendRoom, timeLimit} = getQuerystring()
 
