@@ -1,0 +1,29 @@
+:root {
+    --bg-primary: #6895c9;
+    --bg-secondary: #7d8ea1;
+    --bg-tertiary: #28578d;
+    --tile-size-fixed: 75px;
+    --tile-size-dynamic: min(6.1vw, 5.8vh);
+}
+
+html, body {  
+    padding: 0;
+    margin: 0;
+}
+
+.custom-bg-primary {
+    background-color: var(--bg-primary);
+}
+
+.custom-bg-secondary {
+    background-color: var(--bg-secondary);
+}
+
+.custom-bg-tertiary {
+    background-color: var(--bg-tertiary);
+}
+
+
+.logo {
+    width: 100%;
+}

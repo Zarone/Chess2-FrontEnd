@@ -1,7 +1,7 @@
 import { ChessBoard } from "./chess2.js";
-import {serverID, socketID , LOSE_TEXT, WIN_TEXT, disconnectText, DISCONNECT_TIMER_START} from "./helper-js/utils.js";
-import {getQuerystring} from "./helper-js/utils.js"
-import {Cookie} from "./helper-js/cookieManager.js"
+import { socketID , LOSE_TEXT, WIN_TEXT, disconnectText, DISCONNECT_TIMER_START } from "./helper-js/utils.js";
+import { getQuerystring } from "./helper-js/utils.js"
+import { Cookie } from "./helper-js/cookieManager.js"
 import { Bear } from "./pieces-js/Bear.js";
 import { Elephant } from "./pieces-js/Elephant.js";
 import { FishQueen } from "./pieces-js/FishQueen.js";
@@ -12,7 +12,7 @@ import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 import { Position } from "./helper-js/board.js"
 
-window.onload = async () => {
+export const onLoad = async (styleSheet, styleName) => {
 
     let {roomID, friendRoom, timeLimit} = getQuerystring()
 
@@ -45,7 +45,6 @@ window.onload = async () => {
     turn_Dom.innerText = "...Waiting for player to join"
     turn_Dom.style.backgroundColor = 'white'
 
-    
     let jail1_Dom = document.getElementById("jail-1")
     let jail2_Dom = document.getElementById("jail-2")
     let chessBoard_Dom = document.getElementById("chess-board")
@@ -129,8 +128,10 @@ window.onload = async () => {
         ()=>{
             socket.emit("admitDefeat")
             gameOverModal.toggle()
+            console.log(modalHeading_Dom)
             modalHeading_Dom.innerText = LOSE_TEXT
-        }
+        },
+        styleSheet, styleName
     )
 
     socket.on('player', (playerInfo)=>{
@@ -444,5 +445,5 @@ window.onload = async () => {
     document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
-
+    return chessBoard;
 }
