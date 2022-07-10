@@ -8,7 +8,7 @@ import {Elephant} from "./pieces-js/Elephant.js"
 import {Bear} from "./pieces-js/Bear.js"
 import { Position } from "./helper-js/board.js"
 
-import {nextToJail, toID, canMoveColor, prevMoveColor, getVerticalAndHorizontal} from "./helper-js/utils.js"
+import {nextToJail, toID, canMoveKey, canMoveValue, prevMoveColor, getVerticalAndHorizontal} from "./helper-js/utils.js"
 
 export class ChessBoard {
 
@@ -169,17 +169,17 @@ export class ChessBoard {
     renderMovesForTakenKingQueen(){
         if (this.isWhite){
             if (this.boardLayout["y1"] == undefined) {
-                document.getElementById("y1").style.backgroundColor = canMoveColor
+                document.getElementById("y1").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
             if (this.boardLayout["y2"] == undefined) {
-                document.getElementById("y2").style.backgroundColor = canMoveColor
+                document.getElementById("y2").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
         } else {
             if (this.boardLayout["x1"] == undefined) {
-                document.getElementById("x1").style.backgroundColor = canMoveColor
+                document.getElementById("x1").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
             if (this.boardLayout["x2"] == undefined) {
-                document.getElementById("x2").style.backgroundColor = canMoveColor
+                document.getElementById("x2").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
         }
     }
@@ -267,7 +267,8 @@ export class ChessBoard {
     makeMove(moveToDom, event){
         let classNames = moveToDom.className.split(" ")
         
-        let isMoveableTile = moveToDom.style.backgroundColor == canMoveColor
+        let isMoveableTile = moveToDom.style[canMoveKey(this.styleType)] == canMoveValue(this.styleType);
+        console.log(isMoveableTile, this.styleType, moveToDom.style[canMoveKey(this.styleType)], canMoveValue(this.styleType))
 
         let monkeyJumpingNonRescue = false;
 
@@ -512,7 +513,7 @@ export class ChessBoard {
 
     setPrevColor(toPos){
         if (toPos != "TEMP"){
-            document.getElementById(toPos).style.backgroundColor = prevMoveColor
+            document.getElementById(toPos).style[canMoveKey(this.styleType)] = prevMoveColor
         }
     }
 
@@ -533,19 +534,19 @@ export class ChessBoard {
         let elements = document.getElementsByClassName("chess-box")
         for (let i = 0; i < elements.length; i++){
             let element = elements[i];
-            element.style.backgroundColor = "red";
-            element.style.backgroundColor = "";
+            element.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+            element.style[canMoveKey(this.styleType)] = "";
         }
         elements = document.getElementsByClassName("chess-jail-box")
         for (let i = 0; i < elements.length; i++){
             let element = elements[i];
-            element.style.backgroundColor = "red";
-            element.style.backgroundColor = "";
+            element.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+            element.style[canMoveKey(this.styleType)] = "";
         }
 
         for (let i = 0; i < moves.length; i++){
             let editTileDom = document.getElementById(moves[i].pos);
-            editTileDom.style.backgroundColor = canMoveColor
+            editTileDom.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
         }
     }
 
@@ -689,14 +690,14 @@ export class ChessBoard {
         for (let i = 1; i < 9; i++){
             for (let j = 1; j < 9; j++){
                 let id = toID[i]+(j);
-                document.getElementById(id).style.backgroundColor = ''
+                document.getElementById(id).style[canMoveKey(this.styleType)] = ''
             }
         }
-        document.getElementById("x1").style.backgroundColor = ''
-        document.getElementById("x2").style.backgroundColor = ''
-        document.getElementById("y1").style.backgroundColor = ''
-        document.getElementById("y2").style.backgroundColor = ''
-        document.getElementById("z1").style.backgroundColor = ''
+        document.getElementById("x1").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("x2").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("y1").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("y2").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("z1").style[canMoveKey(this.styleType)] = ''
     }
 
     updateSinglePiece(id){
