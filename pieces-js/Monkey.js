@@ -1,6 +1,6 @@
 import {Piece} from "./Piece.js"
 import { getVerticalAndHorizontal, verticalAndHorizontalToID } from "../helper-js/utils.js";
-import { canMonkeyPrisonJump, notSameType, noPiece, sameMonkeyTurn, straightBlocking, diagonalBlocking } from "../helper-js/conditions.js";
+import { canMonkeyPrisonJump, notSameType, noPiece, sameMonkeyTurn, straightBlocking, diagonalBlocking, nonInitMonkeyJump } from "../helper-js/conditions.js";
 
 export class Monkey extends Piece {
     constructor(position, isWhite){
@@ -185,19 +185,12 @@ export class Monkey extends Piece {
             pos: this.position,
             conditions: [sameMonkeyTurn]
         })
-
-        // for (let i = 0; i < 4; i++){
-        //     for (let j = 0; j < 4; j++){
-        // for (let i = 0; i < 1; i++){
-        //     for (let j = 0; j < 1; j++){
-                
-        // if (i == 0 && j == 0) continue;
         
         if ((vertical + 2) < 9){
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical+2, horizontal), 
-                    conditions: [notSameType, straightBlocking]
+                    conditions: [notSameType, straightBlocking, nonInitMonkeyJump]
                 }
             )
         }
@@ -206,7 +199,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical-2, horizontal), 
-                    conditions: [notSameType, straightBlocking]
+                    conditions: [notSameType, straightBlocking, nonInitMonkeyJump]
                 }
             )
         }
@@ -215,7 +208,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical, horizontal+2), 
-                    conditions: [notSameType, straightBlocking]
+                    conditions: [notSameType, straightBlocking, nonInitMonkeyJump]
                 }
             )
         }
@@ -224,7 +217,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical, horizontal-2), 
-                    conditions: [notSameType, straightBlocking]
+                    conditions: [notSameType, straightBlocking, nonInitMonkeyJump]
                 }
             )
         }
@@ -233,7 +226,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical-2, horizontal+2), 
-                    conditions: [notSameType, diagonalBlocking]
+                    conditions: [notSameType, diagonalBlocking, nonInitMonkeyJump]
                 }
             )
         }
@@ -242,7 +235,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical + 2, horizontal + 2), 
-                    conditions: [notSameType, diagonalBlocking]
+                    conditions: [notSameType, diagonalBlocking, nonInitMonkeyJump]
                 }
             )
         }
@@ -251,7 +244,7 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical+2, horizontal-2), 
-                    conditions: [notSameType, diagonalBlocking]
+                    conditions: [notSameType, diagonalBlocking, nonInitMonkeyJump]
                 }
             )
         }
@@ -260,13 +253,10 @@ export class Monkey extends Piece {
             output.push(
                 {
                     pos: verticalAndHorizontalToID(vertical-2, horizontal-2), 
-                    conditions: [notSameType, diagonalBlocking]
+                    conditions: [notSameType, diagonalBlocking, nonInitMonkeyJump]
                 }
             )
         }
-
-        //     }
-        // }
 
         if (this.isWhite){
             if (vertical % 2 == 0 && horizontal % 2 == 1) output.push({pos: "x1", conditions: [canMonkeyPrisonJump]})

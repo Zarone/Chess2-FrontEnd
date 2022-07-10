@@ -317,6 +317,7 @@ export class ChessBoard {
                 this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn})
                 this.resetTiles();
                 this.playChessSound();
+                delete this.boardLayout["MONKEY_START"];
             } else {
                 abortMove("moving to same tile as you're already on");
             }
@@ -339,6 +340,14 @@ export class ChessBoard {
             let oldFromPos = this.boardLayout[fromPos]
             this.boardLayout[toPos] = new Monkey(toPos, oldFromPos.isWhite)
             delete this.boardLayout[fromPos]
+
+            let tempMonkeyLastMoveStorage;
+            if (this.boardLayout["MONKEY_START"]){
+                tempMonkeyLastMoveStorage= new Monkey( this.boardLayout["MONKEY_START"].position, this.boardLayout["MONKEY_START"].isWhite )
+                delete this.boardLayout["MONKEY_START"]
+            }
+            
+
             if (
                 ! oldToPos &&
                 (Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo) > 1) &&
@@ -348,6 +357,13 @@ export class ChessBoard {
             }
             this.boardLayout[toPos] = oldToPos;
             this.boardLayout[fromPos] = oldFromPos;
+
+            if (this.boardLayout["MONKEY_START"]){
+                
+                this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
+                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
+
+            }
         }
         this.draggingJumpingMoney = false;
 
@@ -370,10 +386,16 @@ export class ChessBoard {
             nextTurn(false, 'Rescue');
             this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn});
         } else if ( monkeyJumpingNonRescue ) {
+            if (this.currentTurn == "White" || this.currentTurn == "Black"){
+                this.boardLayout["MONKEY_START"] = new Monkey (fromPos, this.boardLayout[fromPos].isWhite);
+                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
+            }
+
             this.boardLayout[toPos] = this.boardLayout[fromPos]
             delete this.boardLayout[fromPos]
             this.boardLayout[toPos].position = toPos;
             this.boardLayout["TEMP"] = this.boardLayout[toPos]
+
             nextTurn(false, 'Jumping');
             this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn});
         } else {
@@ -436,7 +458,7 @@ export class ChessBoard {
 
     makePreValidatedMove(fromPos, toPos){
         
-        // if starting a monkey jump
+        // if starting a monkey jump to save king
         if ((toPos.isJail()) && this.boardLayout[fromPos].constructor.name == Monkey.name){
             let nextTo = nextToJail(toPos)
 
@@ -549,6 +571,11 @@ export class ChessBoard {
             (this.currentTurn == "White Jumping" && newTurn == "White Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name)
         )
 
+        let startMonkeyJumping = (
+            (this.currentTurn == "White" && newTurn == "White Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name) ||
+            (this.currentTurn == "Black" && newTurn == "Black Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name)
+        )
+
         let tookRoyalty = (
             ( this.boardLayout[newPosition] && 
                 (this.boardLayout[newPosition].constructor.name == Queen.name || this.boardLayout[newPosition].constructor.name == King.name) 
@@ -580,8 +607,7 @@ export class ChessBoard {
             didKingRescue ||
             (this.currentTurn == "White Rescue" && newTurn == "Black") ||
             (this.currentTurn == "Black Rescue" && newTurn == "White") ||
-            (this.currentTurn == "White" && newTurn == "White Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name) ||
-            (this.currentTurn == "Black" && newTurn == "Black Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name) ||
+            startMonkeyJumping ||
             monkeyJumpingNonRescue
         ) {
             this.currentTurn = newTurn
@@ -619,12 +645,18 @@ export class ChessBoard {
         } else {
             let thisPiece = this.boardLayout[currentPosition]
             let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves(), thisPiece.position)
+
+            if (startMonkeyJumping) {
+                this.boardLayout["MONKEY_START"] = new Monkey (currentPosition, this.boardLayout[currentPosition].isWhite);
+                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
+            }
             
             for (let i = 0; i < legalMoves.length; i++){
                 if (legalMoves[i].pos == newPosition) return true;
             }
 
             if (monkeyJumpingNonRescue && currentPosition.id == newPosition.id){
+                delete this.boardLayout["MONKEY_START"];
                 return true;
             }
 

@@ -58,7 +58,7 @@ export class Position {
     }
 
     isTemp() {
-        return this.id == 'TEMP';
+        return this.id == 'TEMP' || this.id == 'MONKEY_START';
     }
 
     isJail() {

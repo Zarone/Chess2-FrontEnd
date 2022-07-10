@@ -290,6 +290,7 @@ window.onload = async () => {
     
     socket.on("needReconnectData", args=>{
         if (roomID == args.roomID && playerID != args.playerID){
+            console.log("EMITTING DATA FOR RECONNECT, CURRENT BOARD: ", chessBoard.boardLayout)
             socket.emit("reconnectData", {
                 layout: Object.keys(chessBoard.boardLayout).map((val, index)=>{
                     return {
@@ -332,6 +333,8 @@ window.onload = async () => {
 
     socket.on("establishReconnection", (args)=>{
         
+        console.log("RECONNECT DATA: ", args)
+
         gameOverModal.hide()
 
         if (args.roomID == roomID && args.pid != playerID){
