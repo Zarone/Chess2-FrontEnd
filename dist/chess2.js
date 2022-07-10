@@ -34,8 +34,12 @@ export class ChessBoard {
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
 
-    constructor(makeMoveCallback, gameOverCallback, styleSheetReference){
+    styleType = undefined; // either "oat", "pixel"
+    styleSheetReference = undefined;
+
+    constructor(makeMoveCallback, gameOverCallback, styleSheetReference, styleType){
         this.styleSheetReference = styleSheetReference;
+        this.styleType = styleType;
         
         this.boardLayout = {
             "a8": new Rook("a8", false),
@@ -197,7 +201,7 @@ export class ChessBoard {
 
     manageTakeKingOrQueen(piece, event){
         this.draggingPieceDom = document.createElement('img');
-        this.draggingPieceDom.setAttribute("src", "./assets/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
         this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"] /*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -217,7 +221,7 @@ export class ChessBoard {
     manageMonkeyJumpingNonRescue(event){
         let piece = this.boardLayout["TEMP"];
         this.draggingPieceDom = document.createElement('img');
-        this.draggingPieceDom.setAttribute("src", "./assets/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
         this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -237,7 +241,7 @@ export class ChessBoard {
     manageMonkeyJumping(piece, event){
         this.draggingPieceDom = document.createElement('img');
 
-        this.draggingPieceDom.setAttribute("src", "./assets/"+this.boardLayout["TEMP"].getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+this.boardLayout["TEMP"].getImageSrc());
         this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -345,7 +349,7 @@ export class ChessBoard {
 
             let tempMonkeyLastMoveStorage;
             if (this.boardLayout["MONKEY_START"]){
-                tempMonkeyLastMoveStorage= new Monkey( this.boardLayout["MONKEY_START"].position, this.boardLayout["MONKEY_START"].isWhite )
+                tempMonkeyLastMoveStorage = new Monkey( this.boardLayout["MONKEY_START"].position, this.boardLayout["MONKEY_START"].isWhite )
                 delete this.boardLayout["MONKEY_START"]
             }
             
@@ -359,13 +363,8 @@ export class ChessBoard {
             }
             this.boardLayout[toPos] = oldToPos;
             this.boardLayout[fromPos] = oldFromPos;
-
-            if (this.boardLayout["MONKEY_START"]){
                 
-                this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
-                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
-
-            }
+            this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
         }
         this.draggingJumpingMoney = false;
 
@@ -390,7 +389,6 @@ export class ChessBoard {
         } else if ( monkeyJumpingNonRescue ) {
             if (this.currentTurn == "White" || this.currentTurn == "Black"){
                 this.boardLayout["MONKEY_START"] = new Monkey (fromPos, this.boardLayout[fromPos].isWhite);
-                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
             }
 
             this.boardLayout[toPos] = this.boardLayout[fromPos]
@@ -650,7 +648,6 @@ export class ChessBoard {
 
             if (startMonkeyJumping) {
                 this.boardLayout["MONKEY_START"] = new Monkey (currentPosition, this.boardLayout[currentPosition].isWhite);
-                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
             }
             
             for (let i = 0; i < legalMoves.length; i++){
@@ -675,7 +672,7 @@ export class ChessBoard {
 
     renderPiece(tileDom, piece){
         let imageDom = document.createElement("img");
-        imageDom.setAttribute("src", "./assets/"+piece.getImageSrc());
+        imageDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
         imageDom.setAttribute("class", this.styleSheetReference["piece-image"]);
         while (tileDom.hasChildNodes()) {
             tileDom.removeChild(tileDom.lastChild);

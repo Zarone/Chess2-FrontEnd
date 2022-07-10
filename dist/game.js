@@ -12,7 +12,7 @@ import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 import { Position } from "./helper-js/board.js"
 
-export const onLoad = async (styleSheet) => {
+export const onLoad = async (styleSheet, styleName) => {
 
     let {roomID, friendRoom, timeLimit} = getQuerystring()
 
@@ -45,7 +45,6 @@ export const onLoad = async (styleSheet) => {
     turn_Dom.innerText = "...Waiting for player to join"
     turn_Dom.style.backgroundColor = 'white'
 
-    
     let jail1_Dom = document.getElementById("jail-1")
     let jail2_Dom = document.getElementById("jail-2")
     let chessBoard_Dom = document.getElementById("chess-board")
@@ -129,9 +128,10 @@ export const onLoad = async (styleSheet) => {
         ()=>{
             socket.emit("admitDefeat")
             gameOverModal.toggle()
+            console.log(modalHeading_Dom)
             modalHeading_Dom.innerText = LOSE_TEXT
         },
-        styleSheet
+        styleSheet, styleName
     )
 
     socket.on('player', (playerInfo)=>{
@@ -445,5 +445,5 @@ export const onLoad = async (styleSheet) => {
     document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
-
+    return chessBoard;
 }

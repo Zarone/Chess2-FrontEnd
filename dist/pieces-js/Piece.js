@@ -27,7 +27,7 @@ export class Piece {
     }
 
     getImageSrc(){
-        console.error("called Piece getImageSrc")
+        console.error(`[core.Piece] ${this.constructor.name} called base getImageSrc `);
     }
 
     getMoves(){

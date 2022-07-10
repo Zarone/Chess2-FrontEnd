@@ -16,12 +16,12 @@
 }
 
 .white-box {
-    background-color: rgb(255, 0, 0);
-    border-radius: 50%;
+    background-color: rgb(165, 211, 193);
+    border-radius: 5px;
 }
 
 .black-box {
-    background-color: rgb(0, 119, 255);
+    background-color: rgb(150, 131, 175);
     border-radius: 5px;
 }
 
