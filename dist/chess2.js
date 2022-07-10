@@ -34,7 +34,9 @@ export class ChessBoard {
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
 
-    constructor(makeMoveCallback, gameOverCallback){
+    constructor(makeMoveCallback, gameOverCallback, styleSheetReference){
+        this.styleSheetReference = styleSheetReference;
+        
         this.boardLayout = {
             "a8": new Rook("a8", false),
             "b8": new Monkey("b8", false),
@@ -196,7 +198,7 @@ export class ChessBoard {
     manageTakeKingOrQueen(piece, event){
         this.draggingPieceDom = document.createElement('img');
         this.draggingPieceDom.setAttribute("src", "./assets/"+piece.getImageSrc());
-        this.draggingPieceDom.setAttribute("class", "piece-image");
+        this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"] /*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
@@ -216,7 +218,7 @@ export class ChessBoard {
         let piece = this.boardLayout["TEMP"];
         this.draggingPieceDom = document.createElement('img');
         this.draggingPieceDom.setAttribute("src", "./assets/"+piece.getImageSrc());
-        this.draggingPieceDom.setAttribute("class", "piece-image");
+        this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
@@ -236,7 +238,7 @@ export class ChessBoard {
         this.draggingPieceDom = document.createElement('img');
 
         this.draggingPieceDom.setAttribute("src", "./assets/"+this.boardLayout["TEMP"].getImageSrc());
-        this.draggingPieceDom.setAttribute("class", "piece-image");
+        this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
@@ -302,7 +304,7 @@ export class ChessBoard {
         // === End: Internal functions of makeMove ===
 
         // Placing a piece outside the game board
-        if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
+        if (!classNames.includes(this.styleSheetReference["chess-box"]) && !classNames.includes(this.styleSheetReference["chess-jail-box"])){
             abortMove("not a tile on game board");
             return;
         }
@@ -674,7 +676,7 @@ export class ChessBoard {
     renderPiece(tileDom, piece){
         let imageDom = document.createElement("img");
         imageDom.setAttribute("src", "./assets/"+piece.getImageSrc());
-        imageDom.setAttribute("class", "piece-image");
+        imageDom.setAttribute("class", this.styleSheetReference["piece-image"]);
         while (tileDom.hasChildNodes()) {
             tileDom.removeChild(tileDom.lastChild);
         }

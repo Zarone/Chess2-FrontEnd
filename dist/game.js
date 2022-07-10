@@ -12,7 +12,7 @@ import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 import { Position } from "./helper-js/board.js"
 
-export const onLoad = async () => {
+export const onLoad = async (styleSheet) => {
 
     let {roomID, friendRoom, timeLimit} = getQuerystring()
 
@@ -130,7 +130,8 @@ export const onLoad = async () => {
             socket.emit("admitDefeat")
             gameOverModal.toggle()
             modalHeading_Dom.innerText = LOSE_TEXT
-        }
+        },
+        styleSheet
     )
 
     socket.on('player', (playerInfo)=>{
