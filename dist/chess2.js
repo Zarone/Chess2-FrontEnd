@@ -8,7 +8,7 @@ import {Elephant} from "./pieces-js/Elephant.js"
 import {Bear} from "./pieces-js/Bear.js"
 import { Position } from "./helper-js/board.js"
 
-import {nextToJail, toID, canMoveColor, prevMoveColor, getVerticalAndHorizontal} from "./helper-js/utils.js"
+import {nextToJail, toID, canMoveKey, canMoveValue, prevMoveColor, getVerticalAndHorizontal} from "./helper-js/utils.js"
 
 export class ChessBoard {
 
@@ -34,7 +34,13 @@ export class ChessBoard {
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
 
-    constructor(makeMoveCallback, gameOverCallback){
+    styleType = undefined; // either "oat", "pixel"
+    styleSheetReference = undefined;
+
+    constructor(makeMoveCallback, gameOverCallback, styleSheetReference, styleType){
+        this.styleSheetReference = styleSheetReference;
+        this.styleType = styleType;
+        
         this.boardLayout = {
             "a8": new Rook("a8", false),
             "b8": new Monkey("b8", false),
@@ -163,17 +169,17 @@ export class ChessBoard {
     renderMovesForTakenKingQueen(){
         if (this.isWhite){
             if (this.boardLayout["y1"] == undefined) {
-                document.getElementById("y1").style.backgroundColor = canMoveColor
+                document.getElementById("y1").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
             if (this.boardLayout["y2"] == undefined) {
-                document.getElementById("y2").style.backgroundColor = canMoveColor
+                document.getElementById("y2").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
         } else {
             if (this.boardLayout["x1"] == undefined) {
-                document.getElementById("x1").style.backgroundColor = canMoveColor
+                document.getElementById("x1").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
             if (this.boardLayout["x2"] == undefined) {
-                document.getElementById("x2").style.backgroundColor = canMoveColor
+                document.getElementById("x2").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
             }
         }
     }
@@ -195,8 +201,8 @@ export class ChessBoard {
 
     manageTakeKingOrQueen(piece, event){
         this.draggingPieceDom = document.createElement('img');
-        this.draggingPieceDom.setAttribute("src", "./assets/"+piece.getImageSrc());
-        this.draggingPieceDom.setAttribute("class", "piece-image");
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"] /*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
@@ -215,8 +221,8 @@ export class ChessBoard {
     manageMonkeyJumpingNonRescue(event){
         let piece = this.boardLayout["TEMP"];
         this.draggingPieceDom = document.createElement('img');
-        this.draggingPieceDom.setAttribute("src", "./assets/"+piece.getImageSrc());
-        this.draggingPieceDom.setAttribute("class", "piece-image");
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
@@ -235,8 +241,8 @@ export class ChessBoard {
     manageMonkeyJumping(piece, event){
         this.draggingPieceDom = document.createElement('img');
 
-        this.draggingPieceDom.setAttribute("src", "./assets/"+this.boardLayout["TEMP"].getImageSrc());
-        this.draggingPieceDom.setAttribute("class", "piece-image");
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+this.boardLayout["TEMP"].getImageSrc());
+        this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
 
@@ -261,7 +267,8 @@ export class ChessBoard {
     makeMove(moveToDom, event){
         let classNames = moveToDom.className.split(" ")
         
-        let isMoveableTile = moveToDom.style.backgroundColor == canMoveColor
+        let isMoveableTile = moveToDom.style[canMoveKey(this.styleType)] == canMoveValue(this.styleType);
+        console.log(isMoveableTile, this.styleType, moveToDom.style[canMoveKey(this.styleType)], canMoveValue(this.styleType))
 
         let monkeyJumpingNonRescue = false;
 
@@ -302,7 +309,7 @@ export class ChessBoard {
         // === End: Internal functions of makeMove ===
 
         // Placing a piece outside the game board
-        if (!classNames.includes("chess-box") && !classNames.includes("chess-jail-box")){
+        if (!classNames.includes(this.styleSheetReference["chess-box"]) && !classNames.includes(this.styleSheetReference["chess-jail-box"])){
             abortMove("not a tile on game board");
             return;
         }
@@ -343,7 +350,7 @@ export class ChessBoard {
 
             let tempMonkeyLastMoveStorage;
             if (this.boardLayout["MONKEY_START"]){
-                tempMonkeyLastMoveStorage= new Monkey( this.boardLayout["MONKEY_START"].position, this.boardLayout["MONKEY_START"].isWhite )
+                tempMonkeyLastMoveStorage = new Monkey( this.boardLayout["MONKEY_START"].position, this.boardLayout["MONKEY_START"].isWhite )
                 delete this.boardLayout["MONKEY_START"]
             }
             
@@ -357,13 +364,8 @@ export class ChessBoard {
             }
             this.boardLayout[toPos] = oldToPos;
             this.boardLayout[fromPos] = oldFromPos;
-
-            if (this.boardLayout["MONKEY_START"]){
                 
-                this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
-                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
-
-            }
+            this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
         }
         this.draggingJumpingMoney = false;
 
@@ -388,7 +390,6 @@ export class ChessBoard {
         } else if ( monkeyJumpingNonRescue ) {
             if (this.currentTurn == "White" || this.currentTurn == "Black"){
                 this.boardLayout["MONKEY_START"] = new Monkey (fromPos, this.boardLayout[fromPos].isWhite);
-                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
             }
 
             this.boardLayout[toPos] = this.boardLayout[fromPos]
@@ -512,7 +513,7 @@ export class ChessBoard {
 
     setPrevColor(toPos){
         if (toPos != "TEMP"){
-            document.getElementById(toPos).style.backgroundColor = prevMoveColor
+            document.getElementById(toPos).style[canMoveKey(this.styleType)] = prevMoveColor
         }
     }
 
@@ -533,19 +534,19 @@ export class ChessBoard {
         let elements = document.getElementsByClassName("chess-box")
         for (let i = 0; i < elements.length; i++){
             let element = elements[i];
-            element.style.backgroundColor = "red";
-            element.style.backgroundColor = "";
+            element.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+            element.style[canMoveKey(this.styleType)] = "";
         }
         elements = document.getElementsByClassName("chess-jail-box")
         for (let i = 0; i < elements.length; i++){
             let element = elements[i];
-            element.style.backgroundColor = "red";
-            element.style.backgroundColor = "";
+            element.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+            element.style[canMoveKey(this.styleType)] = "";
         }
 
         for (let i = 0; i < moves.length; i++){
             let editTileDom = document.getElementById(moves[i].pos);
-            editTileDom.style.backgroundColor = canMoveColor
+            editTileDom.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
         }
     }
 
@@ -648,7 +649,6 @@ export class ChessBoard {
 
             if (startMonkeyJumping) {
                 this.boardLayout["MONKEY_START"] = new Monkey (currentPosition, this.boardLayout[currentPosition].isWhite);
-                console.log("set", JSON.stringify(this.boardLayout["MONKEY_START"]))
             }
             
             for (let i = 0; i < legalMoves.length; i++){
@@ -673,8 +673,8 @@ export class ChessBoard {
 
     renderPiece(tileDom, piece){
         let imageDom = document.createElement("img");
-        imageDom.setAttribute("src", "./assets/"+piece.getImageSrc());
-        imageDom.setAttribute("class", "piece-image");
+        imageDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
+        imageDom.setAttribute("class", this.styleSheetReference["piece-image"]);
         while (tileDom.hasChildNodes()) {
             tileDom.removeChild(tileDom.lastChild);
         }
@@ -690,14 +690,14 @@ export class ChessBoard {
         for (let i = 1; i < 9; i++){
             for (let j = 1; j < 9; j++){
                 let id = toID[i]+(j);
-                document.getElementById(id).style.backgroundColor = ''
+                document.getElementById(id).style[canMoveKey(this.styleType)] = ''
             }
         }
-        document.getElementById("x1").style.backgroundColor = ''
-        document.getElementById("x2").style.backgroundColor = ''
-        document.getElementById("y1").style.backgroundColor = ''
-        document.getElementById("y2").style.backgroundColor = ''
-        document.getElementById("z1").style.backgroundColor = ''
+        document.getElementById("x1").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("x2").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("y1").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("y2").style[canMoveKey(this.styleType)] = ''
+        document.getElementById("z1").style[canMoveKey(this.styleType)] = ''
     }
 
     updateSinglePiece(id){

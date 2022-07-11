@@ -5,6 +5,8 @@ module.exports = {
   entry: {
     gamePage: path.resolve(__dirname, "./src/gamePage.jsx")
   },
+
+
   module: {
     rules: [
       {
@@ -18,10 +20,11 @@ module.exports = {
             presets: [ "@babel/preset-react" ]
         }
       },
+      { test: /\.css$/, use: ["style-loader","css-loader"] }
     ],
   },
   resolve: {
-    extensions: ["*", ".js", ".jsx"],
+    extensions: ["*", ".js", ".jsx", ".css"],
   },
   output: {
     publicPath: ""

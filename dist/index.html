@@ -11,6 +11,7 @@
     <title>Chess 2</title>
 
     <link rel="stylesheet" href="./styles/styles.css">
+    <script src="./foam-bin.js"></script>
     <script src="./helper-js/join.js" type="module"></script>
 
 </head>
@@ -47,6 +48,7 @@
                     <div class="col-lg-5 pt-5">
                         <div class="container custom-bg-tertiary rounded pt-3 pb-3">
                             <div><p class="h2 text-center" id="rooms-count">Loading room count...</p></div>
+                            <h2>Quick Play</h2>
                             <div class="d-grid">
                                 <button type="button" id="raw-join" class="btn btn-primary btn-block">Play (un-timed)</button>
                                 <p>
@@ -60,11 +62,12 @@
                                 </p>
                             </div>
                             <div>
-                                <div class="d-flex">
+                                <!-- <div class="d-flex">
                                     <button type="button" id="room-join" class="btn btn-primary btn-block">Play With Friends</button>
                                     <input class="form-control" id ="room-id" type="text" placeholder="Room ID">
                                     <input class="form-control" id ="room-time" type="number" placeholder="Time Per Player">
-                                </div>
+                                </div> -->
+                                <foam class="chess2.GameConfigView" of="chess2.GameConfig"></foam>
                                 <p>
                                     If you want to play with friends, you can enter a custom room ID! Please use an uncommon room name so that you're 
                                     less likely to join someone else's game by accident.
