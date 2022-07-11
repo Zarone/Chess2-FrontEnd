@@ -4,8 +4,8 @@
   "description": "This is a simple game demo built by... me. Zachary Alfano. It's based on the video [I Made a BETTER Chess](https://youtu.be/mcivL8u176Y) by [Oats Jenkins](https://www.youtube.com/c/OatsJenkins).",
   "main": "chess2.js",
   "scripts": {
-    "dev": "webpack serve --config ./webpack.config.js --mode development --port 5500",
-    "build": "webpack build --config ./webpack.config.js --mode production"
+    "dev": "node tools/build.js && webpack serve --config ./webpack.config.js --mode development --port 5500",
+    "build": "node tools/build.js && webpack build --config ./webpack.config.js --mode production"
   },
   "repository": {
     "type": "git",
@@ -31,6 +31,8 @@
     "webpack-dev-server": "^4.9.3"
   },
   "dependencies": {
-    "react-helmet": "^6.1.0"
+    "foam3": "github:kgrgreer/foam3#NP-7064/LastWorkingFoobar",
+    "react-helmet": "^6.1.0",
+    "uglify-js": "^3.16.2"
   }
 }
