@@ -134,6 +134,52 @@ export const onLoad = async (styleSheet, styleName) => {
         styleSheet, styleName
     )
 
+    let whiteTimer = finalTimeLimit;
+    let blackTimer = finalTimeLimit;
+    let topTimer_Dom = document.getElementById("timer-top")
+    let bottomTimer_Dom = document.getElementById("timer-bottom")
+    let reversedPointer = { 
+        _reversed: false,
+        get reversed(){
+            return this._reversed;
+        },
+        set reversed(v){
+            console.log("set reversed", v)
+            this._reversed = v;
+            if (flipBoard && chessBoard) flipBoard(chessBoard.isWhite);
+        }
+     }
+
+    function displayTimer(){
+        if ((!chessBoard.isWhite && !reversedPointer.reversed) || (chessBoard.isWhite && reversedPointer.reversed)){
+            let secondsW = (whiteTimer%60)
+            let secondsB = (blackTimer%60)
+            topTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (secondsW < 10 ? ":0" : ":") + secondsW.toFixed(1)
+            bottomTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (secondsB < 10 ? ":0" : ":") + secondsB.toFixed(1)
+        } else {
+            let secondsW = (whiteTimer%60)
+            let secondsB = (blackTimer%60)
+            bottomTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (secondsW < 10 ? ":0" : ":") + secondsW.toFixed(1)
+            topTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (secondsB < 10 ? ":0" : ":") + secondsB.toFixed(1)
+        }
+    }
+
+    function flipBoard(isWhite) {
+        if ((!isWhite && !reversedPointer.reversed) || (isWhite && reversedPointer.reversed)){
+            jail1_Dom.style.flexWrap = "wrap-reverse"
+            jail2_Dom.style.flexWrap = "wrap-reverse"
+            chessBoard_Dom.style.flexWrap = "wrap-reverse"
+            chessBoard_Dom.style.flexDirection = "row-reverse"
+            chessBoardContainer_Dom.style.flexDirection = "row-reverse"
+        } else {
+            jail1_Dom.style.flexWrap = ""
+            jail2_Dom.style.flexWrap = ""
+            chessBoard_Dom.style.flexWrap = ""
+            chessBoard_Dom.style.flexDirection = ""
+            chessBoardContainer_Dom.style.flexDirection = ""
+        }
+    }
+
     socket.on('player', (playerInfo)=>{
 
         playerID = playerInfo.pid;
@@ -147,34 +193,9 @@ export const onLoad = async (styleSheet, styleName) => {
 
         chessBoard.isWhite = playerInfo.isWhite
         
-        if (!playerInfo.isWhite){
-            jail1_Dom.style.flexWrap = "wrap-reverse"
-            jail2_Dom.style.flexWrap = "wrap-reverse"
-            chessBoard_Dom.style.flexWrap = "wrap-reverse"
-            chessBoard_Dom.style.flexDirection = "row-reverse"
-            chessBoardContainer_Dom.style.flexDirection = "row-reverse"
-        }
+        flipBoard(playerInfo.isWhite)
 
     })
-
-    let whiteTimer = finalTimeLimit;
-    let blackTimer = finalTimeLimit;
-    let topTimer_Dom = document.getElementById("timer-top")
-    let bottomTimer_Dom = document.getElementById("timer-bottom")
-
-    function displayTimer(){
-        if (chessBoard.isWhite){
-            let secondsW = (whiteTimer%60)
-            let secondsB = (blackTimer%60)
-            bottomTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (secondsW < 10 ? ":0" : ":") + secondsW.toFixed(1)
-            topTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (secondsB < 10 ? ":0" : ":") + secondsB.toFixed(1)
-        } else {
-            let secondsW = (whiteTimer%60)
-            let secondsB = (blackTimer%60)
-            topTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (secondsW < 10 ? ":0" : ":") + secondsW.toFixed(1)
-            bottomTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (secondsB < 10 ? ":0" : ":") + secondsB.toFixed(1)
-        }
-    }
 
     socket.on("twoPlayers", (args)=>{
         if (roomID == args.thisRoomID){
@@ -218,14 +239,14 @@ export const onLoad = async (styleSheet, styleName) => {
                     return
                 }
 
-                let seconds = (whiteTimer%60)
-                bottomTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
+                // let seconds = (whiteTimer%60)
+                // bottomTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
             } else {
 
                 if (whiteTimer < 0) return;
 
-                let seconds = (whiteTimer%60)
-                topTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
+                // let seconds = (whiteTimer%60)
+                // topTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
             }
             whiteTimer -= 0.1
         } else if (
@@ -237,8 +258,8 @@ export const onLoad = async (styleSheet, styleName) => {
             if (chessBoard.isWhite){
                 if (blackTimer < 0) return;
 
-                let seconds = (blackTimer%60)
-                topTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
+                // let seconds = (blackTimer%60)
+                // topTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
             } else {
 
                 if (blackTimer < 0){
@@ -249,11 +270,13 @@ export const onLoad = async (styleSheet, styleName) => {
                     return
                 }
 
-                let seconds = (blackTimer%60)
-                bottomTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
+                // let seconds = (blackTimer%60)
+                // bottomTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
             }
             blackTimer -= 0.1
         }
+
+        displayTimer()
     }
 
     socket.on('gameOver', ({room, id})=>{
@@ -323,13 +346,7 @@ export const onLoad = async (styleSheet, styleName) => {
         chessBoard.isWhite = playerInfo.isWhite
         finalTimeLimit = playerInfo.timeLimit*60
         
-        if (!playerInfo.isWhite){
-            jail1_Dom.style.flexWrap = "wrap-reverse"
-            jail2_Dom.style.flexWrap = "wrap-reverse"
-            chessBoard_Dom.style.flexWrap = "wrap-reverse"
-            chessBoard_Dom.style.flexDirection = "row-reverse"
-            chessBoardContainer_Dom.style.flexDirection = "row-reverse"
-        }
+        flipBoard(chessBoard.isWhite)
     })
 
     socket.on("establishReconnection", (args)=>{
@@ -445,5 +462,6 @@ export const onLoad = async (styleSheet, styleName) => {
     document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
-    return chessBoard;
+
+    return { chessBoard, reversedPointer };
 }

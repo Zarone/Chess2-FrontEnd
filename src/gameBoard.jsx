@@ -10,10 +10,14 @@ export default function GameBoard(props) {
 
     const [customStyle, setCustomStyleSheet] = useState(getCustomStyle(props.customStyle))
     const [chessBoard, setChessBoard] = useState(null);
-
+    const [reversed, setReversed] = useState({reversed: false});
+    
     useEffect(()=>{
         onLoad({...boardStyle, ...customStyle}, props.customStyle).then(res=>{
-            setChessBoard(res)
+            let tempBoard = res.chessBoard
+            let tempReverse = res.reversedPointer
+            setChessBoard(tempBoard)
+            setReversed(tempReverse)
         });
     }, [])
     
@@ -29,12 +33,18 @@ export default function GameBoard(props) {
         // onLoad({...boardStyle, ...customStyle});
     }, [props.customStyle])
 
+    const onReverse = () => {
+      reversed.reversed = !reversed.reversed
+    //   chessBoard.updatePieces()
+    }
+
     return <React.Fragment>
         <div className="container-fluid d-flex justify-content-around align-items-center">
             <div className={`container custom-bg-tertiary mt-3 mb-3 rounded`} style={{margin: 0}}>
                 <p id="roomID" className="display-6 text-white">Room ID: </p>
             </div>
             <Settings setCustomStyle={props.setCustomStyle}></Settings>
+            <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%"}} onClick={onReverse}>Reverse</button>
         </div>
         <div className="container">
             <div className="container mt-3 mb-3 rounded">
