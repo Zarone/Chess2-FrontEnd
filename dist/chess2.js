@@ -37,6 +37,8 @@ export class ChessBoard {
     styleType = undefined; // either "oat", "pixel"
     styleSheetReference = undefined;
 
+    isSound = true;
+
     constructor(makeMoveCallback, gameOverCallback, styleSheetReference, styleType){
         this.styleSheetReference = styleSheetReference;
         this.styleType = styleType;
@@ -259,9 +261,11 @@ export class ChessBoard {
     }
 
     playChessSound(){
-        let audio = new Audio('./assets/Chess Sound.mp3');
-        audio.loop = false;
-        audio.play().catch(()=>{return;})
+        if (this.isSound){
+            let audio = new Audio('./assets/Chess Sound.mp3');
+            audio.loop = false;
+            audio.play().catch(()=>{return;})
+        }
     }
 
     makeMove(moveToDom, event){

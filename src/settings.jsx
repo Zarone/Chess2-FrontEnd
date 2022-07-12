@@ -1,6 +1,7 @@
 import React from "react"
+import sliderStyles from "../dist/styles/slider.module.css"
 
-export default function Settings({setCustomStyle}){
+export default function Settings({setCustomStyle, soundOn, setSoundToggle}){
     let settingsModal;
     return (<React.Fragment>
         <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%"}} onClick={()=>{
@@ -16,12 +17,29 @@ export default function Settings({setCustomStyle}){
                 <div className="modal-content">
             
                     <div className="modal-header">
-                        <h4 className="modal-title" id="modal-heading-settings">Change your style preferences</h4>
+                        <h4 className="modal-title" id="modal-heading-settings">Settings</h4>
                     </div>
             
                     <div className="modal-body">
-                        <button type="button" className="btn btn-primary btn-block" onClick={()=>{setCustomStyle("oat")}}>Oats Style</button>
-                        <button type="button" className="btn btn-primary btn-block" onClick={()=>{setCustomStyle("pixel")}}>Pixel Style</button>
+                        <div className="container m-3">
+                            <p className="h5">Choose your style</p>
+                            <button type="button" className="btn btn-primary btn-block m-2" onClick={()=>{setCustomStyle("oat")}}>Oats Style</button>
+                            <button type="button" className="btn btn-primary btn-block m-2" onClick={()=>{setCustomStyle("pixel")}}>Pixel Style</button>
+                        </div>
+                        <div className="container m-3">
+                            <p className="h5">Sound Effects</p>
+                            <label className={`${sliderStyles.switch} m-2`}>
+                                <input onChange={(e)=>{setSoundToggle(e.target.checked)}} type="checkbox" checked={soundOn}/>
+                                <span className={sliderStyles.slider}></span>
+                            </label>
+                        </div>
+                        {/* <div className="container m-3">
+                            <p className="h5">Music</p>
+                            <label className={`${sliderStyles.switch} m-2`}>
+                                <input onChange={(e)=>{console.log("toggle music", e.target.checked)}} type="checkbox" />
+                                <span className={sliderStyles.slider}></span>
+                            </label>
+                        </div> */}
                     </div>
 
                     <div className="modal-footer">
