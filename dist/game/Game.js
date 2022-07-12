@@ -17,7 +17,7 @@ export class Game {
 
     setState (obj) {
         for ( const k in obj ) {
-            this.set(k, obj);
+            this.set(k, obj[k]);
         }
     }
 
