@@ -1,7 +1,5 @@
-import { AccessorUtil } from "../helper-js/accessors.js";
 import { Cookie } from "../helper-js/cookieManager.js";
 import { getQuerystring } from "../helper-js/utils.js"
-import { Emitter } from "./Emitter.js";
 import { Game } from "./Game.js";
 export class GameLauncher {
     constructor (config) {

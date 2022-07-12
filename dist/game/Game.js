@@ -1,5 +1,3 @@
-import { AccessorUtil } from "../helper-js/accessors.js";
-import { getQuerystring } from "../helper-js/utils.js"
 import { Emitter } from "./Emitter.js";
 export class Game {
     constructor () {
