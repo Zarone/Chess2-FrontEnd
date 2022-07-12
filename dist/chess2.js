@@ -282,7 +282,6 @@ export class ChessBoard {
         let classNames = moveToDom.className.split(" ")
         
         let isMoveableTile = moveToDom.style[canMoveKey(this.styleType)] == canMoveValue(this.styleType);
-        console.log(isMoveableTile, this.styleType, moveToDom.style[canMoveKey(this.styleType)], canMoveValue(this.styleType))
 
         let monkeyJumpingNonRescue = false;
 

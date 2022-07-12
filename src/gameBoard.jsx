@@ -9,15 +9,12 @@ import Settings from "./settings"
 export default function GameBoard(props) {
 
     const [customStyle, setCustomStyleSheet] = useState(getCustomStyle(props.customStyle))
-    const [chessBoard, setChessBoard] = useState(null);
     const [reversed, setReversed] = useState({reversed: false});
     const [soundOn, setSoundToggle] = useState(true);
     
     useEffect(()=>{
         onLoad({...boardStyle, ...customStyle}, props.customStyle).then(res=>{
-            let tempBoard = res.chessBoard
             let tempReverse = res.reversedPointer
-            setChessBoard(tempBoard)
             setReversed(tempReverse)
         });
     }, [])
@@ -26,23 +23,21 @@ export default function GameBoard(props) {
         let newStyles = getCustomStyle(props.customStyle)
 
         setCustomStyleSheet(newStyles)
-        if (chessBoard) {
-            chessBoard.styleType = props.customStyle
-            chessBoard.styleSheetReference = { ...boardStyle, ...newStyles}
-            chessBoard.updatePieces();
+        if (globalThis.gameboard) {
+            globalThis.gameboard.styleType = props.customStyle
+            globalThis.gameboard.styleSheetReference = { ...boardStyle, ...newStyles}
+            globalThis.gameboard.updatePieces();
         }
-        // onLoad({...boardStyle, ...customStyle});
     }, [props.customStyle])
 
     useEffect(()=>{
-        if (chessBoard) {
-            chessBoard.isSound = soundOn;
+        if (globalThis.gameboard) {
+            globalThis.gameboard.isSound = soundOn;
         }
     }, [soundOn])
 
     const onReverse = () => {
       reversed.reversed = !reversed.reversed
-    //   chessBoard.updatePieces()
     }
 
     return <React.Fragment>

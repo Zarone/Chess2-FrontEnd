@@ -48,10 +48,10 @@ export const onLoad = async (styleSheet, styleName) => {
     turn_Dom.innerText = "...Waiting for player to join"
     turn_Dom.style.backgroundColor = 'white'
 
-    let jail1_Dom = document.getElementById("jail-1")
-    let jail2_Dom = document.getElementById("jail-2")
-    let chessBoard_Dom = document.getElementById("chess-board")
-    let chessBoardContainer_Dom = document.getElementById("board-container")
+    // let jail1_Dom = document.getElementById("jail-1")
+    // let jail2_Dom = document.getElementById("jail-2")
+    // let chessBoard_Dom = document.getElementById("chess-board")
+    // let chessBoardContainer_Dom = document.getElementById("board-container")
 
     let socket = io(socketID())
 
@@ -128,7 +128,7 @@ export const onLoad = async (styleSheet, styleName) => {
             this._reversed = v;
             if (flipBoard && chessBoard) flipBoard(chessBoard.isWhite);
         }
-     }
+    }
 
     function displayTimer(){
         if ((!chessBoard.isWhite && !reversedPointer.reversed) || (chessBoard.isWhite && reversedPointer.reversed)){
@@ -146,17 +146,17 @@ export const onLoad = async (styleSheet, styleName) => {
 
     function flipBoard(isWhite) {
         if ((!isWhite && !reversedPointer.reversed) || (isWhite && reversedPointer.reversed)){
-            jail1_Dom.style.flexWrap = "wrap-reverse"
-            jail2_Dom.style.flexWrap = "wrap-reverse"
-            chessBoard_Dom.style.flexWrap = "wrap-reverse"
-            chessBoard_Dom.style.flexDirection = "row-reverse"
-            chessBoardContainer_Dom.style.flexDirection = "row-reverse"
+            game.elements["jail-1"].style.flexWrap = "wrap-reverse"
+            game.elements["jail-2"].style.flexWrap = "wrap-reverse"
+            game.elements["chess-board"].style.flexWrap = "wrap-reverse"
+            game.elements["chess-board"].style.flexDirection = "row-reverse"
+            game.elements["board-container"].style.flexDirection = "row-reverse"
         } else {
-            jail1_Dom.style.flexWrap = ""
-            jail2_Dom.style.flexWrap = ""
-            chessBoard_Dom.style.flexWrap = ""
-            chessBoard_Dom.style.flexDirection = ""
-            chessBoardContainer_Dom.style.flexDirection = ""
+            game.elements["jail-1"].style.flexWrap = ""
+            game.elements["jail-2"].style.flexWrap = ""
+            game.elements["chess-board"].style.flexWrap = ""
+            game.elements["chess-board"].style.flexDirection = ""
+            game.elements["board-container"].style.flexDirection = ""
         }
     }
 
@@ -191,10 +191,9 @@ export const onLoad = async (styleSheet, styleName) => {
         }
     })
 
-    let timerWorker = new Worker("./helper-js/timerWorker.js")
+    const timerWorker = new Worker("./helper-js/timerWorker.js")
 
     timerWorker.onmessage = () => {
-
         if (chessBoard.currentTurn != "Not Started" && finalTimeLimit > 60*60) {
             timerWorker.terminate();
             return
