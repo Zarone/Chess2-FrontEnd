@@ -29,7 +29,7 @@ export class ChessBoard {
     rookActiveWhite = false;
     rookActiveBlack = false;
 
-    currentTurn = "Not Started"; // either "Not Started", "White", "Black", "White Jail", "Black Jail", "White Rescue", "Black Rescue", "White Jumping", "Black Jumping"
+    // currentTurn = "Not Started"; // either "Not Started", "White", "Black", "White Jail", "Black Jail", "White Rescue", "Black Rescue", "White Jumping", "Black Jumping"
 
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
@@ -39,7 +39,17 @@ export class ChessBoard {
 
     isSound = true;
 
-    constructor(makeMoveCallback, gameOverCallback, styleSheetReference, styleType){
+    set currentTurn (v) {
+        this.game.set('currentTurn', v);
+    }
+    get currentTurn () {
+        return this.game.state.currentTurn;
+    }
+
+    constructor(game, makeMoveCallback, gameOverCallback, styleSheetReference, styleType){
+        globalThis.gameboard = this;
+        this.game = game;
+
         this.styleSheetReference = styleSheetReference;
         this.styleType = styleType;
         

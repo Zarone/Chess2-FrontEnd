@@ -11,6 +11,8 @@ import { King } from "./pieces-js/King.js";
 import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 import { Position } from "./helper-js/board.js"
+import { GameLauncher } from "./game/GameLauncher.js";
+import { DOMPlugin } from "./game/DOMPlugin.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -40,6 +42,7 @@ export const onLoad = async (styleSheet, styleName) => {
         // return
     }
 
+    // covered
     let roomID_Dom = document.getElementById("roomID")
     let turn_Dom = document.getElementById("turn")
     turn_Dom.innerText = "...Waiting for player to join"
@@ -56,63 +59,39 @@ export const onLoad = async (styleSheet, styleName) => {
     socket.on("disconnect", () => {
         gameOverModal.toggle()
         disconnectTimer = DISCONNECT_TIMER_START
-        modalHeading_Dom.innerText = disconnectText(disconnectTimer)
+        game.events.emit('request.gameOverModal', disconnectText(disconnectTimer));
 
         let timer = setInterval(()=>{
+            let text;
             if (disconnectTimer < 0){
-                modalHeading_Dom.innerText = LOSE_TEXT
+                text = LOSE_TEXT
             } else {
                 disconnectTimer -= 1;
-                modalHeading_Dom.innerText = disconnectText(disconnectTimer)
+                text = disconnectText(disconnectTimer)
             }
+            game.events.emit('request.gameOverModal', text);
         }, 1000)
     })
+
+    const launcher = new GameLauncher({ debug: true });
+    launcher.init();
+    launcher.install(new DOMPlugin());
+
+    const game = launcher.game;
 
     socket.emit('joined', {roomID, friendRoom: friendRoom == "true" ? true : false, playerID, timeLimit});
 
     socket.on("maximumPlayers", ()=>{
-        gameOverModal.toggle();
-        modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
+        game.events.emit('request.gameOverModal',
+            "Maximum players on server. Please try again later.");
     })
 
     socket.on("fullRoom", ()=>{
-        gameOverModal.toggle();
-        modalHeading_Dom.innerText = "The room you tried to join is full."
+        game.events.emit('request.gameOverModal', "The room you tried to join is full.");
     })
-   
-    function updateTurnDom(){
-        if (
-            chessBoard.currentTurn == "White" ||
-            chessBoard.currentTurn == "White Jail" ||
-            chessBoard.currentTurn == "White Rescue" ||
-            chessBoard.currentTurn == "White Jumping"
-        ) 
-        {
-            turn_Dom.style.backgroundColor = "white";
-            turn_Dom.style.color = "black";
-        } else if (
-            chessBoard.currentTurn == "Black" ||
-            chessBoard.currentTurn == "Black Jail" ||
-            chessBoard.currentTurn == "Black Rescue" ||
-            chessBoard.currentTurn == "Black Jumping"
-        ) 
-        {
-            turn_Dom.style.backgroundColor = "black";
-            turn_Dom.style.color = "white";
-        } else 
-        {
-            turn_Dom.style.backgroundColor = "white";
-            turn_Dom.style.color = "blue";
-        }
-
-        if (chessBoard.currentTurn != "White Jumping" && chessBoard.currentTurn != "Black Jumping"){
-            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn
-        } else {
-            turn_Dom.innerText = "Turn: " + chessBoard.currentTurn + " - Double Click Tile to Stop"
-        }
-    }
 
     let chessBoard = new ChessBoard(
+        game,
         (moveInfo)=>{
 
             // TODO: MoveInfo class to encapsulate serialize/deserialize logic
@@ -122,8 +101,9 @@ export const onLoad = async (styleSheet, styleName) => {
             console.log('EMIT', moveInfo)
             if (moveInfo.newTurn === undefined) debugger
 
+            // launcher.events.emit('move.end', moveInfo);
+
             socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
-            updateTurnDom()
         },
         ()=>{
             socket.emit("admitDefeat")
@@ -206,7 +186,6 @@ export const onLoad = async (styleSheet, styleName) => {
             blackTimer = finalTimeLimit;
 
             chessBoard.currentTurn = "White"
-            updateTurnDom()
 
             displayTimer()
         }
@@ -305,7 +284,6 @@ export const onLoad = async (styleSheet, styleName) => {
             if (chessBoard.validateMove(args.moveInfo.fromPos, args.moveInfo.toPos, args.moveInfo.newTurn)){
                 chessBoard.makePreValidatedMove(args.moveInfo.fromPos, args.moveInfo.toPos);
                 chessBoard.currentTurn = args.moveInfo.newTurn
-                updateTurnDom()
             } else {
                 console.error("move is not allowed")
             }
@@ -400,7 +378,6 @@ export const onLoad = async (styleSheet, styleName) => {
             chessBoard.rookActiveWhite = args.rookActiveWhite;
             chessBoard.rookActiveBlack = args.rookActiveBlack;
             chessBoard.currentTurn = args.currentTurn;
-            updateTurnDom()
 
             chessBoard.updatePieces();
 
@@ -462,6 +439,6 @@ export const onLoad = async (styleSheet, styleName) => {
     document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
-
+    launcher.launch();
     return { chessBoard, reversedPointer };
 }
