@@ -4,3 +4,5 @@ package-lock.json
 foam-bin.js
 dist/gamePage.js
 dist/gamePage.js.LICENSE.txt
+dist/homePage.js
+dist/homePage.js.LICENSE.txt

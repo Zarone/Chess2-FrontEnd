@@ -3,7 +3,9 @@ const path = require("path");
 
 module.exports = {
   entry: {
-    gamePage: path.resolve(__dirname, "./src/gamePage.jsx")
+    homePage: path.resolve(__dirname, "./src/homePage.jsx"),
+    gamePage: path.resolve(__dirname, "./src/gamePage.jsx"),
+    faqPage: path.resolve(__dirname, "./src/faqPage.jsx"),
   },
 
 
@@ -27,7 +29,7 @@ module.exports = {
     extensions: ["*", ".js", ".jsx", ".css"],
   },
   output: {
-    publicPath: ""
+    publicPath: "",
     // path: path.resolve(__dirname, "./dist"),
     // filename: "bundle.js",
   },

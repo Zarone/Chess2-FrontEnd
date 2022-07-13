@@ -30,16 +30,6 @@ export const onLoad = async (styleSheet, styleName) => {
 
     if (roomID == undefined){
         roomID = null
-        // let openRoomRaw = await fetch(serverID()+"/getOpenRoom")
-        // let openRoomJson = await openRoomRaw.json()
-        // let openRoom = openRoomJson.roomID
-        // if (openRoom == null){
-        //     gameOverModal.toggle();
-        //     modalHeading_Dom.innerText = "Maximum players on server. Please try again later."
-        // } else {
-        //     window.location.href="../game.html?roomID="+openRoom.toString();
-        // }
-        // return
     }
 
     // covered
@@ -47,11 +37,6 @@ export const onLoad = async (styleSheet, styleName) => {
     let turn_Dom = document.getElementById("turn")
     turn_Dom.innerText = "...Waiting for player to join"
     turn_Dom.style.backgroundColor = 'white'
-
-    // let jail1_Dom = document.getElementById("jail-1")
-    // let jail2_Dom = document.getElementById("jail-2")
-    // let chessBoard_Dom = document.getElementById("chess-board")
-    // let chessBoardContainer_Dom = document.getElementById("board-container")
 
     let socket = io(socketID())
 
@@ -216,15 +201,9 @@ export const onLoad = async (styleSheet, styleName) => {
                     timerWorker.terminate();
                     return
                 }
-
-                // let seconds = (whiteTimer%60)
-                // bottomTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
             } else {
 
                 if (whiteTimer < 0) return;
-
-                // let seconds = (whiteTimer%60)
-                // topTimer_Dom.innerText = "White --- " + Math.floor(whiteTimer/60).toString() + (seconds < 10 ? ":0" : ":") + seconds.toFixed(1)
             }
             whiteTimer -= 0.1
         } else if (
@@ -235,9 +214,6 @@ export const onLoad = async (styleSheet, styleName) => {
         ) {
             if (chessBoard.isWhite){
                 if (blackTimer < 0) return;
-
-                // let seconds = (blackTimer%60)
-                // topTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
             } else {
 
                 if (blackTimer < 0){
@@ -247,9 +223,6 @@ export const onLoad = async (styleSheet, styleName) => {
                     timerWorker.terminate();
                     return
                 }
-
-                // let seconds = (blackTimer%60)
-                // bottomTimer_Dom.innerText = "Black --- " + Math.floor(blackTimer/60).toString() + (seconds < 10 ? ":0" : ":") + (blackTimer%60).toFixed(1)
             }
             blackTimer -= 0.1
         }

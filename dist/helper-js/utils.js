@@ -48,14 +48,14 @@ export function disconnectText(secondRemaining){
 }
 
 export function serverID(){
-    if (window.location.href.split(":")[1] == "//127.0.0.1"){
+    if (window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost"){
         return localServerID
     }
     return herokuServerID
 }
 
 export function socketID(){
-    if (window.location.href.split(":")[1] == "//127.0.0.1"){
+    if (window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost"){
         return localSocketID
     }
     return herokuSocketID
