@@ -1,22 +1,52 @@
 export class Cookie{
     
-    path="/"
-    pid=""
+    get pid(){
+        return this.getCookie("pid")
+    }
     
-    constructor(){
-        if(document.cookie.split(";")[0] && document.cookie.split(";")[0]!="pid=") {
-            this.pid=parseInt(document.cookie.split(";")[0].split("=")[1])
-        }
-        if(document.cookie.split(";")[1]) {
-            this.path=document.cookie.split(";")[1].split("=")[1]
-        }
+    set pid(v){
+        document.cookie = `pid=${v};path="/"`
+    }
+    
+    get sound(){
+        return this.getCookie("sound")
     }
 
-    setCookie(){
-        document.cookie = this.getCookie();
+    set sound(v){
+        document.cookie = `sound=${v};path="/"`
     }
 
-    getCookie(){
-        return "pid="+this.pid+";"+" path="+this.path+";"
+    get style(){
+        return this.getCookie("style")
+    }
+    
+    set style(v){
+        document.cookie = `style=${v};path="/"`
+    }
+
+    getCookie(cookieName){
+        let cookies = document.cookie.split("; ")
+        for (let i = 0; i < cookies.length; i++){
+            let [elName, elValue] = cookies[i].split("=")
+            console.log(elName, elValue, elName==cookieName)
+            if (elName == cookieName) {
+                return elValue;
+            }
+        }
+    }
+}
+
+export const cookieInit = () => {
+    if (!globalThis.cookie) globalThis.cookie = new Cookie()
+    return true;
+}
+
+export const initAndGetSound = () => {
+    cookieInit();
+    let currentSound = globalThis.cookie.sound
+    if (currentSound === undefined || currentSound === "true") {
+        return true
+    } else {
+        return false;
     }
 }

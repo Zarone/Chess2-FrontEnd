@@ -1,8 +1,26 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import * as ReactDOM from "react-dom";
-import Header from "./header";
+import Header from "./components/header"
+import SettingsMenu from "./components/settingsMenu";
+import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
 
 export default function HomePage(props){
+
+    const [customStyle, setCustomStyle] = useState((cookieInit() && globalThis.cookie.style) || "oat")
+    const [soundOn, setSoundToggle] = useState(initAndGetSound())
+
+    
+    useEffect(()=>{
+        globalThis.cookie.style = customStyle
+        console.log(globalThis.cookie.style)
+    }, [customStyle])
+
+    useEffect(()=>{
+        globalThis.cookie.sound = soundOn
+        console.log(globalThis.cookie.sound)
+    }, [soundOn])
+
+
     return <React.Fragment>
     <script src="../dist/foam-bin.js"></script>
     <Header />
@@ -21,7 +39,9 @@ export default function HomePage(props){
                     <div className="col-lg-5 pt-5">
                         <div className="container custom-bg-tertiary rounded pt-3 pb-3">
                             <div><p className="h2 text-center" id="rooms-count">Loading room count...</p></div>
+                            
                             <h2>Quick Play</h2>
+
                             <div className="d-grid">
                                 <button type="button" id="raw-join" className="btn btn-primary btn-block">Play (un-timed)</button>
                                 <p>
@@ -34,6 +54,7 @@ export default function HomePage(props){
                                     Press this button if you just want to jump into a timed online game!
                                 </p>
                             </div>
+
                             <div>
                                 <foam className="chess2.GameConfigView" of="chess2.GameConfig"></foam>
                                 <p>
@@ -41,6 +62,17 @@ export default function HomePage(props){
                                     less likely to join someone else's game by accident.
                                 </p>
                             </div>
+                            
+                            <h2 className="mt-5">Settings</h2>
+                            <div>
+                                <SettingsMenu 
+                                    customStyle={customStyle} 
+                                    setCustomStyle={setCustomStyle} 
+                                    soundOn={soundOn} 
+                                    setSoundToggle={setSoundToggle}
+                                />
+                            </div>
+
                         </div>
                     </div>
                 </div>

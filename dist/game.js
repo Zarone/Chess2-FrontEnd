@@ -20,9 +20,9 @@ export const onLoad = async (styleSheet, styleName) => {
 
     let finalTimeLimit = 100 * 60;
 
-    let cookie = new Cookie();
+    if (!globalThis.cookie) globalThis.cookie = new Cookie();
 
-    let playerID = parseInt(cookie.pid)
+    let playerID = parseInt(globalThis.cookie.pid)
 
     let gameOverModal_Dom = document.getElementById("myModal")
     let modalHeading_Dom = document.getElementById("modal-heading")
@@ -148,9 +148,8 @@ export const onLoad = async (styleSheet, styleName) => {
     socket.on('player', (playerInfo)=>{
 
         playerID = playerInfo.pid;
-        if (cookie.pid !== playerID){
-            cookie.pid = playerID.toString();
-            cookie.setCookie()
+        if (globalThis.cookie.pid !== playerID){
+            globalThis.cookie.pid = playerID.toString();
         }
 
         roomID = playerInfo.roomID
@@ -285,9 +284,8 @@ export const onLoad = async (styleSheet, styleName) => {
     socket.on("partialReconnect", playerInfo=>{
 
         playerID = playerInfo.pid;
-        if (cookie.pid !== playerID){
-            cookie.pid = playerID.toString();
-            cookie.setCookie()
+        if (globalThis.cookie.pid !== playerID){
+            globalThis.cookie.pid = playerID.toString();
         }
 
         roomID = playerInfo.roomID

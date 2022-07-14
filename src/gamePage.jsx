@@ -1,10 +1,11 @@
 import React, { useState } from "react"
 import * as ReactDOM from "react-dom";
-import GameBoard from "./gameBoard"
-import Header from "./header"
+import GameBoard from "./components/gameBoard"
+import Header from "./components/header"
+import { cookieInit } from "../dist/helper-js/cookieManager"
 
 function GamePage(props) {
-    const [customStyle, setCustomStyle] = useState("oat");
+    const [customStyle, setCustomStyle] = useState((cookieInit() && globalThis.cookie.style) || "oat");
 
     return <React.Fragment>
         <Header />

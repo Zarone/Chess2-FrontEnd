@@ -16,8 +16,7 @@ export class GameLauncher {
 
         let {roomID, friendRoom, timeLimit} = getQuerystring()
         this.game.setState({ roomID, friendRoom, timeLimit });
-        let cookie = new Cookie();
-        this.game.setState({ cookie, playerID: parseInt(cookie.pid) });
+        this.game.setState({ cookie: globalThis.cookie, playerID: parseInt(globalThis.cookie.pid) });
         
         // // Bind properties
         // ;[
