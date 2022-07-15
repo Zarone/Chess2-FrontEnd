@@ -11,7 +11,8 @@ export class GameLauncher {
 
         // default values
         this.game.setState({
-            currentTurn: 'Not Started'
+            currentTurn: 'Not Started',
+            reversed: false,
         });
 
         let {roomID, friendRoom, timeLimit} = getQuerystring()

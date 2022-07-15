@@ -27,4 +27,12 @@ export class Game {
         this.events.emit(joinTopicName('state', k), v);
         console.log('going to emit', joinTopicName('state', k), v)
     }
+
+    get (k) {
+        return this.state[k];
+    }
+
+    // Shortcuts for event emitter access
+    on (...a) { return this.events.on(...a); }
+    emit (...a) { return this.events.emit(...a); }
 }

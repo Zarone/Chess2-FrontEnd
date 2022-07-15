@@ -24,7 +24,13 @@ export class ChessBoard {
     draggingPieceHeight = null
     draggingPieceDom = null
 
-    isWhite = undefined
+    // IDEA: install all game.state properties w/ Object.defineProperty
+    set isWhite (v) {
+        this.game.set('isWhite', v);
+    }
+    get isWhite() {
+        return this.game.get('isWhite');
+    }
 
     rookActiveWhite = false;
     rookActiveBlack = false;

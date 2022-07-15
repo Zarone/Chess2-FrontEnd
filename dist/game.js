@@ -13,6 +13,7 @@ import { Rook } from "./pieces-js/Rook.js";
 import { Position } from "./helper-js/board.js"
 import { GameLauncher } from "./game/GameLauncher.js";
 import { DOMPlugin } from "./game/DOMPlugin.js";
+import { MultiplayerPlugin } from "./game/MultiplayerPlugin.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -40,40 +41,17 @@ export const onLoad = async (styleSheet, styleName) => {
 
     let socket = io(socketID())
 
-    let disconnectTimer = DISCONNECT_TIMER_START
-    socket.on("disconnect", () => {
-        gameOverModal.toggle()
-        disconnectTimer = DISCONNECT_TIMER_START
-        game.events.emit('request.gameOverModal', disconnectText(disconnectTimer));
-
-        let timer = setInterval(()=>{
-            let text;
-            if (disconnectTimer < 0){
-                text = LOSE_TEXT
-            } else {
-                disconnectTimer -= 1;
-                text = disconnectText(disconnectTimer)
-            }
-            game.events.emit('request.gameOverModal', text);
-        }, 1000)
-    })
-
     const launcher = new GameLauncher({ debug: true });
     launcher.init();
     launcher.install(new DOMPlugin());
+    launcher.install(new MultiplayerPlugin({ socket }));
 
     const game = launcher.game;
 
-    socket.emit('joined', {roomID, friendRoom: friendRoom == "true" ? true : false, playerID, timeLimit});
-
-    socket.on("maximumPlayers", ()=>{
-        game.events.emit('request.gameOverModal',
-            "Maximum players on server. Please try again later.");
-    })
-
-    socket.on("fullRoom", ()=>{
-        game.events.emit('request.gameOverModal', "The room you tried to join is full.");
-    })
+    // === TEMPORARY: update variables used by unmigrated code ===
+    game.on('state.roomID', (_, v) => roomID = v);
+    game.on('state.playerID', (_, v) => playerID = v);
+    // === END TEMPORARY ===
 
     let chessBoard = new ChessBoard(
         game,
@@ -104,14 +82,13 @@ export const onLoad = async (styleSheet, styleName) => {
     let topTimer_Dom = document.getElementById("timer-top")
     let bottomTimer_Dom = document.getElementById("timer-bottom")
     let reversedPointer = { 
-        _reversed: false,
         get reversed(){
-            return this._reversed;
+            return game.get('reversed');
         },
         set reversed(v){
             console.log("set reversed", v)
-            this._reversed = v;
-            if (flipBoard && chessBoard) flipBoard(chessBoard.isWhite);
+            game.set('reversed', v);
+            // if (flipBoard && chessBoard) flipBoard(chessBoard.isWhite);
         }
     }
 
@@ -144,22 +121,6 @@ export const onLoad = async (styleSheet, styleName) => {
             game.elements["board-container"].style.flexDirection = ""
         }
     }
-
-    socket.on('player', (playerInfo)=>{
-
-        playerID = playerInfo.pid;
-        if (globalThis.cookie.pid !== playerID){
-            globalThis.cookie.pid = playerID.toString();
-        }
-
-        roomID = playerInfo.roomID
-        roomID_Dom.innerText = "Room ID: " + playerInfo.roomID
-
-        chessBoard.isWhite = playerInfo.isWhite
-        
-        flipBoard(playerInfo.isWhite)
-
-    })
 
     socket.on("twoPlayers", (args)=>{
         if (roomID == args.thisRoomID){

@@ -29,12 +29,15 @@ export class DOMPlugin {
         })
 
         game.events.on('state.roomID', (_, roomID) => {
-            game.elements['roomID'].innerText = roomID;
+            game.elements['roomID'].innerText = 'Room ID: ' + roomID;
         })
 
         game.events.on('state.currentTurn', (_, currentTurn) => {
             this.updateTurnDOM(game, currentTurn);
         })
+
+        game.events.on('state.playerInfo', this.flipBoard.bind(this));
+        game.events.on('state.reversed', this.flipBoard.bind(this));
     }
 
     updateTurnDOM (game, currentTurn) {
@@ -67,6 +70,24 @@ export class DOMPlugin {
             turn_Dom.innerText = "Turn: " + currentTurn
         } else {
             turn_Dom.innerText = "Turn: " + currentTurn + " - Double Click Tile to Stop"
+        }
+    }
+
+    flipBoard () {
+        const isWhite = ! game.state.playerInfo || game.state.playerInfo.isWhite;
+        const reversed = game.state.reversed;
+        if ((!isWhite && !reversed) || (isWhite && reversed)){
+            game.elements["jail-1"].style.flexWrap = "wrap-reverse"
+            game.elements["jail-2"].style.flexWrap = "wrap-reverse"
+            game.elements["chess-board"].style.flexWrap = "wrap-reverse"
+            game.elements["chess-board"].style.flexDirection = "row-reverse"
+            game.elements["board-container"].style.flexDirection = "row-reverse"
+        } else {
+            game.elements["jail-1"].style.flexWrap = ""
+            game.elements["jail-2"].style.flexWrap = ""
+            game.elements["chess-board"].style.flexWrap = ""
+            game.elements["chess-board"].style.flexDirection = ""
+            game.elements["board-container"].style.flexDirection = ""
         }
     }
 }
