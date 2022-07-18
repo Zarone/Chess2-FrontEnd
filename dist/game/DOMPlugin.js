@@ -106,8 +106,8 @@ export class DOMPlugin {
         // Note: this is effectively "( !isWhite XOR reversed )"
         const flipped = isWhite ? reversed : ! reversed;
         
-        const whiteTimerDom = game.elements[flipped ? 'timer-bottom' : 'timer-top'];
-        const blackTimerDom = game.elements[flipped ? 'timer-top' : 'timer-bottom'];
+        const whiteTimerDom = game.elements[flipped ? 'timer-top' : 'timer-bottom'];
+        const blackTimerDom = game.elements[flipped ? 'timer-bottom' : 'timer-top'];
 
         whiteTimerDom.innerText = 'White --- ' + this.toTimerString_(whiteTimer);
         blackTimerDom.innerText = 'Black --- ' + this.toTimerString_(blackTimer);
