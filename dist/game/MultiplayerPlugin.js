@@ -58,22 +58,17 @@ export class MultiplayerPlugin {
             game.set('playerInfo', playerInfo);
         });
 
-        // socket.on("twoPlayers", (args)=>{
-        //     if (game.get('roomID') == args.thisRoomID){
+        socket.on("twoPlayers", (args)=>{
+            if (game.get('roomID') == args.thisRoomID){
 
-        //         let finalTimeLimit = args.finalTimeLimit*60;
-        //         game.set('finalTimeLimit', finalTimeLimit);
-        //         game.set('whiteTimer', finalTimeLimit);
-        //         game.set('blackTimer', finalTimeLimit);
+                let finalTimeLimit = args.finalTimeLimit*60;
+                game.set('finalTimeLimit', finalTimeLimit);
+                game.set('whiteTimer', finalTimeLimit);
+                game.set('blackTimer', finalTimeLimit);
 
-        //         whiteTimer = finalTimeLimit;
-        //         blackTimer = finalTimeLimit;
-
-        //         game.set('currentTurn', 'White');
-
-        //         displayTimer()
-        //     }
-        // })
+                game.set('currentTurn', 'White');
+            }
+        })
 
     }
 }

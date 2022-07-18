@@ -9,6 +9,8 @@ export class DOMPlugin {
         'chess-board',
         'board-container',
         'turn',
+        'timer-top',
+        'timer-bottom',
     ];
 
     install (game) {
@@ -36,8 +38,14 @@ export class DOMPlugin {
             this.updateTurnDOM(game, currentTurn);
         })
 
+        // Bind properties that affect board orientation
         game.events.on('state.playerInfo', this.flipBoard.bind(this));
         game.events.on('state.reversed', this.flipBoard.bind(this));
+
+        // Bind properties that affect the timer
+        ;['whiteTimer', 'blackTimer', 'reversed'].forEach(k => {
+            game.events.on('state.' + k, this.displayTimer.bind(this));
+        })
     }
 
     updateTurnDOM (game, currentTurn) {
@@ -89,5 +97,26 @@ export class DOMPlugin {
             game.elements["chess-board"].style.flexDirection = ""
             game.elements["board-container"].style.flexDirection = ""
         }
+    }
+
+    displayTimer () {
+        // ???: is it possible to add getter logic here if ever needed?
+        const { isWhite, whiteTimer, blackTimer, reversed } = game.state;
+
+        // Note: this is effectively "( !isWhite XOR reversed )"
+        const flipped = isWhite ? reversed : ! reversed;
+        
+        const whiteTimerDom = game.elements[flipped ? 'timer-bottom' : 'timer-top'];
+        const blackTimerDom = game.elements[flipped ? 'timer-top' : 'timer-bottom'];
+
+        whiteTimerDom.innerText = 'White --- ' + this.toTimerString_(whiteTimer);
+        blackTimerDom.innerText = 'Black --- ' + this.toTimerString_(blackTimer);
+    }
+
+    toTimerString_ (val) {
+        const seconds = val % 60;
+        return Math.floor(val/60).toString() +
+            (seconds < 10 ? ':0' : ':') +
+            seconds.toFixed(1)
     }
 }

@@ -14,6 +14,7 @@ import { Position } from "./helper-js/board.js"
 import { GameLauncher } from "./game/GameLauncher.js";
 import { DOMPlugin } from "./game/DOMPlugin.js";
 import { MultiplayerPlugin } from "./game/MultiplayerPlugin.js";
+import { TimerPlugin } from "./game/TimerPlugin.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -44,6 +45,7 @@ export const onLoad = async (styleSheet, styleName) => {
     const launcher = new GameLauncher({ debug: true });
     launcher.init();
     launcher.install(new DOMPlugin());
+    launcher.install(new TimerPlugin());
     launcher.install(new MultiplayerPlugin({ socket }));
 
     const game = launcher.game;
@@ -122,20 +124,21 @@ export const onLoad = async (styleSheet, styleName) => {
         }
     }
 
-    socket.on("twoPlayers", (args)=>{
-        if (roomID == args.thisRoomID){
+    // socket.on("twoPlayers", (args)=>{
+    //     if (roomID == args.thisRoomID){
 
-            finalTimeLimit = args.finalTimeLimit*60;
+    //         finalTimeLimit = args.finalTimeLimit*60;
 
-            whiteTimer = finalTimeLimit;
-            blackTimer = finalTimeLimit;
+    //         whiteTimer = finalTimeLimit;
+    //         blackTimer = finalTimeLimit;
 
-            chessBoard.currentTurn = "White"
+    //         chessBoard.currentTurn = "White"
 
-            displayTimer()
-        }
-    })
+    //         displayTimer()
+    //     }
+    // })
 
+    /*
     const timerWorker = new Worker("./helper-js/timerWorker.js")
 
     timerWorker.onmessage = () => {
@@ -189,6 +192,7 @@ export const onLoad = async (styleSheet, styleName) => {
 
         displayTimer()
     }
+    */
 
     socket.on('gameOver', ({room, id})=>{
         if (room == roomID){
