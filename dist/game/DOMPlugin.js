@@ -30,6 +30,10 @@ export class DOMPlugin {
             game.elements['modal-heading'].innerText = message;
         })
 
+        game.events.on('request.clearModals', () => {
+            gameOverModal.hide();
+        })
+
         game.events.on('state.roomID', (_, roomID) => {
             game.elements['roomID'].innerText = 'Room ID: ' + roomID;
         })
@@ -50,6 +54,12 @@ export class DOMPlugin {
         game.on('request.admitDefeat', (_, { message }) => {
             game.emit('request.gameOverModal', message);
         });
+
+        game.on('launch', this.launch.bind(this));
+    }
+
+    launch () {
+        this.displayTimer();
     }
 
     updateTurnDOM (game, currentTurn) {

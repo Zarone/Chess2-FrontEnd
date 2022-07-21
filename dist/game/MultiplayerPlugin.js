@@ -1,4 +1,4 @@
-import { DISCONNECT_TIMER_START, socketID } from "../helper-js/utils";
+import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT } from "../helper-js/utils";
 
 export class MultiplayerPlugin {
     constructor ({ socket }) {
@@ -70,6 +70,18 @@ export class MultiplayerPlugin {
             }
         })
 
+        socket.on('gameOver', ({ room, id }) => {
+            // Guard clause: room should match
+            if ( room != game.get('roomID') ) return;
+            game.events.emit(
+                'request.gameOverModal',
+                game.get('playerID') == id ? WIN_TEXT : LOSE_TEXT,
+            );
+        })
+
+        // ???: Maybe add a ReconnectionPlugin
+        this.installReconnection(game);
+
         game.on('request.admitDefeat', () => {
             socket.emit('admitDefeat');
         });
@@ -77,6 +89,72 @@ export class MultiplayerPlugin {
         game.on('request.commitMove', (_, playerMoveInfo) => {
             socket.emit('makeMove', playerMoveInfo);
         })
+    }
 
+    installReconnection () {
+        let socket = this.socket || (this.socket = io(socketID()));
+
+        socket.on('partialReconnect', playerInfo => {
+            game.set('playerID', playerInfo.pid);
+
+            if ( globalThis.cookie.pid !== game.get('playerID') ) {
+                globalThis.cookie.pid = game.get('playerID').toString();
+            }
+            
+            game.set('roomID', playerInfo.roomID);
+            game.set('isWhite', playerInfo.isWhite);
+            game.set('finalTimeLimit', playerInfo.timeLimit * 60);
+        });
+
+        socket.on("needReconnectData", args => {
+            const { roomID, playerID } = game.state;
+            if ( roomID != args.roomID || playerID == args.playerID ) return;
+            game.emit('request.reconnectData');
+            // if (roomID == args.roomID && playerID != args.playerID){
+            //     console.log("EMITTING DATA FOR RECONNECT, CURRENT BOARD: ", chessBoard.boardLayout)
+            //     socket.emit("reconnectData", {
+            //         layout: Object.keys(chessBoard.boardLayout).map((val, index)=>{
+            //             return {
+            //                 position: chessBoard.boardLayout[val].position.id, 
+            //                 isWhite: chessBoard.boardLayout[val].isWhite, 
+            //                 type: chessBoard.boardLayout[val].constructor.name, 
+            //                 hasBanana: chessBoard.boardLayout[val].hasBanana,
+            //                 key: val
+            //             }
+            //         }), 
+            //         rookActiveWhite: chessBoard.rookActiveWhite,
+            //         rookActiveBlack: chessBoard.rookActiveBlack,
+            //         currentTurn: chessBoard.currentTurn
+            //     })
+            // }
+        })
+
+        game.on('request.sendReconnectData', (_, data) => {
+            socket.emit('reconnectData', data);
+        })
+
+
+        socket.on("establishReconnection", (args)=>{
+            
+            console.log("RECONNECT DATA: ", args)
+
+            game.emit('request.clearModals');
+
+            const { roomID, playerID } = game.state;
+            if ( args.roomID != roomID || args.pid == playerID ) return;
+
+            game.emit('request.setBoardLayout', args);
+
+            const { finalTimeLimit, currentTurn } = game.state;
+            
+            game.set('whiteTimer', finalTimeLimit - args.timeWhite);
+            game.set('blackTimer', finalTimeLimit - args.timeBlack);
+
+            if (finalTimeLimit <= 60*60){
+                if ( currentTurn.startsWith('Black') ) blackTimer -= args.timeSinceLastMove;
+                if ( currentTurn.startsWith('White') ) whiteTimer -= args.timeSinceLastMove;
+            } 
+
+        })
     }
 }
