@@ -15,6 +15,7 @@ import { GameLauncher } from "./game/GameLauncher.js";
 import { DOMPlugin } from "./game/DOMPlugin.js";
 import { MultiplayerPlugin } from "./game/MultiplayerPlugin.js";
 import { TimerPlugin } from "./game/TimerPlugin.js";
+import { DOMBoardPlugin } from "./game/DOMBoardPlugin.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -45,6 +46,7 @@ export const onLoad = async (styleSheet, styleName) => {
     const launcher = new GameLauncher({ debug: true });
     launcher.init();
     launcher.install(new DOMPlugin());
+    launcher.install(new DOMBoardPlugin({ styleSheet, styleName }));
     launcher.install(new TimerPlugin());
     launcher.install(new MultiplayerPlugin({ socket }));
 
@@ -55,24 +57,7 @@ export const onLoad = async (styleSheet, styleName) => {
     game.on('state.playerID', (_, v) => playerID = v);
     // === END TEMPORARY ===
 
-    let chessBoard = new ChessBoard(
-        game,
-        (moveInfo)=>{
-
-            // TODO: MoveInfo class to encapsulate serialize/deserialize logic
-            if ( moveInfo.toPos ) moveInfo.toPos = moveInfo.toPos?.id || moveInfo.toPos;
-            if ( moveInfo.fromPos ) moveInfo.fromPos = moveInfo.fromPos?.id || moveInfo.fromPos;
-
-            console.log('EMIT', moveInfo)
-            if (moveInfo.newTurn === undefined) debugger
-
-            // launcher.events.emit('move.end', moveInfo);
-
-            game.emit("request.commitMove", {player: playerID, room: roomID, moveInfo})
-        },
-        game.emit.bind(game, 'request.admitDefeat', { message: 'LOSE_TEXT' }),
-        styleSheet, styleName
-    )
+    let chessBoard = game.plugins['DOMBoardPlugin'].board;
 
     let whiteTimer = finalTimeLimit;
     let blackTimer = finalTimeLimit;

@@ -10,6 +10,8 @@ export class Game {
         this.events = new Emitter();
 
         this.state = {};
+
+        this.plugins = {};
     }
     launch () {
         this.events.emit('launch');
