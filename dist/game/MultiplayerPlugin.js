@@ -70,5 +70,13 @@ export class MultiplayerPlugin {
             }
         })
 
+        game.on('request.admitDefeat', () => {
+            socket.emit('admitDefeat');
+        });
+
+        game.on('request.commitMove', (_, playerMoveInfo) => {
+            socket.emit('makeMove', playerMoveInfo);
+        })
+
     }
 }

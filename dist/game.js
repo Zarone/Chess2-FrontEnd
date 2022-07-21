@@ -68,14 +68,9 @@ export const onLoad = async (styleSheet, styleName) => {
 
             // launcher.events.emit('move.end', moveInfo);
 
-            socket.emit("makeMove", {player: playerID, room: roomID, moveInfo})
+            game.emit("request.commitMove", {player: playerID, room: roomID, moveInfo})
         },
-        ()=>{
-            socket.emit("admitDefeat")
-            gameOverModal.toggle()
-            console.log(modalHeading_Dom)
-            modalHeading_Dom.innerText = LOSE_TEXT
-        },
+        game.emit.bind(game, 'request.admitDefeat', { message: 'LOSE_TEXT' }),
         styleSheet, styleName
     )
 

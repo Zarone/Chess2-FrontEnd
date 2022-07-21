@@ -46,6 +46,10 @@ export class DOMPlugin {
         ;['whiteTimer', 'blackTimer', 'reversed'].forEach(k => {
             game.events.on('state.' + k, this.displayTimer.bind(this));
         })
+
+        game.on('request.admitDefeat', (_, { message }) => {
+            game.emit('request.gameOverModal', message);
+        });
     }
 
     updateTurnDOM (game, currentTurn) {
