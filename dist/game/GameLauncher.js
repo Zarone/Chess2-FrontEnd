@@ -1,6 +1,8 @@
 import { Cookie } from "../helper-js/cookieManager.js";
 import { getQuerystring } from "../helper-js/utils.js"
 import { Game } from "./Game.js";
+
+import { Events } from "./Events"
 export class GameLauncher {
     constructor (config) {
         this.config = config;
@@ -29,13 +31,13 @@ export class GameLauncher {
         // })
     }
     install (plugin) {
-        this.game.events.emit('init.plugin.preInstallHook', plugin);
+        this.game.events.emit(Events.init.plugin.PRE_INSTALL_HOOK, plugin);
 
         // TODO: Move this install step to a Plugin base class
         this.game.plugins[plugin.constructor.name] = plugin;
 
         plugin.install(this.game);
-        this.game.events.emit('init.plugin.postInstallHook', plugin);
+        this.game.events.emit(Events.init.plugin.POST_INSTALL_HOOK, plugin);
     }
     launch() {
         this.game.launch();

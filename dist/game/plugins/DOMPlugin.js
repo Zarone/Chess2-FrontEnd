@@ -1,4 +1,9 @@
-export class DOMPlugin {
+
+import { PluginBase } from "./BasePlugin"
+
+import { Events } from "../Events"
+
+export class DOMPlugin extends PluginBase {
 
     static elements = [
         { name: 'modal', id: 'myModal' },
@@ -14,6 +19,7 @@ export class DOMPlugin {
     ];
 
     install (game) {
+        super.install(game)
         game.elements = {};
         for ( let o of DOMPlugin.elements ) {
             // Let 'string' be a shortcut for { id: 'string' }
@@ -25,37 +31,37 @@ export class DOMPlugin {
         const gameOverModal = 
             new bootstrap.Modal(game.elements['modal'], {keyboard: false});
 
-        game.events.on('request.gameOverModal', (_, message) => {
+        this.on(Events.request.GAME_OVER_MODAL, (_, message) => {
             gameOverModal.show();
             game.elements['modal-heading'].innerText = message;
         })
 
-        game.events.on('request.clearModals', () => {
+        this.on(Events.request.CLEAR_MODALS, () => {
             gameOverModal.hide();
         })
 
-        game.events.on('state.roomID', (_, roomID) => {
+        this.on(Events.state.ROOM_ID, (_, roomID) => {
             game.elements['roomID'].innerText = 'Room ID: ' + roomID;
         })
 
-        game.events.on('state.currentTurn', (_, currentTurn) => {
+        this.on(Events.state.CURRENT_TURN, (_, currentTurn) => {
             this.updateTurnDOM(game, currentTurn);
         })
 
         // Bind properties that affect board orientation
-        game.events.on('state.isWhite', this.flipBoard.bind(this));
-        game.events.on('state.reversed', this.flipBoard.bind(this));
+        this.on(Events.state.IS_WHITE, this.flipBoard.bind(this));
+        this.on(Events.state.REVERSED, this.flipBoard.bind(this));
 
         // Bind properties that affect the timer
-        ;['whiteTimer', 'blackTimer', 'reversed'].forEach(k => {
-            game.events.on('state.' + k, this.displayTimer.bind(this));
+        ;[Events.state.WHITE_TIMER, Events.state.BLACK_TIMER, Events.state.REVERSED].forEach(k => {
+            this.on(k, this.displayTimer.bind(this));
         })
 
-        game.on('request.admitDefeat', (_, { message }) => {
-            game.emit('request.gameOverModal', message);
+        this.on(Events.request.ADMIT_DEFEAT, (_, { message }) => {
+            this.emit(Events.request.GAME_OVER_MODAL, message);
         });
 
-        game.on('launch', this.launch.bind(this));
+        this.on(Events.LAUNCH, this.launch.bind(this));
     }
 
     launch () {

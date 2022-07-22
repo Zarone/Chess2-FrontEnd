@@ -10,18 +10,38 @@
  *   emitter.emit('a.b.c.d', 'hi!'); // outputs: 'ev' { crumbs: 'd' } ['hi!']
  */
 
+import {Event} from "./Events"
+
 export class Emitter {
     constructor () {
         this.listeners = {};
     }
 
     on (topic, listener) {
-        if ( ! this.listeners['.' + topic] ) this.listeners['.' + topic] = [];
-        this.listeners['.' + topic].push(listener);
+
+        let topicStr;
+        if (topic instanceof Event){
+            topicStr = '.' + topic.id;
+        } else {
+            debugger
+            console.error(`Please use Event object for emit. You provided ${topic} of type ${typeof topic}.`)
+            topicStr = '.' + topic;
+        }
+
+        if ( ! this.listeners[topicStr] ) this.listeners[topicStr] = [];
+        this.listeners[topicStr].push(listener);
     }
 
     emit (topic, ...args) {
-        const crumbs = topic.split('.');
+
+        let crumbs;
+        if (topic instanceof Event){
+            crumbs = topic.id.split('.');
+        } else {
+            debugger
+            console.error(`Please use Event object for emit. You provided ${topic} of type ${typeof topic}.`)
+            crumbs = topic.split('.')
+        }
 
         let prefix = '';
         while ( crumbs.length > 0 ) {

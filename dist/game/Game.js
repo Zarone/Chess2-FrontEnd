@@ -1,4 +1,7 @@
 import { Emitter } from "./Emitter.js";
+
+import { Event, Events } from "./Events"
+
 export class Game {
     constructor () {
 
@@ -14,7 +17,7 @@ export class Game {
         this.plugins = {};
     }
     launch () {
-        this.events.emit('launch');
+        this.events.emit(Events.LAUNCH);
     }
 
     setState (obj) {
@@ -26,7 +29,7 @@ export class Game {
     set (k, v) {
         this.state[k] = v;
         const joinTopicName = (...a) => a.join('.');
-        this.events.emit(joinTopicName('state', k), v);
+        this.events.emit(new Event(joinTopicName('state', k)), v);
         
         // I just don't need this to log every frame
         if (k=="whiteTimer" || k=="blackTimer") return;

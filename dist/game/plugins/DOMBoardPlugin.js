@@ -1,22 +1,29 @@
-import { ChessBoard } from "../chess2";
-import { LOSE_TEXT } from "../helper-js/utils";
+import { ChessBoard } from "../../chess2";
+import { LOSE_TEXT } from "../../helper-js/utils";
 
 // Pieces
-import { Bear } from "../pieces-js/Bear.js";
-import { Elephant } from "../pieces-js/Elephant.js";
-import { FishQueen } from "../pieces-js/FishQueen.js";
-import { Monkey } from "../pieces-js/Monkey.js";
-import { Fish } from "../pieces-js/Fish.js";
-import { King } from "../pieces-js/King.js";
-import { Queen } from "../pieces-js/Queen.js";
-import { Rook } from "../pieces-js/Rook.js";
+import { Bear } from "../../pieces-js/Bear.js";
+import { Elephant } from "../../pieces-js/Elephant.js";
+import { FishQueen } from "../../pieces-js/FishQueen.js";
+import { Monkey } from "../../pieces-js/Monkey.js";
+import { Fish } from "../../pieces-js/Fish.js";
+import { King } from "../../pieces-js/King.js";
+import { Queen } from "../../pieces-js/Queen.js";
+import { Rook } from "../../pieces-js/Rook.js";
 
-export class DOMBoardPlugin {
+import { PluginBase } from "./BasePlugin"
+
+import { Events } from "../Events"
+
+export class DOMBoardPlugin extends PluginBase {
     constructor ({ styleSheet, styleName }) {
+        super();
         this.styleSheet = styleSheet;
         this.styleName = styleName;
     }
     install (game) {
+        super.install(game)
+        
         this.board = new ChessBoard(
             game,
             (moveInfo)=>{
@@ -30,20 +37,20 @@ export class DOMBoardPlugin {
 
                 // launcher.events.emit('move.end', moveInfo);
 
-                game.emit("request.commitMove", {
+                this.emit(Events.request.COMMIT_MOVE, {
                     player: game.get('playerID'),
                     room: game.get('roomID'),
                     moveInfo
                 })
             },
-            game.emit.bind(game, 'request.admitDefeat', { message: LOSE_TEXT }),
+            game.emit.bind(game, Events.request.ADMIT_DEFEAT, { message: LOSE_TEXT }),
             this.styleSheet, this.styleName
         )
 
-        game.on('launch', this.launch.bind(this));
+        this.on(Events.LAUNCH, this.launch.bind(this));
 
-        game.on('request.reconnectData', () => {
-            game.emit('request.sendReconnectData', {
+        this.on(Events.request.RECONNECT_DATA, () => {
+            this.emit(Events.request.SEND_RECONNECT_DATA, {
                 layout: Object.keys(this.board.boardLayout).map((val, index)=>{
                     return {
                         position: this.board.boardLayout[val].position.id, 
@@ -59,7 +66,7 @@ export class DOMBoardPlugin {
             });
         });
 
-        game.on('request.setBoardLayout', (_, args) => {
+        this.on(Events.request.SET_BOARD_LAYOUT, (_, args) => {
             const chessBoard = this.board;
 
             chessBoard.boardLayout = {};

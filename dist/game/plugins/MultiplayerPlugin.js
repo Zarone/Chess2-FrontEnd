@@ -1,18 +1,23 @@
-import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT } from "../helper-js/utils";
+import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT } from "../../helper-js/utils";
 
-export class MultiplayerPlugin {
+import { PluginBase } from "./BasePlugin"
+import { Events } from "../Events"
+
+export class MultiplayerPlugin extends PluginBase {
     constructor ({ socket }) {
+        super();
         this.socket = socket;
     }
 
     install (game) {
+        super.install(game)
 
         let socket = this.socket || (this.socket = io(socketID()));
 
         let disconnectTimer = DISCONNECT_TIMER_START;
         socket.on("disconnect", () => {
             disconnectTimer = DISCONNECT_TIMER_START
-            game.events.emit('request.gameOverModal', disconnectText(disconnectTimer));
+            this.emit(Events.request.GAME_OVER_MODAL, disconnectText(disconnectTimer));
 
             let timer = setInterval(()=>{
                 let text;
@@ -22,7 +27,7 @@ export class MultiplayerPlugin {
                     disconnectTimer -= 1;
                     text = disconnectText(disconnectTimer)
                 }
-                game.events.emit('request.gameOverModal', text);
+                this.emit(Events.request.GAME_OVER_MODAL, text);
             }, 1000)
         })
 
@@ -35,16 +40,16 @@ export class MultiplayerPlugin {
         socket.emit('joined', joinMessage);
 
         socket.on("maximumPlayers", ()=>{
-            game.events.emit('request.gameOverModal',
+            this.emit(Events.request.GAME_OVER_MODAL,
                 "Maximum players on server. Please try again later.");
         });
         socket.on("fullRoom", ()=>{
-            game.events.emit('request.gameOverModal', "The room you tried to join is full.");
+            this.emit(Events.request.GAME_OVER_MODAL, "The room you tried to join is full.");
         });
 
         socket.on('player', (playerInfo)=>{
             // ???: move to a playerInfo plugin
-            game.on('state.playerInfo', (_, playerInfo) => {
+            this.on(Events.state.PLAYER_INFO, (_, playerInfo) => {
                 game.set('playerID', playerInfo.pid);
 
                 if ( globalThis.cookie.pid !== playerInfo.pid ) {
@@ -73,8 +78,8 @@ export class MultiplayerPlugin {
         socket.on('gameOver', ({ room, id }) => {
             // Guard clause: room should match
             if ( room != game.get('roomID') ) return;
-            game.events.emit(
-                'request.gameOverModal',
+            this.emit(
+                Events.request.GAME_OVER_MODAL,
                 game.get('playerID') == id ? WIN_TEXT : LOSE_TEXT,
             );
         })
@@ -82,11 +87,11 @@ export class MultiplayerPlugin {
         // ???: Maybe add a ReconnectionPlugin
         this.installReconnection(game);
 
-        game.on('request.admitDefeat', () => {
+        this.on(Events.request.ADMIT_DEFEAT, () => {
             socket.emit('admitDefeat');
         });
 
-        game.on('request.commitMove', (_, playerMoveInfo) => {
+        this.on(Events.request.COMMIT_MOVE, (_, playerMoveInfo) => {
             socket.emit('makeMove', playerMoveInfo);
         })
     }
@@ -109,7 +114,7 @@ export class MultiplayerPlugin {
         socket.on("needReconnectData", args => {
             const { roomID, playerID } = game.state;
             if ( roomID != args.roomID || playerID == args.playerID ) return;
-            game.emit('request.reconnectData');
+            this.emit(Events.request.RECONNECT_DATA);
             // if (roomID == args.roomID && playerID != args.playerID){
             //     console.log("EMITTING DATA FOR RECONNECT, CURRENT BOARD: ", chessBoard.boardLayout)
             //     socket.emit("reconnectData", {
@@ -129,7 +134,7 @@ export class MultiplayerPlugin {
             // }
         })
 
-        game.on('request.sendReconnectData', (_, data) => {
+        this.on(Events.request.SEND_RECONNECT_DATA, (_, data) => {
             socket.emit('reconnectData', data);
         })
 
@@ -138,12 +143,12 @@ export class MultiplayerPlugin {
             
             console.log("RECONNECT DATA: ", args)
 
-            game.emit('request.clearModals');
+            this.emit(Events.request.CLEAR_MODALS);
 
             const { roomID, playerID } = game.state;
             if ( args.roomID != roomID || args.pid == playerID ) return;
 
-            game.emit('request.setBoardLayout', args);
+            this.emit(Events.request.SET_BOARD_LAYOUT, args);
 
             const { finalTimeLimit, currentTurn } = game.state;
             

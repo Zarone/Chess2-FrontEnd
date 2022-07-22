@@ -12,10 +12,11 @@ import { Queen } from "./pieces-js/Queen.js";
 import { Rook } from "./pieces-js/Rook.js";
 import { Position } from "./helper-js/board.js"
 import { GameLauncher } from "./game/GameLauncher.js";
-import { DOMPlugin } from "./game/DOMPlugin.js";
-import { MultiplayerPlugin } from "./game/MultiplayerPlugin.js";
-import { TimerPlugin } from "./game/TimerPlugin.js";
-import { DOMBoardPlugin } from "./game/DOMBoardPlugin.js";
+import { DOMPlugin } from "./game/plugins/DOMPlugin.js";
+import { MultiplayerPlugin } from "./game/plugins/MultiplayerPlugin.js";
+import { TimerPlugin } from "./game/plugins/TimerPlugin.js";
+import { DOMBoardPlugin } from "./game/plugins/DOMBoardPlugin.js";
+import { Events } from "./game/Events"
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -46,8 +47,8 @@ export const onLoad = async (styleSheet, styleName) => {
     const game = launcher.game;
 
     // === TEMPORARY: update variables used by unmigrated code ===
-    game.on('state.roomID', (_, v) => roomID = v);
-    game.on('state.playerID', (_, v) => playerID = v);
+    game.on(Events.state.ROOM_ID, (_, v) => roomID = v);
+    game.on(Events.state.PLAYER_ID, (_, v) => playerID = v);
     // === END TEMPORARY ===
 
     let chessBoard = game.plugins['DOMBoardPlugin'].board;

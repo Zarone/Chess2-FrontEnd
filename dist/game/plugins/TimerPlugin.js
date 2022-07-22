@@ -1,8 +1,14 @@
-export class TimerPlugin {
+import { PluginBase } from "./BasePlugin"
+
+import { Events } from "../Events"
+
+export class TimerPlugin extends PluginBase {
     install (game) {
+        super.install(game)
+        
         this.timerWorker = new Worker('../helper-js/timerWorker.js');
 
-        game.on('launch', () => {
+        this.on(Events.LAUNCH, () => {
             this.launch(game);
         })
     }
@@ -34,10 +40,10 @@ export class TimerPlugin {
 
             const timeLeft = game.get(this.timerProp_(turnPlayer));
             if ( timeLeft < 0 ) {
-                game.emit('admitDefeat');
+                this.emit(Events.request.ADMIT_DEFEAT);
 
                 // TODO: this should listen to the admitDefeat event
-                game.emit('request.gameOverModal',
+                this.emit(Events.request.GAME_OVER_MODAL,
                     "You Lost. Better Luck Next Time 😊");
 
                 this.terminate();
