@@ -16,6 +16,10 @@ export class Event {
     get(v){
         return new Event(`${this.id}.${v}`, true)
     }
+
+    toString() {
+        return this.id;
+    }
 }
 
 export const Events = {

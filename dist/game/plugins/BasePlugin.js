@@ -15,6 +15,14 @@ export class PluginBase {
         } else {
             topic.listeners.add(this.constructor.name)
         }
+
+        if ( this.constructor.apiVersion >= 1 ) {
+            if ( ! this.constructor.receives.includes(topic) ) {
+                throw new Error(`Received undeclared topic: ${topic} in ` +
+                    this.constructor.name);
+            }
+        }
+
         return this.game.events.on(topic, ...args); 
     }
     emit (topic, ...args) {
@@ -27,6 +35,14 @@ export class PluginBase {
         } else {
             topic.emitters.add(this.constructor.name)
         }
+
+        if ( this.constructor.apiVersion >= 1 ) {
+            if ( ! this.constructor.broadcasts.includes(topic) ) {
+                throw new Error(`Broadcasted undeclared topic: ${topic} in ` +
+                    this.constructor.name);
+            }
+        }
+
         return this.game.events.emit(topic, ...args); 
     }
 }

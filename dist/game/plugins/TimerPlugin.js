@@ -3,6 +3,18 @@ import { PluginBase } from "./BasePlugin"
 import { Events } from "../Events"
 
 export class TimerPlugin extends PluginBase {
+
+    static apiVersion = 1
+
+    static receives = [
+        Events.LAUNCH
+    ]
+
+    static broadcasts = [
+        Events.request.ADMIT_DEFEAT,
+        Events.request.GAME_OVER_MODAL,
+    ]
+
     install (game) {
         super.install(game)
         
