@@ -15,6 +15,20 @@ export class TimerPlugin extends PluginBase {
         Events.request.GAME_OVER_MODAL,
     ]
 
+    static reads = ['isWhite', 'currentTurn']
+    static writes = ['whiteTimer', 'blackTimer', 'finalTimeLimit']
+
+    static documentation = `
+        TimerPlugin decrements game state properties whiteTimer and blackTimer
+        on an interval. If finalTimeLimit is greater than an hour TimerPlugin
+        will halt (it is assumed that a time limit is not wanted).
+
+        Properties whiteTimer, blackTimer, and finalTimeLimit represent the
+        time in minutes as a non-integer value.
+
+        When a player runs out of time, they lose and the game ends.
+    `
+
     install (game) {
         super.install(game)
         
