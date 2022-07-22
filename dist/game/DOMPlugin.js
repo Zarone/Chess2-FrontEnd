@@ -43,7 +43,7 @@ export class DOMPlugin {
         })
 
         // Bind properties that affect board orientation
-        game.events.on('state.playerInfo', this.flipBoard.bind(this));
+        game.events.on('state.isWhite', this.flipBoard.bind(this));
         game.events.on('state.reversed', this.flipBoard.bind(this));
 
         // Bind properties that affect the timer
@@ -96,7 +96,7 @@ export class DOMPlugin {
     }
 
     flipBoard () {
-        const isWhite = ! game.state.playerInfo || game.state.playerInfo.isWhite;
+        const isWhite = (game.state.isWhite===undefined)? true : game.state.isWhite;
         const reversed = game.state.reversed;
         if ((!isWhite && !reversed) || (isWhite && reversed)){
             game.elements["jail-1"].style.flexWrap = "wrap-reverse"
