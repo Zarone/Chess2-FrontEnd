@@ -17,6 +17,7 @@ import { MultiplayerPlugin } from "./game/plugins/MultiplayerPlugin.js";
 import { TimerPlugin } from "./game/plugins/TimerPlugin.js";
 import { DOMBoardPlugin } from "./game/plugins/DOMBoardPlugin.js";
 import { Events } from "./game/Events"
+import { MoveInfo } from "./game/net/MoveInfo.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -66,16 +67,13 @@ export const onLoad = async (styleSheet, styleName) => {
 
     socket.on("registeredMove", args=>{
         console.log('REGISTER', args)
-        // TODO: MoveInfo class to encapsulate serialize/deserialize logic
-        if ( args.moveInfo.toPos )
-            args.moveInfo.toPos = new Position(args.moveInfo.toPos);
-        if ( args.moveInfo.fromPos )
-            args.moveInfo.fromPos = new Position(args.moveInfo.fromPos);
+
+        const moveInfo = MoveInfo.deserialize(args.moveInfo);
 
         if (roomID == args.room && playerID != args.player){
-            if (chessBoard.validateMove(args.moveInfo.fromPos, args.moveInfo.toPos, args.moveInfo.newTurn)){
-                chessBoard.makePreValidatedMove(args.moveInfo.fromPos, args.moveInfo.toPos);
-                chessBoard.currentTurn = args.moveInfo.newTurn
+            if (chessBoard.validateMove(moveInfo.fromPos, moveInfo.toPos, moveInfo.newTurn)){
+                chessBoard.makePreValidatedMove(moveInfo.fromPos, moveInfo.toPos);
+                chessBoard.currentTurn = moveInfo.newTurn
             } else {
                 console.error("move is not allowed")
             }

@@ -14,6 +14,7 @@ import { Rook } from "../../pieces-js/Rook.js";
 import { PluginBase } from "./BasePlugin"
 
 import { Events } from "../Events"
+import { MoveInfo } from "../net/MoveInfo";
 
 export class DOMBoardPlugin extends PluginBase {
     constructor ({ styleSheet, styleName }) {
@@ -27,11 +28,6 @@ export class DOMBoardPlugin extends PluginBase {
         this.board = new ChessBoard(
             game,
             (moveInfo)=>{
-
-                // TODO: MoveInfo class to encapsulate serialize/deserialize logic
-                if ( moveInfo.toPos ) moveInfo.toPos = moveInfo.toPos?.id || moveInfo.toPos;
-                if ( moveInfo.fromPos ) moveInfo.fromPos = moveInfo.fromPos?.id || moveInfo.fromPos;
-
                 console.log('EMIT', moveInfo)
                 if (moveInfo.newTurn === undefined) debugger
 
@@ -40,7 +36,7 @@ export class DOMBoardPlugin extends PluginBase {
                 this.emit(Events.request.COMMIT_MOVE, {
                     player: game.get('playerID'),
                     room: game.get('roomID'),
-                    moveInfo
+                    moveInfo: MoveInfo.create(moveInfo)
                 })
             },
             game.emit.bind(game, Events.request.ADMIT_DEFEAT, { message: LOSE_TEXT }),
