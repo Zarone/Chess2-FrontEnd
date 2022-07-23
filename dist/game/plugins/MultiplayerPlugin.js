@@ -91,8 +91,9 @@ export class MultiplayerPlugin extends PluginBase {
             socket.emit('admitDefeat');
         });
 
-        this.on(Events.request.COMMIT_MOVE, (_, playerMoveInfo) => {
-            socket.emit('makeMove', playerMoveInfo);
+        this.on(Events.request.COMMIT_MOVE, (_, { player, room, moveInfo }) => {
+            moveInfo = moveInfo.serialize();
+            socket.emit('makeMove', { player, room, moveInfo });
         })
     }
 
