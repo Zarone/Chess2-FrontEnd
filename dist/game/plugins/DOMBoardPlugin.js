@@ -16,6 +16,8 @@ import { PluginBase } from "./BasePlugin"
 import { Events } from "../Events"
 import { MoveInfo } from "../net/MoveInfo";
 
+import { Position } from "../../helper-js/board"
+
 export class DOMBoardPlugin extends PluginBase {
     constructor ({ styleSheet, styleName }) {
         super();
@@ -62,8 +64,12 @@ export class DOMBoardPlugin extends PluginBase {
             });
         });
 
-        this.on(Events.state.BOARD_UPDATE, () => {
+        this.on(Events.state.BOARD_UPDATE, ({crumbs}, ...args) => {
             console.log("A");
+
+            // this stops an unnecessary reload
+            if (crumbs && crumbs[0] == "set" && Position.PSEUDO_POSITIONS.includes(args[0])) return;
+            
             this.board.resetTiles();
             this.board.updatePieces();
         });

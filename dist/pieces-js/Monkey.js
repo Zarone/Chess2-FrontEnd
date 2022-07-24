@@ -182,7 +182,7 @@ export class Monkey extends Piece {
         let output = []
 
         output.push({
-            pos: this.position,
+            pos: this.position.id,
             conditions: [sameMonkeyTurn]
         })
         

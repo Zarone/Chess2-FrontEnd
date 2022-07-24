@@ -58,7 +58,9 @@ export class BoardLayout extends PowerClass {
         this.emitter.emit(BoardLayout.TOPIC_DEL, posID);
         delete this.data[posID];
     }
+
     setData(posID, piece) {
+        if (!this.emitter) return; // this only happens if you use a temporary boardLayout
         this.emitter.emit(BoardLayout.TOPIC_SET, posID, piece);
         this.data[posID] = piece;
     }
@@ -118,7 +120,7 @@ export class BoardLayout extends PowerClass {
                             to: elem.pos,
                             rookActiveWhite: game.get('rookActiveWhite'),
                             rookActiveBlack: game.get('rookActiveBlack'),
-                            thisTurn: this.currentTurn
+                            thisTurn: game.get('currentTurn')
                         }
                     ) 
                 ) {

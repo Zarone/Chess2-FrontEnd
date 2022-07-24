@@ -38,9 +38,6 @@ export class ChessBoard {
         return this.game.get('isWhite');
     }
 
-    rookActiveWhite = false;
-    rookActiveBlack = false;
-
     // currentTurn = "Not Started"; // either "Not Started", "White", "Black", "White Jail", "Black Jail", "White Rescue", "Black Rescue", "White Jumping", "Black Jumping"
 
     makeMoveCallbackFunc = undefined;
@@ -114,16 +111,22 @@ export class ChessBoard {
         this.makeMove(attemptMoveTo, event)
     }
     
-    updateRookActivity(toPos){
-        this.rookActiveBlack = false;
-        this.rookActiveWhite = false;
+    updateRookActivity(fromPos, toPos){
+        this.game.set('rookActiveBlack', false);
+        this.game.set('rookActiveWhite', false);
 
         // if a piece was taken
         if (this.boardLayout[toPos] != undefined){
             if (this.boardLayout[toPos].isWhite){
-                this.rookActiveWhite = true;
+                this.game.set('rookActiveWhite', true);
             } else if (this.boardLayout[toPos] != null){
-                this.rookActiveBlack = true;
+                this.game.set('rookActiveBlack', true);
+            }
+        } else if (toPos.isJail()){
+            if (this.boardLayout[fromPos].isWhite){
+                this.game.set('rookActiveWhite', true);
+            } else {
+                this.game.set('rookActiveBlack', true);
             }
         }
     }
@@ -145,7 +148,7 @@ export class ChessBoard {
     }
 
     stateChecks(fromPos, toPos){
-        this.updateRookActivity(toPos);
+        this.updateRookActivity(fromPos, toPos);
         this.checkFishPromotion(fromPos, toPos);
     }
     
@@ -168,11 +171,12 @@ export class ChessBoard {
     }
 
     renderMovesForJumpingMonkey(piece){
-        this.boardLayout["TEMP"].position = piece.position
-        this.boardLayout[piece.position] = this.boardLayout["TEMP"]
-        let foundMoves = this.boardLayout["TEMP"].getJumpingMoves()
-        this.renderMoves( this.filterImpossibleMoves(foundMoves, piece.position) )
-        this.boardLayout[piece.position] = piece
+        this.boardLayout.data["TEMP"].position = piece.position
+        this.boardLayout.data[piece.position] = this.boardLayout["TEMP"]
+        let foundMoves = this.boardLayout.data["TEMP"].getJumpingMoves()
+        let moves = this.filterImpossibleMoves(foundMoves, piece.position)
+        this.boardLayout.data[piece.position] = piece
+        this.renderMoves( moves )
     }
 
     // sorry for the poor naming convention
@@ -349,7 +353,7 @@ export class ChessBoard {
             this.boardLayout[toPos] = oldToPos;
             this.boardLayout[fromPos] = oldFromPos;
                 
-            this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
+            if (tempMonkeyLastMoveStorage) this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
         }
         this.draggingJumpingMoney = false;
 
@@ -358,8 +362,8 @@ export class ChessBoard {
 
             let nextTo = nextToJail(toPos)
 
-            tempPiece = this.boardLayout[toPos]
-            this.boardLayout["TEMP"] = this.boardLayout[fromPos]
+            tempPiece = this.boardLayout[toPos] // set to king
+            this.boardLayout["TEMP"] = this.boardLayout[fromPos] // set to monkey
 
             delete this.boardLayout[fromPos]
 
@@ -443,9 +447,9 @@ export class ChessBoard {
 
             if (toPos.isJail()){
                 if (this.boardLayout[fromPos].isWhite){
-                    this.rookActiveWhite = true;
+                    this.game.set('rookActiveWhite', true);
                 } else {
-                    this.rookActiveBlack = true;
+                    this.game.set('rookActiveBlack', true);
                 }
             }
             

@@ -1,4 +1,4 @@
-import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT } from "../../helper-js/utils";
+import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT, disconnectText } from "../../helper-js/utils";
 
 import { PluginBase } from "./BasePlugin"
 import { Events } from "../Events"
