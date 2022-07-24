@@ -33,6 +33,7 @@ export class Emitter {
     }
 
     emit (topic, ...args) {
+        console.log('[Emitter]', topic.id, ...args);
 
         let crumbs;
         if (topic instanceof Event){
@@ -52,5 +53,20 @@ export class Emitter {
                 listener({ crumbs }, ...args);
             }
         }
+    }
+}
+
+export class SubEmitter {
+    constructor (prefix, delegate) {
+        this.prefix = prefix;
+        this.delegate = delegate;
+    }
+
+    on(topic, ...a) {
+        return this.delegate.on(Event.create(this.prefix + '.' + topic), ...a);
+    }
+
+    emit(topic, ...a) {
+        return this.delegate.emit(Event.create(this.prefix + '.' + topic), ...a);
     }
 }

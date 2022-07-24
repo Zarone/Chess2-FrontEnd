@@ -65,6 +65,10 @@ export class Position {
         return ['x', 'y'].includes(this.column);
     }
 
+    isJailControlledBy(player) {
+        return player === 'White' ? this.column == 'y' : this.column == 'x';
+    }
+
     isWithinBounds() {
         // TEMP has no row position, so just return true
         if ( this.isTemp() ) return true;
@@ -97,6 +101,11 @@ export class Position {
         });
     }
 
+    equals (otherPos) {
+        otherPos = Position.adapt(otherPos);
+        return this.id == otherPos.id;
+    }
+
     static toID = [
         null, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
     ]
@@ -127,5 +136,11 @@ export class Position {
         return (Position.toID[horizontal] || "!") + vertical
     }
 
-    
+    static adapt (o) {
+        if ( typeof o === 'string' ) return new this(o);
+        if ( o instanceof this ) return o;
+        console.error(`Cannot adapt to ${this.name}: `, o)
+        throw new Error(
+            `Cannot adapt to ${this.name}:`, o);
+    }
 }

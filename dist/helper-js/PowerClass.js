@@ -17,12 +17,24 @@ export class PowerClass {
         }
 
         this.constructor.initializer(this, ...args);
+
+        if ( this.init && typeof this.init === 'function' ) this.init();
     }
 
     static create (...args) {
         const o = new this(__MAGIC_CREATE, args);
 
-        return this.handler ? new Proxy(o, this.handler) : o;
+        return this.handler ? new Proxy(o,
+            PowerClass.wrapHandler(this.handler)) : o;
+    }
+
+    static wrapHandler (handler) {
+        const wHandler = { ...handler };
+        wHandler.get = function get (target, key) {
+            if ( key === '_unproxied' ) return target;
+            return handler.get(...arguments);
+        }
+        return wHandler;
     }
 
     static DATA_PROPERTY_INITIALIZER = (obj, data) => {

@@ -1,4 +1,4 @@
-import { Emitter } from "./Emitter.js";
+import { Emitter, SubEmitter } from "./Emitter.js";
 
 import { Event, Events } from "./Events"
 
@@ -27,14 +27,21 @@ export class Game {
     }
 
     set (k, v) {
-        this.state[k] = v;
         const joinTopicName = (...a) => a.join('.');
-        this.events.emit(new Event(joinTopicName('state', k)), v);
+        const topicName = joinTopicName('state', k);
+
+        if ( v.installEmitter && typeof v.installEmitter === 'function' ) {
+            v.installEmitter(new SubEmitter(topicName, this.events));
+        }
+
+        this.state[k] = v;
+
+        this.events.emit(new Event(topicName), v);
         
         // I just don't need this to log every frame
         if (k=="whiteTimer" || k=="blackTimer") return;
 
-        console.log('going to emit', joinTopicName('state', k), v)
+        console.log('going to emit', topicName, v)
     }
 
     get (k) {

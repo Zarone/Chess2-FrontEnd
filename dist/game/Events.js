@@ -7,6 +7,16 @@ export class Event {
         this.id = id;
     }
 
+    static memo = {}
+
+    // Creates an Event if it does not exist in 'memo',
+    //   otherwise returns the memo'd event
+    static create (id) {
+        return Event.memo[id] || (
+            Event.memo[id] = new Event(id)
+        );
+    }
+
     /**
      * For example:
      *      let AB = new Event("a.b");

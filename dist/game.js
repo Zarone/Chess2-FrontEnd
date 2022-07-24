@@ -18,6 +18,7 @@ import { TimerPlugin } from "./game/plugins/TimerPlugin.js";
 import { DOMBoardPlugin } from "./game/plugins/DOMBoardPlugin.js";
 import { Events } from "./game/Events"
 import { MoveInfo } from "./game/net/MoveInfo.js";
+import { BoardFactory, BoardLayouts } from "./chess2/BoardLayout.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -46,6 +47,8 @@ export const onLoad = async (styleSheet, styleName) => {
     launcher.install(new MultiplayerPlugin({ socket }));
 
     const game = launcher.game;
+
+    game.set('boardLayout', BoardFactory.create(BoardLayouts.DEFAULT));
 
     // === TEMPORARY: update variables used by unmigrated code ===
     game.on(Events.state.ROOM_ID, (_, v) => roomID = v);

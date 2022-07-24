@@ -9,10 +9,16 @@ import {Bear} from "./pieces-js/Bear.js"
 import { Position } from "./helper-js/board.js"
 
 import {nextToJail, toID, canMoveKey, canMoveValue, prevMoveColor, getVerticalAndHorizontal} from "./helper-js/utils.js"
+import { BoardFactory, BoardLayouts } from "./chess2/BoardLayout.js"
 
 export class ChessBoard {
 
-    boardLayout = {} // set in constructor
+    set boardLayout (v) {
+        this.game.set('boardLayout', v);
+    }
+    get boardLayout () {
+        return this.game.get('boardLayout');
+    }
     dragging = false
     
     draggingRoyalty = false
@@ -59,47 +65,6 @@ export class ChessBoard {
         this.styleSheetReference = styleSheetReference;
         this.styleType = styleType;
         
-        this.boardLayout = {
-            "a8": new Rook("a8", false),
-            "b8": new Monkey("b8", false),
-            "c8": new Fish("c8", false),
-            "d8": new Queen("d8", false),
-            "e8": new King("e8", false),
-            "f8": new Fish("f8", false),
-            "g8": new Monkey("g8", false),
-            "h8": new Rook("h8", false),
-
-            "a7": new Fish("a7", false),
-            "b7": new Fish("b7", false),
-            "c7": new Elephant("c7", false),
-            "d7": new Fish("d7", false),
-            "e7": new Fish("e7", false),
-            "f7": new Elephant("f7", false),
-            "g7": new Fish("g7", false),
-            "h7": new Fish("h7", false),
-
-            
-            "a1": new Rook("a1", true),
-            "b1": new Monkey("b1", true),
-            "c1": new Fish("c1", true),
-            "d1": new Queen("d1", true),
-            "e1": new King("e1", true),
-            "f1": new Fish("f1", true),
-            "g1": new Monkey("g1", true),
-            "h1": new Rook("h1", true),
-
-            "a2": new Fish("a2", true),
-            "b2": new Fish("b2", true),
-            "c2": new Elephant("c2", true),
-            "d2": new Fish("d2", true),
-            "e2": new Fish("e2", true),
-            "f2": new Elephant("f2", true),
-            "g2": new Fish("g2", true),
-            "h2": new Fish("h2", true),
-
-            "z1": new Bear("z1"),
-        }
-
         this.makeMoveCallbackFunc = makeMoveCallback;
         this.gameOverCallbackFunc = gameOverCallback;
     }
@@ -454,26 +419,7 @@ export class ChessBoard {
     }
 
     filterImpossibleMoves(moves, currentPos){
-        return moves.filter((elem, index)=>{
-            for (let i = 0; i < elem.conditions.length; i++){
-                if (
-                    !elem.conditions[i](
-                        { 
-                            board: this.boardLayout, 
-                            from: currentPos, 
-                            to: elem.pos,
-                            rookActiveWhite: this.rookActiveWhite,
-                            rookActiveBlack: this.rookActiveBlack,
-                            thisTurn: this.currentTurn
-                        }
-                    ) 
-                ) {
-                    return false
-                }
-            }
-            return true
-
-        })
+        return this.boardLayout.filterImpossibleMoves(this.game, moves, currentPos);
     }
 
     makePreValidatedMove(fromPos, toPos){
@@ -580,109 +526,13 @@ export class ChessBoard {
     }
 
     validateMove(currentPosition, newPosition, newTurn){
-        
-        let jailMoves = (this.currentTurn == "Black Jail" && this.isWhite) || (this.currentTurn == "White Jail" && !this.isWhite);
-        let monkeyMoves = (this.currentTurn == "Black Rescue" && this.isWhite) || (this.currentTurn == "White Rescue" && !this.isWhite);
-        
-        let monkeyJumpingNonRescue = (
-            (this.currentTurn == "Black Jumping" && newTurn == "White" && this.boardLayout[currentPosition].constructor.name == Monkey.name) ||
-            (this.currentTurn == "White Jumping" && newTurn == "Black" && this.boardLayout[currentPosition].constructor.name == Monkey.name) ||
-            (this.currentTurn == "Black Jumping" && newTurn == "Black Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name) ||
-            (this.currentTurn == "White Jumping" && newTurn == "White Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name)
-        )
-
-        let startMonkeyJumping = (
-            (this.currentTurn == "White" && newTurn == "White Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name) ||
-            (this.currentTurn == "Black" && newTurn == "Black Jumping" && this.boardLayout[currentPosition].constructor.name == Monkey.name)
-        )
-
-        let tookRoyalty = (
-            ( this.boardLayout[newPosition] && 
-                (this.boardLayout[newPosition].constructor.name == Queen.name || this.boardLayout[newPosition].constructor.name == King.name) 
-            ) &&
-            (
-                (newTurn == "White Jail" && this.currentTurn == "White") ||
-                (newTurn == "Black Jail" && this.currentTurn == "Black") ||
-                (newTurn == "White Jail" && this.currentTurn == "White Jumping") ||
-                (newTurn == "Black Jail" && this.currentTurn == "Black Jumping")
-            )
-        )
-        
-        let didKingRescue = (
-            ( this.boardLayout[newPosition] && this.boardLayout[newPosition].constructor.name == King.name ) &&
-            (
-                (newTurn == "White Rescue" && this.currentTurn == "White") ||
-                (newTurn == "White Rescue" && this.currentTurn == "White Jumping") ||
-                (newTurn == "Black Rescue" && this.currentTurn == "Black") ||
-                (newTurn == "Black Rescue" && this.currentTurn == "Black Jumping")
-            )
-        )
-
-        if (
-            (newTurn == "White" && this.currentTurn == "Black") ||
-            (newTurn == "Black" && this.currentTurn == "White") ||
-            tookRoyalty ||
-            (this.currentTurn == "White Jail" && newTurn == "Black") ||
-            (this.currentTurn == "Black Jail" && newTurn == "White") ||
-            didKingRescue ||
-            (this.currentTurn == "White Rescue" && newTurn == "Black") ||
-            (this.currentTurn == "Black Rescue" && newTurn == "White") ||
-            startMonkeyJumping ||
-            monkeyJumpingNonRescue
-        ) {
-            this.currentTurn = newTurn
-        } else {
-            console.error("new turn is invalid")
-            return false
-        }
-
-        if (jailMoves){
-            return (
-                currentPosition?.isTemp() && 
-                this.boardLayout[newPosition] == undefined && 
-                (
-                    (this.boardLayout["TEMP"].isWhite && newPosition.column == "x") || 
-                    (!this.boardLayout["TEMP"].isWhite && newPosition.column == "y")
-                )
-            )
-        } else if (monkeyMoves){
-            let monkey = this.boardLayout["TEMP"]
-            let king = this.boardLayout[monkey.position]
-
-            this.boardLayout[monkey.position] = monkey;
-
-            let legalMoves = this.filterImpossibleMoves(monkey.getJumpingMoves(), monkey.position)
-    
-            for (let i = 0; i < legalMoves.length; i++){
-                if (legalMoves[i].pos == newPosition){ 
-                    this.boardLayout[monkey.position] = king;
-                    return true;
-                }
+        return this.boardLayout.validateMove(
+            this.game, game.get('currentTurn'), {
+                fromPos: currentPosition,
+                toPos: newPosition,
+                newTurn
             }
-            console.error("received invalid move")
-            return false
-
-        } else {
-            let thisPiece = this.boardLayout[currentPosition]
-            let legalMoves = this.filterImpossibleMoves(thisPiece.getMoves(), thisPiece.position)
-
-            if (startMonkeyJumping) {
-                this.boardLayout["MONKEY_START"] = new Monkey (currentPosition, this.boardLayout[currentPosition].isWhite);
-            }
-            
-            for (let i = 0; i < legalMoves.length; i++){
-                if (legalMoves[i].pos == newPosition) return true;
-            }
-
-            if (monkeyJumpingNonRescue && currentPosition.id == newPosition.id){
-                delete this.boardLayout["MONKEY_START"];
-                return true;
-            }
-
-            debugger
-            console.error("received invalid move")
-            return false
-        }
+        );
     }
 
     findAndRenderMoves(piece){
