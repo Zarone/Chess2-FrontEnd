@@ -326,7 +326,7 @@ export class ChessBoard {
 
             delete this.boardLayout[fromPos]
 
-            const { piece } = this.boardLayout.move(toPos, nextTo);
+            const { piece } = this.boardLayout.move(toPos, nextTo, { noTemp: true });
             piece.hasBanana = false;
             // this.boardLayout[nextTo] = this.boardLayout[toPos]
             // this.boardLayout[nextTo].position = nextTo
@@ -382,34 +382,7 @@ export class ChessBoard {
     }
 
     makePreValidatedMove(fromPos, toPos){
-        
-        // if starting a monkey jump to save king
-        if (toPos.isJail() && this.boardLayout[fromPos] instanceof Monkey){
-            let nextTo = nextToJail(toPos)
-
-            const monkey = this.boardLayout[fromPos];
-
-            // Lift monkey into the air
-            this.boardLayout.moveToTemp(fromPos);
-            monkey.position = nextTo;
-
-            // Move king out of jail
-            const { piece } = this.boardLayout.move(toPos, nextTo);
-            piece.hasBanana = false;
-
-        } else {
-
-            if (toPos.isJail()){
-                if (this.boardLayout[fromPos].isWhite){
-                    this.game.set('rookActiveWhite', true);
-                } else {
-                    this.game.set('rookActiveBlack', true);
-                }
-            }
-            
-            this.boardLayout.move(fromPos, toPos);
-
-        }
+        return this.boardLayout.makePreValidatedMove(this.game, fromPos, toPos);
     }
 
     setPrevColor(toPos){

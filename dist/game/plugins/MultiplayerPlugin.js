@@ -2,6 +2,7 @@ import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT, disconnectText }
 
 import { PluginBase } from "./BasePlugin"
 import { Events } from "../Events"
+import { MoveInfo } from "../net/MoveInfo";
 
 export class MultiplayerPlugin extends PluginBase {
     constructor ({ socket }) {
@@ -82,6 +83,27 @@ export class MultiplayerPlugin extends PluginBase {
                 Events.request.GAME_OVER_MODAL,
                 game.get('playerID') == id ? WIN_TEXT : LOSE_TEXT,
             );
+        })
+
+        socket.on('registeredMove', args => {
+            const moveInfo = MoveInfo.deserialize(args.moveInfo);
+
+            const { roomID, playerID } = game.state;
+
+            if ( roomID != args.room ) return;
+            if ( playerID == args.player ) return;
+
+            const boardLayout = game.get('boardLayout');
+            const isValid = boardLayout.validateMove(
+                game, game.get('currentTurn'), moveInfo);
+
+            if ( ! isValid ) {
+                console.error('move is not allowed', moveInfo);
+                return;
+            }
+
+            boardLayout.makePreValidatedMove(game, moveInfo.fromPos, moveInfo.toPos);
+            game.set('currentTurn', moveInfo.newTurn);
         })
 
         // ???: Maybe add a ReconnectionPlugin
