@@ -1,3 +1,4 @@
+import { getQuerystring } from "../../helper-js/utils";
 import { Events } from "../Events";
 import { PluginBase } from "./BasePlugin";
 
@@ -17,6 +18,11 @@ export class SinglePlayerPlugin extends PluginBase {
         })
 
         this.on(Events.LAUNCH, () => {
+            const timeLimit = getQuerystring().timeLimit * 60;
+            game.set('finalTimeLimit', timeLimit);
+            game.set('blackTimer', timeLimit);
+            game.set('whiteTimer', timeLimit);
+
             game.set('currentTurn', 'White');
         })
     }
