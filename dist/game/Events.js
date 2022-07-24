@@ -54,6 +54,7 @@ export const Events = {
         BOARD_LAYOUT: new Event("state.boardLayout"),
         BOARD_UPDATE: new Event("state.boardLayout.update"),
         BOARD_MOVE: new Event("state.boardLayout.update.move"),
+        FLIPPED: new Event("state.flipped")
     },
     LAUNCH: new Event("launch"),
     init: {

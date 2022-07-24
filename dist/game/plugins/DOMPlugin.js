@@ -51,6 +51,7 @@ export class DOMPlugin extends PluginBase {
         // Bind properties that affect board orientation
         this.on(Events.state.IS_WHITE, this.flipBoard.bind(this));
         this.on(Events.state.REVERSED, this.flipBoard.bind(this));
+        this.on(Events.state.FLIPPED, this.flipBoard.bind(this));
 
         // Bind properties that affect the timer
         ;[Events.state.WHITE_TIMER, Events.state.BLACK_TIMER, Events.state.REVERSED].forEach(k => {
@@ -102,9 +103,10 @@ export class DOMPlugin extends PluginBase {
     }
 
     flipBoard () {
+        const flipEnabled = game.state.flipped
         const isWhite = (game.state.isWhite===undefined)? true : game.state.isWhite;
         const reversed = game.state.reversed;
-        if ((!isWhite && !reversed) || (isWhite && reversed)){
+        if ( flipEnabled && ((!isWhite && !reversed) || (isWhite && reversed))){
             game.elements["jail-1"].style.flexWrap = "wrap-reverse"
             game.elements["jail-2"].style.flexWrap = "wrap-reverse"
             game.elements["chess-board"].style.flexWrap = "wrap-reverse"

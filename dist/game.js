@@ -80,6 +80,14 @@ export const onLoad = async (styleSheet, styleName) => {
             console.log("set reversed", v)
             game.set('reversed', v);
             // if (flipBoard && chessBoard) flipBoard(chessBoard.isWhite);
+        },
+
+        get flipped(){
+            return game.get('flipped');
+        },
+        set flipped(v){
+            console.log("set flipped", v)
+            game.set('flipped', v);
         }
     }
 
@@ -87,5 +95,5 @@ export const onLoad = async (styleSheet, styleName) => {
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
     launcher.launch();
-    return { chessBoard, reversedPointer };
+    return { chessBoard, reversedPointer, gameMode };
 }

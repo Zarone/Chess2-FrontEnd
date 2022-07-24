@@ -43,9 +43,9 @@ export default function HomePage(props){
                             <h2>Quick Play</h2>
 
                             <div className="d-grid">
-                                <button type="button" id="raw-join" className="btn btn-primary btn-block">Play (un-timed)</button>
+                                <button type="button" id="raw-singleplayer" className="btn btn-primary btn-block">Play (singleplayer)</button>
                                 <p>
-                                    Press this button if you just want to jump into an online game!
+                                    Press this button if you just want to jump into a singleplayer game!
                                 </p>
                             </div>
                             <div className="d-grid">
@@ -55,7 +55,7 @@ export default function HomePage(props){
                                 </p>
                             </div>
                             <div className="d-grid">
-                                <button type="button" id="raw-singleplayer" className="btn btn-primary btn-block">Play (singleplayer)</button>
+                                <button type="button" id="raw-join" className="btn btn-primary btn-block">Play (un-timed)</button>
                                 <p>
                                     Press this button if you just want to jump into an online game!
                                 </p>
