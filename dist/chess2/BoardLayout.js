@@ -46,7 +46,6 @@ export class BoardLayout extends PowerClass {
         //   object had the consequence that "._unproxied" is needed to set
         //   properties on the "real" this.
         this._unproxied.emitter = emitter;
-        console.log('uhhh??', this.data.emitter);
     }
 
     delData(posID) {

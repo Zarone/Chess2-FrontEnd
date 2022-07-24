@@ -33,7 +33,7 @@ export class Emitter {
     }
 
     emit (topic, ...args) {
-        console.log('[Emitter]', topic.id, ...args);
+        // console.log('[Emitter]', topic.id, ...args);
 
         let crumbs;
         if (topic instanceof Event){
