@@ -22,14 +22,19 @@ export class BoardLayout extends PowerClass {
     // Handler turns "a1", "b2" etc into properties of 'this'
     static handler = {
         get ( target, key ) {
-            if ( key in target.data ) return target.data[key];
+            if ( Position.isValidPositionID(key) ) {
+                return target.data[key];
+            }
             
             // Default behaviour
             return Reflect.get(...arguments)
         },
         set ( target, key, val ) {
-            target.setData(key, val);
-            return true;
+            if ( Position.isValidPositionID(key) ) {
+                target.setData(key, val);
+                return true;
+            }
+            return Reflect.set(...arguments);
         },
         deleteProperty ( target, key ) {
             if ( key in target.data ) {
@@ -45,8 +50,7 @@ export class BoardLayout extends PowerClass {
         // Being able to use BoardLayout as a drop-in replacement for a data
         //   object had the consequence that "._unproxied" is needed to set
         //   properties on the "real" this.
-        this._unproxied.emitter = emitter;
-        console.log('uhhh??', this.data.emitter);
+        this.emitter = emitter;
     }
 
     delData(posID) {
