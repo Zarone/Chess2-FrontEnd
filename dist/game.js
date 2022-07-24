@@ -21,6 +21,7 @@ import { MoveInfo } from "./game/net/MoveInfo.js";
 import { BoardFactory, BoardLayouts } from "./chess2/BoardLayout.js";
 import { EndGamePlugin } from "./game/plugins/EndGamePlugin.js";
 import { PieceHooksPlugin } from "./game/plugins/PieceHooksPlugin.js";
+import { SinglePlayerPlugin } from "./game/plugins/SinglePlayerPlugin.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -49,10 +50,11 @@ export const onLoad = async (styleSheet, styleName) => {
     launcher.install(new EndGamePlugin());
     launcher.install(new TimerPlugin());
     launcher.install(new MultiplayerPlugin({ socket }));
+    // launcher.install(new SinglePlayerPlugin())
 
     const game = launcher.game;
 
-    game.set('boardLayout', BoardFactory.create(BoardLayouts.MONKEY_SAVE_TEST));
+    game.set('boardLayout', BoardFactory.create(BoardLayouts.DEFAULT));
 
     // === TEMPORARY: update variables used by unmigrated code ===
     game.on(Events.state.ROOM_ID, (_, v) => roomID = v);
