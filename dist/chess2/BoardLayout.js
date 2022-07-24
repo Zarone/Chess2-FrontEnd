@@ -99,7 +99,7 @@ export class BoardLayout extends PowerClass {
         currentTurn = Turn.adapt(currentTurn);
         let newTurn = Turn.adapt(moveInfo.newTurn);
 
-        const samePlayer = currentTurn.player == newTurn;
+        const samePlayer = currentTurn.player == newTurn.player;
 
         const monkeyJumpingStart =
             currentTurn.is(NORMAL) && newTurn.is(JUMPING) && samePlayer;
