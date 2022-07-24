@@ -54,6 +54,12 @@ export default function HomePage(props){
                                     Press this button if you just want to jump into a timed online game!
                                 </p>
                             </div>
+                            <div className="d-grid">
+                                <button type="button" id="raw-singleplayer" className="btn btn-primary btn-block">Play (singleplayer)</button>
+                                <p>
+                                    Press this button if you just want to jump into an online game!
+                                </p>
+                            </div>
 
                             <div>
                                 <foam className="chess2.GameConfigView" of="chess2.GameConfig"></foam>

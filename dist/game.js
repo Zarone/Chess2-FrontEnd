@@ -25,7 +25,10 @@ import { SinglePlayerPlugin } from "./game/plugins/SinglePlayerPlugin.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
-    let {roomID, friendRoom, timeLimit} = getQuerystring()
+    const qstr = getQuerystring();
+    let {roomID, friendRoom, timeLimit} = qstr;
+
+    const gameMode = qstr.gamemode || 'SINGLE_PLAYER';
 
     if (!globalThis.cookie) globalThis.cookie = new Cookie();
 
@@ -49,8 +52,14 @@ export const onLoad = async (styleSheet, styleName) => {
     launcher.install(new PieceHooksPlugin());
     launcher.install(new EndGamePlugin());
     launcher.install(new TimerPlugin());
-    launcher.install(new MultiplayerPlugin({ socket }));
-    // launcher.install(new SinglePlayerPlugin())
+    if ( gameMode == 'PLAYER_VS_PLAYER' ) {
+        launcher.install(new MultiplayerPlugin({ socket }));
+    } else if ( gameMode == 'SINGLE_PLAYER' ) {
+        launcher.install(new SinglePlayerPlugin());
+    } else {
+        alert('why are you typing random stuff in the url?');
+        throw new Error('why are you typing random stuff in the url?');
+    }
 
     const game = launcher.game;
 
