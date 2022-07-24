@@ -111,47 +111,6 @@ export class ChessBoard {
         this.makeMove(attemptMoveTo, event)
     }
     
-    updateRookActivity(fromPos, toPos){
-        this.game.set('rookActiveBlack', false);
-        this.game.set('rookActiveWhite', false);
-
-        // if a piece was taken
-        if (this.boardLayout[toPos] != undefined){
-            if (this.boardLayout[toPos].isWhite){
-                this.game.set('rookActiveWhite', true);
-            } else if (this.boardLayout[toPos] != null){
-                this.game.set('rookActiveBlack', true);
-            }
-        } else if (toPos.isJail()){
-            if (this.boardLayout[fromPos].isWhite){
-                this.game.set('rookActiveWhite', true);
-            } else {
-                this.game.set('rookActiveBlack', true);
-            }
-        }
-    }
-
-    checkFishPromotion(fromPos, toPos){
-        
-        // if the piece being moved is a fish
-        if ( this.boardLayout[fromPos].constructor.name == Fish.name ){
-
-            let rowName = toPos.row
-            if (
-                (this.boardLayout[fromPos].isWhite && rowName=="8") ||
-                (!this.boardLayout[fromPos].isWhite && rowName=="1")
-            ){
-                this.boardLayout[fromPos] = new FishQueen(fromPos, this.boardLayout[fromPos].isWhite)
-            }
-
-        }
-    }
-
-    stateChecks(fromPos, toPos){
-        this.updateRookActivity(fromPos, toPos);
-        this.checkFishPromotion(fromPos, toPos);
-    }
-    
     renderMovesForTakenKingQueen(){
         if (this.isWhite){
             if (this.boardLayout["y1"] == undefined) {
@@ -367,11 +326,12 @@ export class ChessBoard {
 
             delete this.boardLayout[fromPos]
 
-            this.boardLayout[nextTo] = this.boardLayout[toPos]
-            this.boardLayout[nextTo].position = nextTo
-            this.boardLayout[nextTo].hasBanana = false;
-
-            delete this.boardLayout[toPos]
+            const { piece } = this.boardLayout.move(toPos, nextTo);
+            piece.hasBanana = false;
+            // this.boardLayout[nextTo] = this.boardLayout[toPos]
+            // this.boardLayout[nextTo].position = nextTo
+            // this.boardLayout[nextTo].hasBanana = false;
+            // delete this.boardLayout[toPos]
 
             nextTurn(false, 'Rescue');
             this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn});
@@ -380,10 +340,11 @@ export class ChessBoard {
                 this.boardLayout["MONKEY_START"] = new Monkey (fromPos, this.boardLayout[fromPos].isWhite);
             }
 
-            this.boardLayout[toPos] = this.boardLayout[fromPos]
-            delete this.boardLayout[fromPos]
-            this.boardLayout[toPos].position = toPos;
-            this.boardLayout["TEMP"] = this.boardLayout[toPos]
+            this.boardLayout.move(fromPos, toPos);
+            // this.boardLayout[toPos] = this.boardLayout[fromPos]
+            // delete this.boardLayout[fromPos]
+            // this.boardLayout[toPos].position = toPos;
+            // this.boardLayout["TEMP"] = this.boardLayout[toPos]
 
             nextTurn(false, 'Jumping');
             this.makeMoveCallbackFunc({fromPos, toPos, newTurn: this.currentTurn});
@@ -398,13 +359,7 @@ export class ChessBoard {
                 this.boardLayout["TEMP"] = tempPiece
             }
 
-            this.stateChecks(fromPos, toPos)
-
-            this.boardLayout[toPos] = this.boardLayout[fromPos]
-
-            delete this.boardLayout[fromPos]
-
-            this.boardLayout[toPos].position = toPos;
+            this.boardLayout.move(fromPos, toPos);
 
             nextTurn(! tookKingOrQueen, tookKingOrQueen && 'Jail');
 
@@ -443,7 +398,6 @@ export class ChessBoard {
             piece.hasBanana = false;
 
         } else {
-            this.stateChecks(fromPos, toPos)
 
             if (toPos.isJail()){
                 if (this.boardLayout[fromPos].isWhite){

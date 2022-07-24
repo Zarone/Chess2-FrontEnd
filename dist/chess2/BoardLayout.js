@@ -75,6 +75,7 @@ export class BoardLayout extends PowerClass {
 
         const extra = {};
 
+        console.log('??? PIECE HERE ???', this.data[toPos])
         if ( this.data[toPos] != undefined ) {
             extra.victim = this.data.TEMP = this.data[toPos];
         } else {
@@ -272,43 +273,25 @@ export class BoardLayouts {
     ]
 
     static MONKEY_SAVE_TEST = [
-        ["a8", 'Rook', false],
-        ["b8", 'Monkey', false],
-        ["c8", 'Fish', false],
-        ["d8", 'Queen', false],
-        ["e8", 'King', false],
-        ["f8", 'Fish', false],
-        ["g8", 'Monkey', false],
-        ["h8", 'Rook', false],
-
-        ["a7", 'Fish', false],
-        ["b7", 'Fish', false],
-        ["c7", 'Elephant', false],
-        ["d7", 'Fish', false],
-        ["e7", 'Fish', false],
-        ["f7", 'Elephant', false],
-        ["g7", 'Fish', false],
-        ["h7", 'Fish', false],
-
-        
-        ["a1", 'Rook', true],
         ["a4", 'Monkey', true],
-        ["c1", 'Fish', true],
-        ["d1", 'Queen', true],
         ["x1", 'King', true],
-        ["f1", 'Fish', true],
-        ["g1", 'Monkey', true],
-        ["h1", 'Rook', true],
-
-        ["a2", 'Fish', true],
         ["b4", 'Fish', true],
-        ["c2", 'Elephant', true],
-        ["d2", 'Fish', true],
-        ["e2", 'Fish', true],
-        ["f2", 'Elephant', true],
-        ["g2", 'Fish', true],
-        ["h2", 'Fish', true],
-
         ["z1", 'Bear'],
+    ]
+
+    static FISHY_QUEEN_TEST = [
+        ["b7", 'Fish', true],
+        ["g2", 'Fish', false],
+    ]
+
+    static ROOK_PARTY = [
+        ...('abcdefgh'.split('').map(l => [l+'1', 'Rook', true])),
+        ...('abcdefgh'.split('').map(l => [l+'2', 'Rook', false])),
+        ['b4', 'Fish', true],
+        ['c5', 'Fish', false],
+        ['d4', 'Fish', true],
+        ['e5', 'Fish', false],
+        ['f4', 'Fish', true],
+        ['g5', 'Fish', false],
     ]
 }
