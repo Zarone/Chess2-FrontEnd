@@ -52,7 +52,7 @@ export const onLoad = async (styleSheet, styleName) => {
 
     const game = launcher.game;
 
-    game.set('boardLayout', BoardFactory.create(BoardLayouts.DEFAULT));
+    game.set('boardLayout', BoardFactory.create(BoardLayouts.MONKEY_SAVE_TEST));
 
     // === TEMPORARY: update variables used by unmigrated code ===
     game.on(Events.state.ROOM_ID, (_, v) => roomID = v);
@@ -72,21 +72,6 @@ export const onLoad = async (styleSheet, styleName) => {
         }
     }
 
-    socket.on("registeredMove", args=>{
-        console.log('REGISTER', args)
-
-        const moveInfo = MoveInfo.deserialize(args.moveInfo);
-
-        if (roomID == args.room && playerID != args.player){
-            if (chessBoard.validateMove(moveInfo.fromPos, moveInfo.toPos, moveInfo.newTurn)){
-                chessBoard.makePreValidatedMove(moveInfo.fromPos, moveInfo.toPos);
-                chessBoard.currentTurn = moveInfo.newTurn
-            } else {
-                console.error("move is not allowed")
-            }
-        }
-    })
-    
     document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 

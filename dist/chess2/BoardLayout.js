@@ -65,7 +65,7 @@ export class BoardLayout extends PowerClass {
         this.data[posID] = piece;
     }
 
-    move (fromPos, toPos) {
+    move (fromPos, toPos, options) {
         fromPos = Position.adapt(fromPos);
         toPos = Position.adapt(toPos);
 
@@ -78,7 +78,7 @@ export class BoardLayout extends PowerClass {
         console.log('??? PIECE HERE ???', this.data[toPos])
         if ( this.data[toPos] != undefined ) {
             extra.victim = this.data.TEMP = this.data[toPos];
-        } else {
+        } else if ( ! options.noTemp ) {
             this.data.TEMP = this.data[fromPos];
         }
 
@@ -131,6 +131,35 @@ export class BoardLayout extends PowerClass {
             return true
 
         })
+    }
+
+    makePreValidatedMove (game, fromPos, toPos) {
+        if (toPos.isJail() && this.data[fromPos] instanceof Monkey){
+            let nextTo = nextToJail(toPos)
+
+            const monkey = this.data[fromPos];
+
+            // Lift monkey into the air
+            this.moveToTemp(fromPos);
+            monkey.position = nextTo;
+
+            // Move king out of jail
+            const { piece } = this.move(toPos, nextTo);
+            piece.hasBanana = false;
+
+        } else {
+
+            if (toPos.isJail()){
+                if (this.data[fromPos].isWhite){
+                    game.set('rookActiveWhite', true);
+                } else {
+                    game.set('rookActiveBlack', true);
+                }
+            }
+            
+            this.move(fromPos, toPos);
+
+        }
     }
 
     validateMove (game, currentTurn, moveInfo) {
