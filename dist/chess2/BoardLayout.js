@@ -16,8 +16,9 @@ export class BoardLayout extends PowerClass {
     // Same as: constructor (layout) { this.data = layout; }
     static initializer = PowerClass.DATA_PROPERTY_INITIALIZER;
 
-    static TOPIC_SET = Event.create('set')
-    static TOPIC_DEL = Event.create('del')
+    static TOPIC_SET = Event.create('update.set')
+    static TOPIC_DEL = Event.create('update.del')
+    static TOPIC_MOVE = Event.create('update.move')
 
     // Handler turns "a1", "b2" etc into properties of 'this'
     static handler = {
@@ -60,6 +61,37 @@ export class BoardLayout extends PowerClass {
     setData(posID, piece) {
         this.emitter.emit(BoardLayout.TOPIC_SET, posID, piece);
         this.data[posID] = piece;
+    }
+
+    move (fromPos, toPos) {
+        fromPos = Position.adapt(fromPos);
+        toPos = Position.adapt(toPos);
+
+        if ( fromPos.equals(toPos) ) return;
+
+        const piece = this.data[fromPos];
+
+        const extra = {};
+
+        if ( this.data[toPos] != undefined ) {
+            extra.victim = this.data.TEMP = this.data[toPos];
+        } else {
+            this.data.TEMP = this.data[fromPos];
+        }
+
+        this.data[toPos] = piece;
+        piece.position = toPos;
+        delete this.data[fromPos];
+
+        const eventInfo = { fromPos, toPos, piece, ...extra };
+
+        this.emitter.emit(BoardLayout.TOPIC_MOVE, eventInfo);
+        return eventInfo;
+    }
+
+    moveToTemp (fromPos) {
+        this.data.TEMP = this.data[fromPos];
+        this.data.TEMP.position = 'TEMP';
     }
 
     get boardLayout () {
@@ -227,6 +259,47 @@ export class BoardLayouts {
 
         ["a2", 'Fish', true],
         ["b2", 'Fish', true],
+        ["c2", 'Elephant', true],
+        ["d2", 'Fish', true],
+        ["e2", 'Fish', true],
+        ["f2", 'Elephant', true],
+        ["g2", 'Fish', true],
+        ["h2", 'Fish', true],
+
+        ["z1", 'Bear'],
+    ]
+
+    static MONKEY_SAVE_TEST = [
+        ["a8", 'Rook', false],
+        ["b8", 'Monkey', false],
+        ["c8", 'Fish', false],
+        ["d8", 'Queen', false],
+        ["e8", 'King', false],
+        ["f8", 'Fish', false],
+        ["g8", 'Monkey', false],
+        ["h8", 'Rook', false],
+
+        ["a7", 'Fish', false],
+        ["b7", 'Fish', false],
+        ["c7", 'Elephant', false],
+        ["d7", 'Fish', false],
+        ["e7", 'Fish', false],
+        ["f7", 'Elephant', false],
+        ["g7", 'Fish', false],
+        ["h7", 'Fish', false],
+
+        
+        ["a1", 'Rook', true],
+        ["a4", 'Monkey', true],
+        ["c1", 'Fish', true],
+        ["d1", 'Queen', true],
+        ["x1", 'King', true],
+        ["f1", 'Fish', true],
+        ["g1", 'Monkey', true],
+        ["h1", 'Rook', true],
+
+        ["a2", 'Fish', true],
+        ["b4", 'Fish', true],
         ["c2", 'Elephant', true],
         ["d2", 'Fish', true],
         ["e2", 'Fish', true],
