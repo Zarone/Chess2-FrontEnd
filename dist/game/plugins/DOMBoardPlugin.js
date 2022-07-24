@@ -47,7 +47,7 @@ export class DOMBoardPlugin extends PluginBase {
 
         this.on(Events.request.RECONNECT_DATA, () => {
             this.emit(Events.request.SEND_RECONNECT_DATA, {
-                layout: Object.keys(this.board.boardLayout).map((val, index)=>{
+                layout: Object.keys(this.board.boardLayout.data).map((val, index)=>{
                     return {
                         position: this.board.boardLayout[val].position.id, 
                         isWhite: this.board.boardLayout[val].isWhite, 
@@ -65,7 +65,7 @@ export class DOMBoardPlugin extends PluginBase {
         this.on(Events.request.SET_BOARD_LAYOUT, (_, args) => {
             const chessBoard = this.board;
 
-            chessBoard.boardLayout = {};
+            chessBoard.boardLayout._unproxied.data = {};
             for (let i = 0; i < args.layout.length; i++){
                 switch (args.layout[i].type) {
                     case Bear.name:

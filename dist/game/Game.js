@@ -30,7 +30,7 @@ export class Game {
         const joinTopicName = (...a) => a.join('.');
         const topicName = joinTopicName('state', k);
 
-        if ( v.installEmitter && typeof v.installEmitter === 'function' ) {
+        if ( v && v.installEmitter && typeof v.installEmitter === 'function' ) {
             v.installEmitter(new SubEmitter(topicName, this.events));
         }
 

@@ -33,10 +33,10 @@ export class Emitter {
     }
 
     emit (topic, ...args) {
-        console.log('[Emitter]', topic.id, ...args);
-
+        
         let crumbs;
         if (topic instanceof Event){
+            if (topic.id != "state.whiteTimer" && topic.id != "state.blackTimer") console.log('[Emitter]', topic.id, ...args);
             crumbs = topic.id.split('.');
         } else {
             debugger
