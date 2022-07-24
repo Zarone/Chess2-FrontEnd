@@ -19,6 +19,7 @@ import { DOMBoardPlugin } from "./game/plugins/DOMBoardPlugin.js";
 import { Events } from "./game/Events"
 import { MoveInfo } from "./game/net/MoveInfo.js";
 import { BoardFactory, BoardLayouts } from "./chess2/BoardLayout.js";
+import { EndGamePlugin } from "./game/plugins/EndGamePlugin.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -43,6 +44,7 @@ export const onLoad = async (styleSheet, styleName) => {
     launcher.init();
     launcher.install(new DOMPlugin());
     launcher.install(new DOMBoardPlugin({ styleSheet, styleName }));
+    launcher.install(new EndGamePlugin());
     launcher.install(new TimerPlugin());
     launcher.install(new MultiplayerPlugin({ socket }));
 

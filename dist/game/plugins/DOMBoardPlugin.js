@@ -62,6 +62,19 @@ export class DOMBoardPlugin extends PluginBase {
             });
         });
 
+        this.on(Events.state.BOARD_UPDATE, () => {
+            console.log("A");
+            this.board.resetTiles();
+            this.board.updatePieces();
+        });
+
+        this.on(Events.state.BOARD_MOVE, (_, { fromPos, toPos }) => {
+            console.log("B");
+            this.board.setPrevColor(fromPos);
+            this.board.setPrevColor(toPos);
+            this.board.playChessSound();
+        });
+
         this.on(Events.request.SET_BOARD_LAYOUT, (_, args) => {
             const chessBoard = this.board;
 

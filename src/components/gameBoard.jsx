@@ -72,7 +72,7 @@ export default function GameBoard(props) {
                         ("87654321")
                             .split("")
                             .map((number, numberIndex) => {
-                                return ("hgfedcba")
+                                return ("abcdefgh")
                                 .split("")
                                 .map((letter, letterIndex) => {
                                     const isWhite = ( (numberIndex + letterIndex) % 2 == 0);

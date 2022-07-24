@@ -50,7 +50,10 @@ export const Events = {
         REVERSED: new Event("state.reversed"),
         WHITE_TIMER: new Event("state.whiteTimer"),
         BLACK_TIMER: new Event("state.blackTimer"),
-        PLAYER_INFO: new Event("state.playerInfo")
+        PLAYER_INFO: new Event("state.playerInfo"),
+        BOARD_LAYOUT: new Event("state.boardLayout"),
+        BOARD_UPDATE: new Event("state.boardLayout.update"),
+        BOARD_MOVE: new Event("state.boardLayout.update.move"),
     },
     LAUNCH: new Event("launch"),
     init: {

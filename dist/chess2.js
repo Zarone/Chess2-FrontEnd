@@ -425,17 +425,18 @@ export class ChessBoard {
     makePreValidatedMove(fromPos, toPos){
         
         // if starting a monkey jump to save king
-        if ((toPos.isJail()) && this.boardLayout[fromPos].constructor.name == Monkey.name){
+        if (toPos.isJail() && this.boardLayout[fromPos] instanceof Monkey){
             let nextTo = nextToJail(toPos)
 
-            this.boardLayout["TEMP"] = this.boardLayout[fromPos];
-            this.boardLayout["TEMP"].position = nextTo
+            const monkey = this.boardLayout[fromPos];
 
-            this.boardLayout[nextTo] = this.boardLayout[toPos]
-            this.boardLayout[nextTo].hasBanana = false;
-            this.boardLayout[nextTo].position = nextTo;
+            // Lift monkey into the air
+            this.boardLayout.moveToTemp(fromPos);
+            monkey.position = nextTo;
 
-            delete this.boardLayout[toPos]
+            // Move king out of jail
+            const { piece } = this.boardLayout.move(toPos, nextTo);
+            piece.hasBanana = false;
 
         } else {
             this.stateChecks(fromPos, toPos)
@@ -448,45 +449,14 @@ export class ChessBoard {
                 }
             }
             
-            if (toPos.id != fromPos.id){
-                if (this.boardLayout[toPos] != undefined) {
-                    this.boardLayout["TEMP"] = this.boardLayout[toPos]
-                } else {
-                    this.boardLayout["TEMP"] = this.boardLayout[fromPos]
-                    this.boardLayout["TEMP"].position = toPos
-                }
-        
-                this.boardLayout[toPos] = this.boardLayout[fromPos]
-        
-                this.boardLayout[toPos].position = toPos
-        
-                delete this.boardLayout[fromPos]
-            }
+            this.boardLayout.move(fromPos, toPos);
 
         }
-        
-        if (this.checkLoseCondition()) {
-            console.log("calling game over callback function")
-            this.gameOverCallbackFunc();
-        }
-        this.resetTiles();
-        this.updatePieces();
-        this.setPrevColor(fromPos)
-        this.setPrevColor(toPos)
-        this.playChessSound();
     }
 
     setPrevColor(toPos){
         if (toPos != "TEMP"){
             document.getElementById(toPos).style[canMoveKey(this.styleType)] = prevMoveColor
-        }
-    }
-
-    checkLoseCondition(){
-        if (this.isWhite){
-            return ( this.boardLayout["x1"] && this.boardLayout["x2"] )
-        } else {
-            return ( this.boardLayout["y1"] && this.boardLayout["y2"] )
         }
     }
 
