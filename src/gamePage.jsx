@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import GameBoard from "./components/gameBoard"
 import Header from "./components/header"
 import { cookieInit } from "../dist/helper-js/cookieManager"
-import { styleList } from "./components/styleManager"
+import { styleList } from "./helper-js/StyleManager"
 
 function GamePage(props) {
     const [customStyle, setCustomStyle] = useState( styleList[cookieInit() && globalThis.cookie.style] || styleList.oat );

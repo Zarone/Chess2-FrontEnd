@@ -1,6 +1,6 @@
 import React from 'react'
 import sliderStyles from "../../dist/styles/slider.module.css"
-import { styleList } from './styleManager'
+import { styleList } from '../helper-js/StyleManager'
 
 export default function SettingsMenu({customStyle, setCustomStyle, soundOn, setSoundToggle}){
         

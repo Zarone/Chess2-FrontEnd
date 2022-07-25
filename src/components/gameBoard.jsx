@@ -2,7 +2,7 @@ import React, { useEffect, useState }  from "react"
 import { onLoad } from "../../dist/game"
 
 import boardStyle from "../../dist/styles/board.module.css"
-import {getCustomStyle} from "./styleManager"
+import {getCustomStyle} from "../helper-js/StyleManager"
 
 import Settings from "./settings"
 import { initAndGetSound } from "../../dist/helper-js/cookieManager"

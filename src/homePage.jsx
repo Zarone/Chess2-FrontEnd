@@ -4,7 +4,7 @@ import Header from "./components/header"
 import SettingsMenu from "./components/settingsMenu";
 import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
 import "../dist/helper-js/join";
-import { styleList } from "./components/styleManager";
+import { styleList } from "./helper-js/StyleManager";
 
 export default function HomePage(props){
 
