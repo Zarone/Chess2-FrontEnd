@@ -18,6 +18,7 @@ class CustomStyle {
 export const styleList = {
     oat: new CustomStyle("oat", oatStyle, "backgroundColor", "red"),
     pixel: new CustomStyle("pixel", pixelStyle, "background", `url("./assets/pixel/To Move.png") center center no-repeat scroll rgba(255, 0, 153, 0.3)`),
+    highRes: new CustomStyle("highRes", oatStyle, "backgroundColor", "red"),
 }
 
 export function getCustomStyle(style: CustomStyle): Module { return style.module } ;
