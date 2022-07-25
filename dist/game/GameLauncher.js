@@ -17,9 +17,14 @@ export class GameLauncher {
             reversed: false,
         });
 
-        let {roomID, friendRoom, timeLimit} = getQuerystring()
-        this.game.setState({ roomID, friendRoom, timeLimit });
-        this.game.setState({ cookie: globalThis.cookie, playerID: parseInt(globalThis.cookie.pid) });
+        if ( typeof window !== 'undefined' ) {
+            let {roomID, friendRoom, timeLimit} = getQuerystring()
+            this.game.setState({ roomID, friendRoom, timeLimit });
+            this.game.setState({
+                cookie: globalThis.cookie,
+                playerID: parseInt(globalThis.cookie.pid)
+            });
+        }
         
         // // Bind properties
         // ;[

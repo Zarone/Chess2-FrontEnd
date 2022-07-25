@@ -5,7 +5,8 @@
   "main": "chess2.js",
   "scripts": {
     "dev": "node tools/build.js && webpack serve --config ./webpack.config.js --mode development --port 5500",
-    "build": "node tools/build.js && webpack build --config ./webpack.config.js --mode production"
+    "build": "node tools/build.js && webpack build --config ./webpack.config.js --mode production",
+    "test": "node --experimental-specifier-resolution=node test/bin/test_exec.js"
   },
   "repository": {
     "type": "git",
