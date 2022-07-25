@@ -6,6 +6,7 @@ import getCustomStyle from "./styleManager"
 
 import Settings from "./settings"
 import { initAndGetSound } from "../../dist/helper-js/cookieManager"
+import { GameModes } from "../helper-js/GameModes"
 
 export default function GameBoard(props) {
 
@@ -13,7 +14,7 @@ export default function GameBoard(props) {
     const [reversed, setReversed] = useState({reversed: false, flipped: false});
     const [soundOn, setSoundToggle] = useState(initAndGetSound());
 
-    const [gameMode, setGameMode] = useState("")
+    const [gameMode, setGameMode] = useState({})
     
     const [_, forceUpdate] = useState();
 
@@ -60,16 +61,16 @@ export default function GameBoard(props) {
             <div className={`container custom-bg-tertiary mt-3 mb-3 rounded`} style={{margin: 0}}>
                 <p id="roomID" className="display-6 text-white">
                     { 
-                        gameMode != "SINGLE_PLAYER" ? 
+                        !gameMode.singleplayer ? 
                             "Room ID: "
                             : "Singleplayer (no AI)" 
                     }
                 </p> 
             </div> 
             <Settings customStyle={props.customStyle} setCustomStyle={props.setCustomStyle} soundOn={soundOn} setSoundToggle={setSoundToggle}></Settings>
-            { gameMode != "SINGLE_PLAYER" ? <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%"}} onClick={onReverse}>Reverse</button> : "" }
+            { !gameMode.singleplayer ? <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%"}} onClick={onReverse}>Reverse</button> : "" }
             { 
-                gameMode == "SINGLE_PLAYER" ? 
+                gameMode.singleplayer ? 
                     <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%", backgroundColor: (()=>{console.log("reload", reversed.flipped);return true; })() && reversed.flipped ? "#4488c8":"#d4d6d6"}} onClick={onFlip}>
                         Flip On Turn
                     </button> : 

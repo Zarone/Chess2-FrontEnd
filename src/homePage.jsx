@@ -3,13 +3,18 @@ import * as ReactDOM from "react-dom";
 import Header from "./components/header"
 import SettingsMenu from "./components/settingsMenu";
 import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
+{/* <script src="./helper-js/join.js" type="module"></script> */}
+import { onLoad } from "../dist/helper-js/join";
 
 export default function HomePage(props){
 
     const [customStyle, setCustomStyle] = useState((cookieInit() && globalThis.cookie.style) || "oat")
     const [soundOn, setSoundToggle] = useState(initAndGetSound())
 
-    
+    // useEffect(()=>{
+    //     onLoad()
+    // }, [])
+
     useEffect(()=>{
         globalThis.cookie.style = customStyle
         console.log(globalThis.cookie.style)
@@ -23,7 +28,7 @@ export default function HomePage(props){
 
     return <React.Fragment>
     <script src="../dist/foam-bin.js"></script>
-    <Header />
+    <script src="./helper-js/join.js" type="module"></script>
     <section>
         <div className="container-fluid text-white pt-5">
             <div className="container my-5 custom-bg-primary pb-5 rounded">

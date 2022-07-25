@@ -1,8 +1,10 @@
 import {serverID} from "./utils.js";
 import {Cookie} from "./cookieManager.js"
 
+import { GameMode, GameModes } from "../../src/helper-js/GameModes"
+
 function rawJoin(time){
-    window.location.href="../game.html?gamemode=PLAYER_VS_PLAYER&friendRoom=false&timeLimit="+time.toString();
+    window.location.href=`../game.html?gamemode=${GameModes.PLAYER_VS_PLAYER.modeName}&friendRoom=false&timeLimit=${time.toString()}`;
 }
 
 function rawSinglePlayer(time){
@@ -41,8 +43,8 @@ foam.ENUM({
     name: 'GameMode',
 
     values: [
-        { name: 'PLAYER_VS_PLAYER' , label: 'Two Players'   },
-        { name: 'SINGLE_PLAYER'    , label: 'Single Player'   },
+        { name: GameModes.PLAYER_VS_PLAYER.modeName , label: 'Two Players'   },
+        { name: GameModes.SINGLE_PLAYER.modeName    , label: 'Single Player'   },
 
         // TODO: implement these game modes
         // { name: 'PLAYER_ALONE'       , label: 'Singleplayer'  },
