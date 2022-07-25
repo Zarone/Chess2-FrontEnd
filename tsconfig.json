@@ -8,5 +8,6 @@
         "jsx": "react",
         "allowJs": true,
         "moduleResolution": "node",
+        "plugins": [{ "name": "typescript-plugin-css-modules" }]
     }
 }

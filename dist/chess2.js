@@ -43,7 +43,7 @@ export class ChessBoard {
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
 
-    styleType = undefined; // either "oat", "pixel"
+    styleType = undefined; // of type CustomStyle
     styleSheetReference = undefined;
 
     isSound = true;
@@ -147,7 +147,7 @@ export class ChessBoard {
 
     manageTakeKingOrQueen(piece, event){
         this.draggingPieceDom = document.createElement('img');
-        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType.name+"/"+piece.getImageSrc());
         this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"] /*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -167,7 +167,7 @@ export class ChessBoard {
     manageMonkeyJumpingNonRescue(event){
         let piece = this.boardLayout["TEMP"];
         this.draggingPieceDom = document.createElement('img');
-        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType.name+"/"+piece.getImageSrc());
         this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -187,7 +187,7 @@ export class ChessBoard {
     manageMonkeyJumping(piece, event){
         this.draggingPieceDom = document.createElement('img');
 
-        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType+"/"+this.boardLayout["TEMP"].getImageSrc());
+        this.draggingPieceDom.setAttribute("src", "./assets/"+this.styleType.name+"/"+this.boardLayout["TEMP"].getImageSrc());
         this.draggingPieceDom.setAttribute("class", this.styleSheetReference["piece-image"]/*"piece-image"*/);
 
         document.getElementById("x1").appendChild(this.draggingPieceDom);
@@ -443,7 +443,7 @@ export class ChessBoard {
 
     renderPiece(tileDom, piece){
         let imageDom = document.createElement("img");
-        imageDom.setAttribute("src", "./assets/"+this.styleType+"/"+piece.getImageSrc());
+        imageDom.setAttribute("src", "./assets/"+this.styleType.name+"/"+piece.getImageSrc());
         imageDom.setAttribute("class", this.styleSheetReference["piece-image"]);
         while (tileDom.hasChildNodes()) {
             tileDom.removeChild(tileDom.lastChild);

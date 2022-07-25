@@ -2,7 +2,7 @@ import React, { useEffect, useState }  from "react"
 import { onLoad } from "../../dist/game"
 
 import boardStyle from "../../dist/styles/board.module.css"
-import getCustomStyle from "./styleManager"
+import {getCustomStyle} from "./styleManager"
 
 import Settings from "./settings"
 import { initAndGetSound } from "../../dist/helper-js/cookieManager"
@@ -36,7 +36,7 @@ export default function GameBoard(props) {
             globalThis.gameboard.updatePieces();
         }
 
-        globalThis.cookie.style = props.customStyle;
+        globalThis.cookie.style = props.customStyle.name;
 
     }, [props.customStyle])
 

@@ -3,20 +3,16 @@ import * as ReactDOM from "react-dom";
 import Header from "./components/header"
 import SettingsMenu from "./components/settingsMenu";
 import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
-{/* <script src="./helper-js/join.js" type="module"></script> */}
-import { onLoad } from "../dist/helper-js/join";
+import "../dist/helper-js/join";
+import { styleList } from "./components/styleManager";
 
 export default function HomePage(props){
 
-    const [customStyle, setCustomStyle] = useState((cookieInit() && globalThis.cookie.style) || "oat")
+    const [customStyle, setCustomStyle] = useState(styleList[cookieInit() && globalThis.cookie.style] || styleList.oat)
     const [soundOn, setSoundToggle] = useState(initAndGetSound())
 
-    // useEffect(()=>{
-    //     onLoad()
-    // }, [])
-
     useEffect(()=>{
-        globalThis.cookie.style = customStyle
+        globalThis.cookie.style = customStyle.name
         console.log(globalThis.cookie.style)
     }, [customStyle])
 

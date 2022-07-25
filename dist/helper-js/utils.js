@@ -9,31 +9,13 @@ export const canMoveColor = "red"
 export const prevMoveColor = "green"
 
 export const canMoveKey = (styleType) => {
-    switch (styleType) {
-        case "oat":
-            return "backgroundColor"
-            break;
-        case "pixel":
-            return "background"
-            break;
-        default:
-            return "backgroundColor"
-            break;
-    }
+    if (styleType) return styleType.canMoveKey
+    throw new Error("undefined styleType");
 }
 
 export const canMoveValue = (styleType) => {
-    switch (styleType) {
-        case "oat":
-            return "red"
-            break;
-        case "pixel":
-            return `url("./assets/pixel/To Move.png") center center no-repeat scroll rgba(255, 0, 153, 0.3)`
-            break;
-        default:
-            return "red"
-            break;
-    }
+    if (styleType) return styleType.canMoveValue
+    throw new Error("undefined styleType");
 }
 
 // export const START_TIME = 60 * 5
