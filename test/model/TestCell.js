@@ -12,11 +12,26 @@ export class TestCell extends TestModel {
                 actualClass: this.piece?.constructor?.name,
                 piece: this.piece
             });
+            return false;
         } else {
             this.tester.pass({
                 message,
                 expectedClass: cls.name,
             })
+            return true;
         }
+    }
+
+    assertNotEmpty (message) {
+        message = message ||
+            `cell at ${this.pos} holds a piece`;
+        if ( ! this.piece ) {
+            this.tester.error({
+                message,
+                emessage: () => `${this.pos} was empty`
+            })
+            return false;
+        }
+        return true;
     }
 }

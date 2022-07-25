@@ -1,6 +1,9 @@
+import { NotTestedResult } from "./NotTestedResult";
+
 export class BaseTest {
     constructor () {
         this.results = [];
+        this.simulatedOperations = 0;
     }
 
     get errors () {
@@ -13,6 +16,17 @@ export class BaseTest {
 
     pass (data) {
         this.results.push({ ...data, passed: true });
+    }
+
+    notTested (message, fn) {
+        this.simulatedOperations = 0;
+        let testDiff = this.results.length;
+        fn();
+        this.results.push(new NotTestedResult(
+            message,
+            this.simulatedOperations,
+            this.results.length - testDiff,
+        ));
     }
 
     output (logger) {
@@ -30,6 +44,10 @@ export class BaseTest {
         logger.log(msg);
 
         for ( const result of this.results ) {
+            if ( result instanceof NotTestedResult ) {
+                result.output(logger);
+                continue;
+            }
             let msg = result.passed
                 ? `  \x1B[32;2m ✓\x1B[0m `
                 : `  \x1B[31;1m ✕\x1B[0m `
@@ -41,6 +59,15 @@ export class BaseTest {
             }
 
             logger.log(msg);
+
+            if ( ! result.passed ) {
+                for ( const k in result ) {
+                    if ( k == 'passed' ) continue;
+                    if ( k == 'message' ) continue;
+                    let v = JSON.stringify(result[k]);
+                    console.log(`     - ${k}: ${v}`)
+                }
+            }
         }
     }
 }

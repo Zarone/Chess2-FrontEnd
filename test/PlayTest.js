@@ -5,6 +5,7 @@ import { PieceHooksPlugin } from "../dist/game/plugins/PieceHooksPlugin";
 import { TimerPlugin } from "../dist/game/plugins/TimerPlugin";
 import { BaseTest } from "./framework/BaseTest";
 import { TestCell } from "./model/TestCell";
+import { TestMove } from "./model/TestMove";
 
 export class PlayTest extends BaseTest {
     static documentation = `
@@ -42,5 +43,9 @@ export class PlayTest extends BaseTest {
 
         // Generate cell information
         return new TestCell(this, { pos: id, piece: a });
+    }
+
+    testMove (args) {
+        return new TestMove(this, args);
     }
 }

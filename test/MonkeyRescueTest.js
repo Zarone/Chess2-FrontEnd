@@ -1,4 +1,5 @@
 import { BoardLayouts } from "../dist/chess2/BoardLayout";
+import { Position } from "../dist/helper-js/board";
 import { King } from "../dist/pieces-js/King";
 import { Monkey } from "../dist/pieces-js/Monkey";
 import { PlayTest } from "./PlayTest.js";
@@ -17,27 +18,41 @@ export class MonkeyRescueTest extends PlayTest {
         a4.assertPieceType(Monkey);
         const monkey = a4.piece;
 
-        // let move = this.testMove({
-        //     label: 'Move monkey onto king',
-        //     fromPos: 'a4',
-        //     toPos: 'x1'
-        // });
-        // move.assertAllowed();
-        // move.commit();
+        let move = this.testMove({
+            label: 'Move monkey to king',
+            fromPos: 'a4',
+            toPos: 'x1'
+        });
+        move.assertAllowed();
+        // no commit - move to TEMP happens internally
 
-        // let a4 = this.testCell('a4');
-        // a4.assertPiece(king);
+        this.notTested('ChessBoard.makeMove', () => {
+            move = this.testMove({
+                label: 'Move monkey to TEMP',
+                fromPos: 'a4',
+                toPos: 'TEMP'
+            });
+            // no validation - this moves happens internally
+            move.commit();
 
-        // let temp = this.testCell('TEMP');
-        // temp.assertPiece(monkey);
+            move = this.testMove({
+                label: 'Move king to where monkey was',
+                fromPos: 'x1',
+                toPos: 'a4',
+            });
+            // no validation - this moves happens internally
+            move.commit();
 
-        // let move = this.testMove({
-        //     label: 'Monkey escape',
-        //     fromPos: 'TEMP',
-        //     toPos: 'b4'
-        // });
+            // simulate behaviour that we can't test
+            monkey.position = Position.adapt('a4');
+        });
 
-        // move.assertAllowed();
-        // move.commit();
+        move = this.testMove({
+            label: 'Monkey escapes',
+            fromPos: 'TEMP',
+            toPos: 'c4'
+        });
+        move.assertAllowed();
+        move.commit();
     }
 }
