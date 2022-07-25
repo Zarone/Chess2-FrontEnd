@@ -1,8 +1,8 @@
 import { getQuerystring } from "../../helper-js/utils";
 import { Events } from "../Events";
-import { PluginBase } from "./BasePlugin";
+import { GameModeBasePlugin } from "../../../src/game/plugins/GameModeBasePlugin";
 
-export class SinglePlayerPlugin extends PluginBase {
+export class SinglePlayerPlugin extends GameModeBasePlugin {
     
     static apiVersion = 1
 

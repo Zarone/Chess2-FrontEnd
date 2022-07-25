@@ -39,7 +39,7 @@ export class GameLauncher {
         this.game.events.emit(Events.init.plugin.PRE_INSTALL_HOOK, plugin);
 
         // TODO: Move this install step to a Plugin base class
-        this.game.plugins[plugin.constructor.name] = plugin;
+        this.game.plugins[plugin.constructor.identifier || plugin.constructor.name] = plugin;
 
         plugin.install(this.game);
         this.game.events.emit(Events.init.plugin.POST_INSTALL_HOOK, plugin);

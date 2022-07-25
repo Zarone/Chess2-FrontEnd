@@ -1,12 +1,12 @@
 import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT, disconnectText } from "../../helper-js/utils";
 
-import { PluginBase } from "./BasePlugin"
+import { GameModeBasePlugin } from "../../../src/game/plugins/GameModeBasePlugin";
 import { Events } from "../Events"
 import { MoveInfo } from "../net/MoveInfo";
 
-export class MultiplayerPlugin extends PluginBase {
-    constructor ({ socket }) {
-        super();
+export class MultiplayerPlugin extends GameModeBasePlugin {
+    constructor ({ socket, gameMode }) {
+        super({gameMode});
         this.socket = socket;
     }
 

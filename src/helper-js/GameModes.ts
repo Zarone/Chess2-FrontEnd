@@ -3,16 +3,22 @@ import { SinglePlayerPlugin } from "../../dist/game/plugins/SinglePlayerPlugin.j
 import { PluginBase } from "../../dist/game/plugins/BasePlugin";
 
 interface pluginConstructor {
-    new () : PluginBase;
+    new (prop: {}) : PluginBase;
+}
+
+interface pluginConstructorWrapper {
+    (prop:{}):PluginBase;
 }
 
 export class GameMode {
     singleplayer: boolean;
-    plugin: pluginConstructor;
+    plugin: pluginConstructorWrapper;
     modeName: string;
     constructor(singleplayer: boolean, pluginConstructor: pluginConstructor, modeName: string){
         this.singleplayer = singleplayer;
-        this.plugin = pluginConstructor;
+        this.plugin = (prop: {}) => { 
+            return new pluginConstructor({gameMode: this, ...prop});
+        };
         this.modeName = modeName;
     }
 }
