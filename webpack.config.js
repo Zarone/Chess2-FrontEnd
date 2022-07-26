@@ -49,11 +49,11 @@ module.exports = {
             path.resolve(__dirname, "./src/"),
         ],
       },
-    //   {
-    //     test: /\.js$/,
-    //     use: ["source-map-loader"],
-    //     enforce: "pre"
-    //   },
+      {
+        test: /\.js$/,
+        use: ["source-map-loader"],
+        enforce: "pre"
+      },
     ],
   },
   resolve: {

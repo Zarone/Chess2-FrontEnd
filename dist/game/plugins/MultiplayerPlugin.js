@@ -2,7 +2,7 @@ import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT, disconnectText }
 
 import { GameModeBasePlugin } from "../../../src/game/plugins/GameModeBasePlugin";
 import { Events } from "../Events"
-import { MoveInfo } from "../net/MoveInfo";
+import { MoveInfo } from "../../../src/game/net/MoveInfo";
 
 export class MultiplayerPlugin extends GameModeBasePlugin {
     constructor ({ socket, gameMode }) {
@@ -88,23 +88,14 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
 
         socket.on('registeredMove', args => {
             const moveInfo = MoveInfo.deserialize(args.moveInfo);
-
+            
             const { roomID, playerID } = game.state;
-
+            
             if ( roomID != args.room ) return;
             if ( playerID == args.player ) return;
+            
+            this.emit(Events.request.FORCE_MOVE, moveInfo)
 
-            const boardLayout = game.get('boardLayout');
-            const isValid = boardLayout.validateMove(
-                game, game.get('currentTurn'), moveInfo);
-
-            if ( ! isValid ) {
-                console.error('move is not allowed', moveInfo);
-                return;
-            }
-
-            boardLayout.makePreValidatedMove(game, moveInfo.fromPos, moveInfo.toPos);
-            game.set('currentTurn', moveInfo.newTurn);
         })
 
         // ???: Maybe add a ReconnectionPlugin

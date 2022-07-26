@@ -40,7 +40,8 @@ export const Events = {
         CLEAR_MODALS: new Event("request.clearModals"),
         ADMIT_DEFEAT: new Event("request.admitDefeat"),
         COMMIT_MOVE: new Event("request.commitMove"),
-        SEND_RECONNECT_DATA: new Event("request.sendReconnectData")
+        SEND_RECONNECT_DATA: new Event("request.sendReconnectData"),
+        FORCE_MOVE: new Event("requests.forceMove")
     },
     state: {
         ROOM_ID: new Event("state.roomID"),

@@ -14,7 +14,7 @@ import { Rook } from "../../pieces-js/Rook.js";
 import { PluginBase } from "./BasePlugin"
 
 import { Events } from "../Events"
-import { MoveInfo } from "../net/MoveInfo";
+import { MoveInfo } from "../../../src/game/net/MoveInfo";
 
 import { Position } from "../../helper-js/board"
 
@@ -34,6 +34,8 @@ export class DOMBoardPlugin extends PluginBase {
                 if (moveInfo.newTurn === undefined) debugger
 
                 // launcher.events.emit('move.end', moveInfo);
+
+                console.log(MoveInfo.create(moveInfo))
 
                 this.emit(Events.request.COMMIT_MOVE, {
                     player: game.get('playerID'),

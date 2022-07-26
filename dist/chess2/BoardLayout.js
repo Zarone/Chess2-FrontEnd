@@ -2,7 +2,7 @@ import { SubEmitter } from "../game/Emitter";
 import { Event } from "../game/Events";
 import { Turn } from "../game/model/Turn";
 import { Position } from "../helper-js/board";
-import { PowerClass } from "../helper-js/PowerClass";
+import { PowerClass } from "../../src/helper-js/PowerClass";
 import { And, Not, Either } from "../helper-js/Predicate";
 import { JAIL, JUMPING, NORMAL, RESCUE } from "../helper-js/TurnUtil";
 import { nextToJail } from "../helper-js/utils";

@@ -17,7 +17,7 @@ import { MultiplayerPlugin } from "./game/plugins/MultiplayerPlugin.js";
 import { TimerPlugin } from "./game/plugins/TimerPlugin.js";
 import { DOMBoardPlugin } from "./game/plugins/DOMBoardPlugin.js";
 import { Events } from "./game/Events"
-import { MoveInfo } from "./game/net/MoveInfo.js";
+import { MoveInfo } from "../src/game/net/MoveInfo";
 import { BoardFactory, BoardLayouts } from "./chess2/BoardLayout.js";
 import { EndGamePlugin } from "./game/plugins/EndGamePlugin.js";
 import { PieceHooksPlugin } from "./game/plugins/PieceHooksPlugin.js";
@@ -72,7 +72,7 @@ export const onLoad = async (styleSheet, styleName) => {
     game.on(Events.state.PLAYER_ID, (_, v) => playerID = v);
     // === END TEMPORARY ===
 
-    let chessBoard = game.plugins['DOMBoardPlugin'].board;
+    let chessBoard = game.plugins[DOMBoardPlugin.prototype.constructor.name].board;
 
     let reversedPointer = { 
         get reversed(){

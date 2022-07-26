@@ -8,40 +8,57 @@
 
 const __MAGIC_CREATE = {};
 
+interface PowerClassConstructor {
+    new (__expected_magic_create: {}, args: any): PowerClass;
+    initializer: Function;
+}
+
 export class PowerClass {
-    constructor (__expected_magic_create, args) {
+
+    static initializer: Function; 
+    static handler: {get: (...any: any)=>any}
+
+    init: Function;
+
+    constructor (__expected_magic_create: {}, args: any) {
         if ( __expected_magic_create !== __MAGIC_CREATE ) {
             const name = this.constructor.name;
             throw new Error(
                 `Create ${name} using "${name}.create()" instead of "new ${name}()"`);
         }
 
-        this.constructor.initializer(this, ...args);
-
+        (this.constructor as PowerClassConstructor).initializer(this, ...args);
+        console.log("this", JSON.stringify(this))
         if ( this.init && typeof this.init === 'function' ) this.init();
+ 
     }
 
-    static create (...args) {
+    static create (...args: any) {
+        console.log("[Power Class] Create", args)
         const o = new this(__MAGIC_CREATE, args);
+        console.log("[Power Class] Created", JSON.stringify(o))
 
         return this.handler ? new Proxy(o,
             PowerClass.wrapHandler(this.handler)) : o;
     }
 
-    static wrapHandler (handler) {
+    static wrapHandler (handler: {get: (...any: any)=>any}) {
         const wHandler = { ...handler };
-        wHandler.get = function get (target, key) {
+        wHandler.get = function get (...args: any) {
+            let key: string = args[0];
+            let target = args[1];
+
             if ( key === '_unproxied' ) return target;
-            return handler.get(...arguments);
+            return handler.get(...args);
         }
         return wHandler;
     }
 
-    static DATA_PROPERTY_INITIALIZER = (obj, data) => {
+    static DATA_PROPERTY_INITIALIZER = (obj: {data: any}, data: any) => {
         obj.data = data;
     }
 
-    static PARAMETRIC_INITIALIZER = (obj, ...objects) => {
+    static PARAMETRIC_INITIALIZER = (obj: any, ...objects: [args: any]) => {
         for ( const fields of objects ) {
             if ( typeof fields != 'object' ) {
                 throw new Error('parametric class needs object constructor args');
