@@ -1,8 +1,17 @@
-import { Emitter, SubEmitter } from "./Emitter.js";
+import { Emitter, SubEmitter } from "../../dist/game/Emitter.js";
 
-import { Event, Events } from "./Events"
+import { Event, Events } from "./../../dist/game/Events"
+
+import { PluginBase } from "../../dist/game/plugins/BasePlugin.js";
 
 export class Game {
+
+    elements: {[key: string]: HTMLElement}
+    controllers: {};
+    events: Emitter;
+    state: {[key: string]: any};
+    plugins: {[key: string]: PluginBase};
+
     constructor () {
 
         // identifiers to literal DOM elements
@@ -20,14 +29,14 @@ export class Game {
         this.events.emit(Events.LAUNCH);
     }
 
-    setState (obj) {
+    setState (obj: { [key: string]: any }) {
         for ( const k in obj ) {
             this.set(k, obj[k]);
         }
     }
 
-    set (k, v) {
-        const joinTopicName = (...a) => a.join('.');
+    set (k: string, v: any) {
+        const joinTopicName = (...a: any) => a.join('.');
         const topicName = joinTopicName('state', k);
 
         if ( v && v.installEmitter && typeof v.installEmitter === 'function' ) {
@@ -44,11 +53,12 @@ export class Game {
         console.log('going to emit', topicName, v)
     }
 
-    get (k) {
+    get (k: string) {
         return this.state[k];
     }
 
     // Shortcuts for event emitter access
-    on (...a) { return this.events.on(...a); }
-    emit (...a) { return this.events.emit(...a); }
+    on (...a: any) { return this.events.on(...a); }
+    emit (...a: any) { return this.events.emit(...a); }
 }
+

@@ -1,5 +1,5 @@
 import { PluginBase } from "../../../dist/game/plugins/BasePlugin"
-import { Game } from "../../../dist/game/Game.js";
+import { Game } from "../Game";
 import { GameMode } from "../../helper-js/GameModes";
 import { Events } from "../../../dist/game/Events"
 import { MoveInfo } from "../net/MoveInfo";

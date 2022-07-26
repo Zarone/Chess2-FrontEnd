@@ -1,6 +1,6 @@
 import { Cookie } from "../helper-js/cookieManager.js";
 import { getQuerystring } from "../helper-js/utils.js"
-import { Game } from "./Game.js";
+import { Game } from "../../src/game/Game";
 
 import { Events } from "./Events"
 export class GameLauncher {
