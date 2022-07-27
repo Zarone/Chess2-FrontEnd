@@ -27,7 +27,7 @@ export class PowerClass {
                 `Create ${name} using "${name}.create()" instead of "new ${name}()"`);
         }
 
-        (this.constructor as PowerClassConstructor).initializer(this, ...args);
+        (this.constructor as typeof PowerClass).initializer(this, ...args);
         console.log("this", JSON.stringify(this))
         if ( this.init && typeof this.init === 'function' ) this.init();
  

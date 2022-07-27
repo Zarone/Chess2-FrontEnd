@@ -1,8 +1,9 @@
-import { BoardFactory } from "../dist/chess2/BoardLayout";
+import { BoardFactory } from "../dist/chess2/BoardLayout.js";
 import { GameLauncher } from "../dist/game/GameLauncher"
 import { EndGamePlugin } from "../dist/game/plugins/EndGamePlugin";
 import { PieceHooksPlugin } from "../dist/game/plugins/PieceHooksPlugin";
-import { TimerPlugin } from "../dist/game/plugins/TimerPlugin";
+import { TestGameModePlugin } from "../src/game/plugins/TestGameModePlugin";
+import { GameModes } from "../src/helper-js/GameModes";
 import { BaseTest } from "./framework/BaseTest";
 import { TestCell } from "./model/TestCell";
 import { TestMove } from "./model/TestMove";
@@ -17,6 +18,7 @@ export class PlayTest extends BaseTest {
         launcher.init();
         launcher.install(new PieceHooksPlugin());
         launcher.install(new EndGamePlugin());
+        launcher.install(GameModes.TEST_MODE.plugin());
 
         this.game = launcher.game;
     }

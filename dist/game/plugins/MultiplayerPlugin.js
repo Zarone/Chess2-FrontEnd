@@ -10,6 +10,21 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
         this.socket = socket;
     }
 
+    static apiVersion = 1
+    static receives = [
+        Events.state.PLAYER_INFO,
+        Events.request.SEND_RECONNECT_DATA,
+        Events.request.ADMIT_DEFEAT,
+        Events.request.COMMIT_MOVE,
+        Events.state.CURRENT_TURN,
+        Events.LAUNCH,
+        Events.request.FORCE_MOVE
+    ]
+    static broadcasts = [
+        Events.request.FORCE_MOVE,
+        Events.request.GAME_OVER_MODAL
+    ];
+
     install (game) {
         super.install(game)
 

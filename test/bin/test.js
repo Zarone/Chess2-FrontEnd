@@ -1,5 +1,5 @@
-import { TestRunner } from "../framework/TestRunner.js";
-import { MonkeyRescueTest } from "../MonkeyRescueTest.js";
+import { TestRunner } from "../framework/TestRunner";
+import { MonkeyRescueTest } from "../MonkeyRescueTest";
 
 const testRunner = new TestRunner({
     tests: [

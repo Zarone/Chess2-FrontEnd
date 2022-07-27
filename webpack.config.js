@@ -6,11 +6,6 @@ module.exports = {
 
   devtool: 'inline-source-map',
 
-//   entry: {
-//     homePage: path.resolve(__dirname, "./src/homePage.jsx"),
-//     gamePage: path.resolve(__dirname, "./src/gamePage.jsx"),
-//     faqPage: path.resolve(__dirname, "./src/faqPage.jsx"),
-//   },
   entry: {  
     homePage: path.resolve(__dirname, "./src/homePage.jsx"),
     gamePage: path.resolve(__dirname, "./src/gamePage.jsx"),
@@ -20,7 +15,6 @@ module.exports = {
             acc[file.split("/src/")[1].split(".")[0]] = file;
             return acc;
         }, {})
-        // console.log(glob.sync("./src/**/*.ts"))
         return val 
     }
     )() },
@@ -61,14 +55,7 @@ module.exports = {
   },
   output: {
     publicPath: "",
-    // path: path.resolve(__dirname, "./dist"),
-    // filename: "bundle.js",
   },
-//   output: {
-//     filename: "[name].js",
-//     chunkFilename: "[name]-[id].js",
-//     path: __dirname + "/dist"
-//   },
   plugins: [
         new webpack.HotModuleReplacementPlugin(),
     ],

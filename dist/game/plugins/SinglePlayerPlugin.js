@@ -9,7 +9,6 @@ export class SinglePlayerPlugin extends GameModeBasePlugin {
     static receives = [
         Events.state.CURRENT_TURN,
         Events.LAUNCH,
-        Events.request.FORCE_MOVE
     ]
 
     install (game) {

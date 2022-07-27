@@ -6,15 +6,6 @@ export class MoveInfo extends PowerClass {
     [x: string]: any;
     static initializer = PowerClass.PARAMETRIC_INITIALIZER;
 
-    // constructor (__expected_magic_create: {}, args: any) {
-    //     super(__expected_magic_create, args);
-    //     this.toPos = this.toPos;
-    // }
-
-    // toPos: Position;
-    // fromPos: Position;
-    // newTurn: string;
-
     serialize () {
         console.log("[Serializing Move]", this)
         return {

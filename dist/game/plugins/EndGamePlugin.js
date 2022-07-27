@@ -25,6 +25,9 @@ export class EndGamePlugin extends PluginBase {
         super.install(game);
 
         this.on(Events.state.BOARD_UPDATE, () => {
+
+            if ( !game.plugins[GameModeBasePlugin.identifier] ) throw new Error("[EndGamePlugin]: No Game Mode Set")
+
             if ( game.plugins[GameModeBasePlugin.identifier].gameMode.singleplayer && this.checkLoseCondition(game, true) ) {
                 this.emit(Events.request.ADMIT_DEFEAT, { message: NEUTRAL_GAME_OVER });
             } else if ( this.checkLoseCondition(game) ) {

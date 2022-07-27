@@ -7,5 +7,7 @@
         "@babel/react", 
         "@babel/typescript", 
         ["@babel/env", { "modules": false }]
-    ]
+    ],
+    "sourceMaps": "inline",
+    "retainLines": true 
 }

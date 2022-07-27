@@ -1,13 +1,15 @@
-import { BoardLayouts } from "../dist/chess2/BoardLayout";
-import { Position } from "../dist/helper-js/board";
+import { BoardLayouts } from "../dist/chess2/BoardLayout.js";
+import { Position } from "../dist/helper-js/board.js";
 import { King } from "../dist/pieces-js/King";
 import { Monkey } from "../dist/pieces-js/Monkey";
 import { PlayTest } from "./PlayTest.js";
 
 export class MonkeyRescueTest extends PlayTest {
+    
     run () {
+        
         this.setBoardLayout(BoardLayouts.MONKEY_SAVE_TEST);
-
+        
         this.setTurn('White');
 
         let x1 = this.testCell('x1');

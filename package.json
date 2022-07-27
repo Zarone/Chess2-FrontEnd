@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "node tools/build.js && webpack serve --config ./webpack.config.js --mode development --port 5500",
     "build": "node tools/build.js && webpack build --config ./webpack.config.js --mode production",
-    "test": "node --experimental-specifier-resolution=node test/bin/test_exec.js"
+    "test": "webpack build --config ./webpack.config.test.js --mode development && node --nolazy --experimental-modules test/bin/bundle/test.js",
+    "debugTest": "webpack build --config ./webpack.config.test.js --mode development && node --nolazy --inspect-brk --experimental-modules test/bin/bundle/test.js"
   },
   "repository": {
     "type": "git",

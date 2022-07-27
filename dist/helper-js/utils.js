@@ -45,7 +45,7 @@ export function socketID(){
 }
 
 export function getQuerystring() {
-    let output={}
+    let output={timeLimit: undefined}
     if(window.location.search){
     var queryParams = window.location.search.substring(1);
     var listQueries = queryParams.split("&");
