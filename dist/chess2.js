@@ -114,17 +114,17 @@ export class ChessBoard {
     renderMovesForTakenKingQueen(){
         if (this.isWhite){
             if (this.boardLayout["y1"] == undefined) {
-                document.getElementById("y1").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+                this.styleType.canMove.setAt(document.getElementById("y1"))
             }
             if (this.boardLayout["y2"] == undefined) {
-                document.getElementById("y2").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+                this.styleType.canMove.setAt(document.getElementById("y2y2"))
             }
         } else {
             if (this.boardLayout["x1"] == undefined) {
-                document.getElementById("x1").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+                this.styleType.canMove.setAt(document.getElementById("x1"))
             }
             if (this.boardLayout["x2"] == undefined) {
-                document.getElementById("x2").style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+                this.styleType.canMove.setAt(document.getElementById("x2"))
             }
         }
     }
@@ -215,7 +215,7 @@ export class ChessBoard {
     makeMove(moveToDom, event){
         let classNames = moveToDom.className.split(" ")
         
-        let isMoveableTile = moveToDom.style[canMoveKey(this.styleType)] == canMoveValue(this.styleType);
+        let isMoveableTile = this.styleType.canMove.checkAgainst(moveToDom);
 
         let monkeyJumpingNonRescue = false;
 
@@ -279,6 +279,7 @@ export class ChessBoard {
         }
 
         if ( ! isMoveableTile ) {
+	    console.log(moveToDom);
             abortMove("not a moveable tile");
             return;
         }
@@ -387,7 +388,7 @@ export class ChessBoard {
 
     setPrevColor(toPos){
         if (toPos != "TEMP"){
-            document.getElementById(toPos).style[canMoveKey(this.styleType)] = prevMoveColor
+            document.getElementById(toPos).style["backgroundColor"] = prevMoveColor
         }
     }
 
@@ -400,19 +401,21 @@ export class ChessBoard {
         let elements = document.getElementsByClassName("chess-box")
         for (let i = 0; i < elements.length; i++){
             let element = elements[i];
-            element.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
-            element.style[canMoveKey(this.styleType)] = "";
+            this.styleType.canMove.setAt(element.style);
+            this.styleType.canMove.unsetAt(element.style);
         }
         elements = document.getElementsByClassName("chess-jail-box")
         for (let i = 0; i < elements.length; i++){
             let element = elements[i];
-            element.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
-            element.style[canMoveKey(this.styleType)] = "";
+            this.styleType.canMove.setAt(element.style);
+            this.styleType.canMove.unsetAt(element.style);
         }
 
         for (let i = 0; i < moves.length; i++){
             let editTileDom = document.getElementById(moves[i].pos);
-            editTileDom.style[canMoveKey(this.styleType)] = canMoveValue(this.styleType);
+            this.styleType.canMove.unsetAt(editTileDom);
+            this.styleType.canMove.setAt(editTileDom);
+            console.log(editTileDom);
         }
     }
 
@@ -460,14 +463,16 @@ export class ChessBoard {
         for (let i = 1; i < 9; i++){
             for (let j = 1; j < 9; j++){
                 let id = toID[i]+(j);
-                document.getElementById(id).style[canMoveKey(this.styleType)] = ''
+                this.styleType.canMove.unsetAt(document.getElementById(id));
             }
         }
-        document.getElementById("x1").style[canMoveKey(this.styleType)] = ''
-        document.getElementById("x2").style[canMoveKey(this.styleType)] = ''
-        document.getElementById("y1").style[canMoveKey(this.styleType)] = ''
-        document.getElementById("y2").style[canMoveKey(this.styleType)] = ''
-        document.getElementById("z1").style[canMoveKey(this.styleType)] = ''
+        
+        this.styleType.canMove.unsetAt(document.getElementById("x1"));
+        this.styleType.canMove.unsetAt(document.getElementById("y1"));
+        this.styleType.canMove.unsetAt(document.getElementById("x2"));
+        this.styleType.canMove.unsetAt(document.getElementById("y1"));
+        this.styleType.canMove.unsetAt(document.getElementById("z1"));
+
     }
 
     updateSinglePiece(id){
