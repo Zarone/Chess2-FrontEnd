@@ -18,16 +18,16 @@ export class BaseTest {
         this.results.push({ ...data, passed: true });
     }
 
-    // notTested (message, fn) {
-    //     this.simulatedOperations = 0;
-    //     let testDiff = this.results.length;
-    //     fn();
-    //     this.results.push(new NotTestedResult(
-    //         message,
-    //         this.simulatedOperations,
-    //         this.results.length - testDiff,
-    //     ));
-    // }
+    notTested (message, fn) {
+        this.simulatedOperations = 0;
+        let testDiff = this.results.length;
+        fn();
+        this.results.push(new NotTestedResult(
+            message,
+            this.simulatedOperations,
+            this.results.length - testDiff,
+        ));
+    }
 
     output (logger) {
         const failed = this.errors.length > 0;
