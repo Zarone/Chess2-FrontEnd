@@ -195,7 +195,7 @@ export class BoardLayout extends PowerClass {
             monkeyJumpingStart ||
             monkeyJumpingNonRescue
         ) ) {
-            return false;
+            return new Error(`[Validate Move] New Turn "${newTurn}" Invalid`);
         }
 
         const jailMoves = currentTurn.is(JAIL);
@@ -204,7 +204,7 @@ export class BoardLayout extends PowerClass {
         if ( jailMoves ) {
             return moveInfo.fromPos?.isTemp() &&
                 this.isEmpty(moveInfo.toPos) &&
-                moveInfo.toPos.isJailControlledBy(currentTurn.player)
+                moveInfo.toPos.isJailControlledBy(currentTurn.player) ? true : new Error("[Validate Move] Jail Move Invalid")
         }
 
         if ( rescueMoves ) {
@@ -219,7 +219,7 @@ export class BoardLayout extends PowerClass {
                 if ( moveInfo.toPos.equals(move.pos) ) return true;
             }
             
-            return false;
+            return new Error("[Validate Move] Rescue Move Invalid");
         }
 
         const thisPiece = this.data[moveInfo.fromPos];
@@ -240,7 +240,7 @@ export class BoardLayout extends PowerClass {
             return true;
         }
 
-        return false;
+        return new Error("[Validate Move] Movement Invalid");
     }
 }
 

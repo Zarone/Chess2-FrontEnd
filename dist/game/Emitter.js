@@ -50,14 +50,23 @@ export class Emitter {
         }
 
         let prefix = '';
+        let outputs = {}
         while ( crumbs.length > 0 ) {
+            
+            let crumbOutput = []
+            
             prefix += '.' + crumbs.shift();
             const listeners = this.listeners[prefix];
             if ( ! listeners || listeners.length < 1 ) continue;
             for ( const listener of listeners ) {
-                listener({ crumbs }, ...args);
+                let output = listener({ crumbs }, ...args);
+                crumbOutput.push(output);
             }
+
+            outputs[prefix] = crumbOutput;
         }
+
+        return outputs;
     }
 }
 

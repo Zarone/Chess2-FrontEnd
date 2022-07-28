@@ -17,16 +17,19 @@ export class GameModeBasePlugin extends PluginBase {
         if ( (this.constructor as typeof GameModeBasePlugin).receives.includes(Events.request.FORCE_MOVE)){        
             this.on(Events.request.FORCE_MOVE, (_: {}, moveInfo: MoveInfo)=>{
                 const boardLayout = game.get('boardLayout');
-                const isValid = boardLayout.validateMove(
-                    game, game.get('currentTurn'), moveInfo);
+                const validateResponse: (boolean|Error) = boardLayout.validateMove(
+                    game, game.get('currentTurn'), moveInfo
+                )
+                const isValid = ! (validateResponse instanceof Error);
     
                 if ( ! isValid ) {
-                    console.error('move is not allowed', moveInfo);
-                    return;
+                    return validateResponse;
                 }
     
                 boardLayout.makePreValidatedMove(game, moveInfo.fromPos, moveInfo.toPos);
                 game.set('currentTurn', moveInfo.newTurn);
+                
+                return true; 
             })
         }
 

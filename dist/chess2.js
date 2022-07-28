@@ -427,15 +427,15 @@ export class ChessBoard {
         return this.filterImpossibleMoves(movesFromPiece, piece.position)
     }
 
-    validateMove(currentPosition, newPosition, newTurn){
-        return this.boardLayout.validateMove(
-            this.game, game.get('currentTurn'), {
-                fromPos: currentPosition,
-                toPos: newPosition,
-                newTurn
-            }
-        );
-    }
+    // validateMove(currentPosition, newPosition, newTurn){
+    //     return this.boardLayout.validateMove(
+    //         this.game, game.get('currentTurn'), {
+    //             fromPos: currentPosition,
+    //             toPos: newPosition,
+    //             newTurn
+    //         }
+    //     );
+    // }
 
     findAndRenderMoves(piece){
         let movesToRender = this.findMoves(piece)

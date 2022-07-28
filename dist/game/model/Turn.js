@@ -10,7 +10,7 @@ export class Turn {
     }
 
     toString () {
-        return this.player + ' ' + this.state;
+        return this.player + (this.state ? (' ' + this.state) : '');
     }
 
     is (predicate) {

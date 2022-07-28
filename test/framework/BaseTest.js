@@ -18,16 +18,16 @@ export class BaseTest {
         this.results.push({ ...data, passed: true });
     }
 
-    notTested (message, fn) {
-        this.simulatedOperations = 0;
-        let testDiff = this.results.length;
-        fn();
-        this.results.push(new NotTestedResult(
-            message,
-            this.simulatedOperations,
-            this.results.length - testDiff,
-        ));
-    }
+    // notTested (message, fn) {
+    //     this.simulatedOperations = 0;
+    //     let testDiff = this.results.length;
+    //     fn();
+    //     this.results.push(new NotTestedResult(
+    //         message,
+    //         this.simulatedOperations,
+    //         this.results.length - testDiff,
+    //     ));
+    // }
 
     output (logger) {
         const failed = this.errors.length > 0;
@@ -48,22 +48,24 @@ export class BaseTest {
                 result.output(logger);
                 continue;
             }
+            
             let msg = result.passed
-                ? `  \x1B[32;2m ✓\x1B[0m `
-                : `  \x1B[31;1m ✕\x1B[0m `
+            ? `  \x1B[32;2m ✓\x1B[0m `
+            : `  \x1B[31;1m ✕\x1B[0m `
             
             msg += result.message;
-
+            
             if ( result.emessage ) {
                 msg += ' (' + result.emessage(result) + ')';
             }
-
+            
             logger.log(msg);
 
             if ( ! result.passed ) {
                 for ( const k in result ) {
                     if ( k == 'passed' ) continue;
                     if ( k == 'message' ) continue;
+                    if ( k == 'emessage' ) continue;
                     let v = JSON.stringify(result[k]);
                     console.log(`     - ${k}: ${v}`)
                 }
