@@ -30,12 +30,7 @@ export class DOMBoardPlugin extends PluginBase {
         this.board = new ChessBoard(
             game,
             (moveInfo)=>{
-                console.log('EMIT', moveInfo)
                 if (moveInfo.newTurn === undefined) debugger
-
-                // launcher.events.emit('move.end', moveInfo);
-
-                console.log(MoveInfo.create(moveInfo))
 
                 this.emit(Events.request.COMMIT_MOVE, {
                     player: game.get('playerID'),
@@ -67,7 +62,6 @@ export class DOMBoardPlugin extends PluginBase {
         });
 
         this.on(Events.state.BOARD_UPDATE, ({crumbs}, ...args) => {
-            console.log("A");
 
             // this stops an unnecessary reload
             if (crumbs && crumbs[0] == "set" && Position.PSEUDO_POSITIONS.includes(args[0])) return;
@@ -77,7 +71,6 @@ export class DOMBoardPlugin extends PluginBase {
         });
 
         this.on(Events.state.BOARD_MOVE, (_, { fromPos, toPos }) => {
-            console.log("B");
             this.board.setPrevColor(fromPos);
             this.board.setPrevColor(toPos);
             this.board.playChessSound();

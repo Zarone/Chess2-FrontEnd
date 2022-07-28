@@ -117,7 +117,7 @@ export class ChessBoard {
                 this.styleType.canMove.setAt(document.getElementById("y1"))
             }
             if (this.boardLayout["y2"] == undefined) {
-                this.styleType.canMove.setAt(document.getElementById("y2y2"))
+                this.styleType.canMove.setAt(document.getElementById("y2"))
             }
         } else {
             if (this.boardLayout["x1"] == undefined) {
@@ -279,7 +279,6 @@ export class ChessBoard {
         }
 
         if ( ! isMoveableTile ) {
-	    console.log(moveToDom);
             abortMove("not a moveable tile");
             return;
         }
@@ -415,7 +414,6 @@ export class ChessBoard {
             let editTileDom = document.getElementById(moves[i].pos);
             this.styleType.canMove.unsetAt(editTileDom);
             this.styleType.canMove.setAt(editTileDom);
-            console.log(editTileDom);
         }
     }
 

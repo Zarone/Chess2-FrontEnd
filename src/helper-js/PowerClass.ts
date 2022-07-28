@@ -28,15 +28,12 @@ export class PowerClass {
         }
 
         (this.constructor as typeof PowerClass).initializer(this, ...args);
-        console.log("this", JSON.stringify(this))
         if ( this.init && typeof this.init === 'function' ) this.init();
  
     }
 
     static create (...args: any) {
-        console.log("[Power Class] Create", args)
         const o = new this(__MAGIC_CREATE, args);
-        console.log("[Power Class] Created", JSON.stringify(o))
 
         return this.handler ? new Proxy(o,
             PowerClass.wrapHandler(this.handler)) : o;

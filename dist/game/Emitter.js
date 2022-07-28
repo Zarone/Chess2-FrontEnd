@@ -36,7 +36,12 @@ export class Emitter {
         
         let crumbs;
         if (topic instanceof Event){
-            if (topic.id != "state.whiteTimer" && topic.id != "state.blackTimer") console.log('[Emitter]', topic.id, ...args);
+            if (topic.id != "state.whiteTimer" && topic.id != "state.blackTimer") {
+                console.groupCollapsed("[Emit]", topic.id);
+                console.log('[Args]', ...args);
+                console.log('[Emitter]', topic.emitters.size == 0 ? "Root or ApiVersion < 1" : topic.emitters)
+                console.groupEnd();
+            }
             crumbs = topic.id.split('.');
         } else {
             debugger

@@ -50,7 +50,6 @@ export class Game {
         // I just don't need this to log every frame
         if (k=="whiteTimer" || k=="blackTimer") return;
 
-        console.log('going to emit', topicName, v)
     }
 
     get (k: string) {

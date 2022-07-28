@@ -75,7 +75,6 @@ export class BoardLayout extends PowerClass {
 
         const extra = {};
 
-        console.log('??? PIECE HERE ???', this.data[toPos])
         if ( this.data[toPos] != undefined ) {
             extra.victim = this.data.TEMP = this.data[toPos];
         } else if ( ! options?.noTemp ) {

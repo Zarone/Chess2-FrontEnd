@@ -21,11 +21,9 @@ class KeyValueWrapper {
         }
     }
 
-    checkAgainst(obj: Object){
-        console.log("checking against", obj);
+    checkAgainst(obj: HTMLElement){
         for (let i = 0; i < this.key.length; i++){
-            if (obj.style[this.key[i]] != this.value[i]) {
-                console.log(this.key[i], "does not match");
+            if ((<any>obj.style)[this.key[i]] != this.value[i]) {
                 return false;
             }
         }
@@ -33,17 +31,15 @@ class KeyValueWrapper {
         return true;
     }
     
-    setAt(obj: Object){
-        console.log("this.key", this.key);
-        console.log("this.value", this.value);
+    setAt(obj: HTMLElement){
         for (let i = 0; i < this.key.length; i++){
-            obj.style[this.key[i]] = this.value[i];
+            (<any>obj.style)[this.key[i]] = this.value[i];
         }
     }
 
-    unsetAt(obj: Object){
+    unsetAt(obj: HTMLElement){
         for (let i = 0; i < this.key.length; i++){
-            obj.style[this.key[i]] = "";
+            (<any>obj.style)[this.key[i]] = "";
         }
     }
 }
@@ -53,7 +49,6 @@ class CustomStyle {
     module: Module;
     canMove: KeyValueWrapper;  
     constructor(name: string, module: Module, canMoveKey: (string|string[]), canMoveValue: (string|string[])) {
-        console.log(canMoveKey,"canMoveKey");
         this.name = name;
         this.module = module;
         this.canMove = new KeyValueWrapper(canMoveKey,canMoveValue);
