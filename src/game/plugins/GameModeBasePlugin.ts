@@ -15,21 +15,29 @@ export class GameModeBasePlugin extends PluginBase {
         super.install(game)
         if ( !(this.constructor as typeof GameModeBasePlugin).receives ) throw Error("[GameModeBasePlugin] Receives list not defined in derived class")
         if ( (this.constructor as typeof GameModeBasePlugin).receives.includes(Events.request.FORCE_MOVE)){        
+            
             this.on(Events.request.FORCE_MOVE, (_: {}, moveInfo: MoveInfo)=>{
                 const boardLayout = game.get('boardLayout');
-                const validateResponse: (boolean|Error) = boardLayout.validateMove(
+                boardLayout.makePreValidatedMove(game, moveInfo.fromPos, moveInfo.toPos);
+                game.set('currentTurn', moveInfo.newTurn);
+            })
+            
+            this.on(Events.request.VALIDATE_MOVE, (_: {}, moveInfo: MoveInfo)=>{
+                const boardLayout = game.get('boardLayout');
+                return boardLayout.validateMove(
                     game, game.get('currentTurn'), moveInfo
                 )
-                const isValid = ! (validateResponse instanceof Error);
+            })
+
+            this.on(Events.request.TRY_MAKE_MOVE, (_: {}, moveInfo: MoveInfo)=>{
+                let validateResponse = this.emit(Events.request.VALIDATE_MOVE, moveInfo);
     
-                if ( ! isValid ) {
+                if ( validateResponse instanceof Error ) {
                     return validateResponse;
                 }
     
-                boardLayout.makePreValidatedMove(game, moveInfo.fromPos, moveInfo.toPos);
-                game.set('currentTurn', moveInfo.newTurn);
-                
-                return true; 
+                this.emit(Events.request.FORCE_MOVE, moveInfo)
+
             })
         }
 

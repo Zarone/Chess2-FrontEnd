@@ -41,7 +41,9 @@ export const Events = {
         ADMIT_DEFEAT: new Event("request.admitDefeat"),
         COMMIT_MOVE: new Event("request.commitMove"),
         SEND_RECONNECT_DATA: new Event("request.sendReconnectData"),
-        FORCE_MOVE: new Event("requests.forceMove")
+        TRY_MAKE_MOVE: new Event("requests.tryMakeMove"),
+        FORCE_MOVE: new Event("requests.forceMove"),
+        VALIDATE_MOVE: new Event("requests.validateMove")
     },
     state: {
         ROOM_ID: new Event("state.roomID"),

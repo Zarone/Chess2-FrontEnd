@@ -9,7 +9,9 @@ export class TestGameModePlugin extends GameModeBasePlugin {
     static receives = [
         Events.state.CURRENT_TURN,
         Events.LAUNCH,
-        Events.request.FORCE_MOVE
+        Events.request.FORCE_MOVE,
+        Events.request.VALIDATE_MOVE,
+        Events.request.TRY_MAKE_MOVE
     ]
 
     install (game: Game) {

@@ -18,11 +18,13 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
         Events.request.COMMIT_MOVE,
         Events.state.CURRENT_TURN,
         Events.LAUNCH,
-        Events.request.FORCE_MOVE
+        Events.request.FORCE_MOVE,
+        Events.request.VALIDATE_MOVE,
+        Events.request.TRY_MAKE_MOVE
     ]
     static broadcasts = [
         Events.request.FORCE_MOVE,
-        Events.request.GAME_OVER_MODAL
+        Events.request.GAME_OVER_MODAL,
     ];
 
     install (game) {
