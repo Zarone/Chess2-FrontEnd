@@ -12,6 +12,7 @@ export class Game {
     state: {[key: string]: any};
     plugins: {[key: string]: PluginBase};
 
+
     constructor () {
 
         // identifiers to literal DOM elements
