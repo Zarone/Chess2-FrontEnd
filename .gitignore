@@ -8,15 +8,20 @@ dist/gamePage.js
 dist/gamePage.js.LICENSE.txt
 dist/homePage.js
 dist/homePage.js.LICENSE.txt
-dist/faqPage.js.LICENSE.txt
-dist/package.json
 dist/faqPage.js
+dist/faqPage.js.LICENSE.txt
 dist/game/Game.js
+dist/game/net/MoveInfo.js
 dist/game/plugins/GameModeBasePlugin.js
-dist/helper-js/GameModes.js
+dist/game/plugins/TestGameMode.js
+dist/game/plugins/HumanVsAIPlugin.js
+dist/game/plugins/HumanVsAIPlugin.js.LICENSE.txt
+dist/game/plugins/TestGameModePlugin.js
 dist/helper-js/PowerClass.js
 dist/helper-js/StyleManager.js
-dist/game/plugins/TestGameMode.js
+dist/helper-js/GameModes.js
+dist/helper-js/GameModes.js.LICENSE.txt
+dist/package.json
 
 dist/assets/*.wasm
 

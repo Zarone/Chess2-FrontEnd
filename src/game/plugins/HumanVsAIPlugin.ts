@@ -48,6 +48,6 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
     // This method allows the AI to complain about stuff
     // (these are not errors; just complaints)
     complain (message: string) {
-        console.log(`[AI complaiint] ${message} :/`);
+        console.log(`[AI complaint] ${message} :/`);
     }
 }
