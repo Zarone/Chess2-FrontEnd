@@ -23,11 +23,12 @@ import { EndGamePlugin } from "./game/plugins/EndGamePlugin.js";
 import { PieceHooksPlugin } from "./game/plugins/PieceHooksPlugin.js";
 import { SinglePlayerPlugin } from "./game/plugins/SinglePlayerPlugin.js";
 import { GameMode, GameModes } from "../src/helper-js/GameModes"
+import { EnemyComputerSettings } from "../src/helper-js/EnemyComputerSettings";
 
 export const onLoad = async (styleSheet, styleName) => {
 
     const qstr = getQuerystring();
-    let {roomID, friendRoom, timeLimit} = qstr;
+    let {roomID, friendRoom, timeLimit, computerLevel, computerType} = qstr;
 
     const gameMode = qstr.gamemode ? GameModes[qstr.gamemode] : GameModes.SINGLE_PLAYER;
 
@@ -61,7 +62,7 @@ export const onLoad = async (styleSheet, styleName) => {
     //     alert('why are you typing random stuff in the url?');
     //     throw new Error('why are you typing random stuff in the url?');
     // }
-    launcher.install(new gameMode.plugin({socket}))
+    launcher.install( new gameMode.plugin({socket, computerSettings: {level: +computerLevel, type: computerType} } ) )
 
     const game = launcher.game;
 
