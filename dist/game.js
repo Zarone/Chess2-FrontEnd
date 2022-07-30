@@ -17,11 +17,19 @@ import { MultiplayerPlugin } from "./game/plugins/MultiplayerPlugin.js";
 import { TimerPlugin } from "./game/plugins/TimerPlugin.js";
 import { DOMBoardPlugin } from "./game/plugins/DOMBoardPlugin.js";
 import { Events } from "./game/Events"
-import { MoveInfo } from "./game/net/MoveInfo.js";
+import { MoveInfo } from "../src/game/net/MoveInfo";
+import { BoardFactory, BoardLayouts } from "./chess2/BoardLayout.js";
+import { EndGamePlugin } from "./game/plugins/EndGamePlugin.js";
+import { PieceHooksPlugin } from "./game/plugins/PieceHooksPlugin.js";
+import { SinglePlayerPlugin } from "./game/plugins/SinglePlayerPlugin.js";
+import { GameMode, GameModes } from "../src/helper-js/GameModes"
 
 export const onLoad = async (styleSheet, styleName) => {
 
-    let {roomID, friendRoom, timeLimit} = getQuerystring()
+    const qstr = getQuerystring();
+    let {roomID, friendRoom, timeLimit} = qstr;
+
+    const gameMode = qstr.gamemode ? GameModes[qstr.gamemode] : GameModes.SINGLE_PLAYER;
 
     if (!globalThis.cookie) globalThis.cookie = new Cookie();
 
@@ -42,17 +50,29 @@ export const onLoad = async (styleSheet, styleName) => {
     launcher.init();
     launcher.install(new DOMPlugin());
     launcher.install(new DOMBoardPlugin({ styleSheet, styleName }));
+    launcher.install(new PieceHooksPlugin());
+    launcher.install(new EndGamePlugin());
     launcher.install(new TimerPlugin());
-    launcher.install(new MultiplayerPlugin({ socket }));
+    // if ( gameMode == 'PLAYER_VS_PLAYER' ) {
+    //     launcher.install(new MultiplayerPlugin({ socket }));
+    // } else if ( gameMode == 'SINGLE_PLAYER' ) {
+    //     launcher.install(new SinglePlayerPlugin());
+    // } else {
+    //     alert('why are you typing random stuff in the url?');
+    //     throw new Error('why are you typing random stuff in the url?');
+    // }
+    launcher.install(new gameMode.plugin({socket}))
 
     const game = launcher.game;
+
+    game.set('boardLayout', BoardFactory.create(BoardLayouts.DEFAULT));
 
     // === TEMPORARY: update variables used by unmigrated code ===
     game.on(Events.state.ROOM_ID, (_, v) => roomID = v);
     game.on(Events.state.PLAYER_ID, (_, v) => playerID = v);
     // === END TEMPORARY ===
 
-    let chessBoard = game.plugins['DOMBoardPlugin'].board;
+    let chessBoard = game.plugins[DOMBoardPlugin.prototype.constructor.name].board;
 
     let reversedPointer = { 
         get reversed(){
@@ -62,27 +82,20 @@ export const onLoad = async (styleSheet, styleName) => {
             console.log("set reversed", v)
             game.set('reversed', v);
             // if (flipBoard && chessBoard) flipBoard(chessBoard.isWhite);
+        },
+
+        get flipped(){
+            return game.get('flipped');
+        },
+        set flipped(v){
+            console.log("set flipped", v)
+            game.set('flipped', v);
         }
     }
 
-    socket.on("registeredMove", args=>{
-        console.log('REGISTER', args)
-
-        const moveInfo = MoveInfo.deserialize(args.moveInfo);
-
-        if (roomID == args.room && playerID != args.player){
-            if (chessBoard.validateMove(moveInfo.fromPos, moveInfo.toPos, moveInfo.newTurn)){
-                chessBoard.makePreValidatedMove(moveInfo.fromPos, moveInfo.toPos);
-                chessBoard.currentTurn = moveInfo.newTurn
-            } else {
-                console.error("move is not allowed")
-            }
-        }
-    })
-    
     document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
     launcher.launch();
-    return { chessBoard, reversedPointer };
+    return { chessBoard, reversedPointer, gameMode };
 }

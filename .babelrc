@@ -1,6 +1,13 @@
 {
+    // "presets": [
+    // "@babel/preset-env",
+    // "@babel/preset-react"
+    // ],
     "presets": [
-    "@babel/preset-env",
-    "@babel/preset-react"
-    ]
+        "@babel/react", 
+        "@babel/typescript", 
+        ["@babel/env", { "modules": false }]
+    ],
+    "sourceMaps": "inline",
+    "retainLines": true 
 }

@@ -1,17 +1,36 @@
-import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT } from "../../helper-js/utils";
+import { DISCONNECT_TIMER_START, LOSE_TEXT, socketID, WIN_TEXT, disconnectText } from "../../helper-js/utils";
 
-import { PluginBase } from "./BasePlugin"
+import { GameModeBasePlugin } from "../../../src/game/plugins/GameModeBasePlugin";
 import { Events } from "../Events"
+import { MoveInfo } from "../../../src/game/net/MoveInfo";
 
-export class MultiplayerPlugin extends PluginBase {
-    constructor ({ socket }) {
-        super();
+export class MultiplayerPlugin extends GameModeBasePlugin {
+    constructor ({ socket, gameMode }) {
+        super({gameMode});
         this.socket = socket;
     }
+
+    static apiVersion = 1
+    static receives = [
+        Events.state.PLAYER_INFO,
+        Events.request.SEND_RECONNECT_DATA,
+        Events.request.ADMIT_DEFEAT,
+        Events.request.COMMIT_MOVE,
+        Events.state.CURRENT_TURN,
+        Events.LAUNCH,
+        Events.request.FORCE_MOVE,
+        Events.request.VALIDATE_MOVE,
+        Events.request.TRY_MAKE_MOVE
+    ]
+    static broadcasts = [
+        Events.request.FORCE_MOVE,
+        Events.request.GAME_OVER_MODAL,
+    ];
 
     install (game) {
         super.install(game)
 
+        game.set('flipped', true)
         let socket = this.socket || (this.socket = io(socketID()));
 
         let disconnectTimer = DISCONNECT_TIMER_START;
@@ -82,6 +101,18 @@ export class MultiplayerPlugin extends PluginBase {
                 Events.request.GAME_OVER_MODAL,
                 game.get('playerID') == id ? WIN_TEXT : LOSE_TEXT,
             );
+        })
+
+        socket.on('registeredMove', args => {
+            const moveInfo = MoveInfo.deserialize(args.moveInfo);
+            
+            const { roomID, playerID } = game.state;
+            
+            if ( roomID != args.room ) return;
+            if ( playerID == args.player ) return;
+            
+            this.emit(Events.request.FORCE_MOVE, moveInfo)
+
         })
 
         // ???: Maybe add a ReconnectionPlugin

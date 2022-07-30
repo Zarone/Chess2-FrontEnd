@@ -8,40 +8,13 @@ const localSocketID = "ws://127.0.0.1:8080"
 export const canMoveColor = "red"
 export const prevMoveColor = "green"
 
-export const canMoveKey = (styleType) => {
-    switch (styleType) {
-        case "oat":
-            return "backgroundColor"
-            break;
-        case "pixel":
-            return "background"
-            break;
-        default:
-            return "backgroundColor"
-            break;
-    }
-}
-
-export const canMoveValue = (styleType) => {
-    switch (styleType) {
-        case "oat":
-            return "red"
-            break;
-        case "pixel":
-            return `url("./assets/pixel/To Move.png") center center no-repeat scroll rgba(255, 0, 153, 0.3)`
-            break;
-        default:
-            return "red"
-            break;
-    }
-}
-
 // export const START_TIME = 60 * 5
 
 export const DISCONNECT_TIMER_START = 30
 
 export const LOSE_TEXT = "You Lost. Better Luck Next Time! 😊"
 export const WIN_TEXT = "You Win! 💯"
+export const NEUTRAL_GAME_OVER = "Game Over"
 
 export function disconnectText(secondRemaining){
     return "You've disconnect 😥 You have " + secondRemaining.toString() + " seconds to reconnect. Try reload the page."
@@ -62,7 +35,7 @@ export function socketID(){
 }
 
 export function getQuerystring() {
-    let output={}
+    let output={timeLimit: undefined}
     if(window.location.search){
     var queryParams = window.location.search.substring(1);
     var listQueries = queryParams.split("&");

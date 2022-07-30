@@ -14,7 +14,9 @@ import { Rook } from "../../pieces-js/Rook.js";
 import { PluginBase } from "./BasePlugin"
 
 import { Events } from "../Events"
-import { MoveInfo } from "../net/MoveInfo";
+import { MoveInfo } from "../../../src/game/net/MoveInfo";
+
+import { Position } from "../../helper-js/board"
 
 export class DOMBoardPlugin extends PluginBase {
     constructor ({ styleSheet, styleName }) {
@@ -28,10 +30,7 @@ export class DOMBoardPlugin extends PluginBase {
         this.board = new ChessBoard(
             game,
             (moveInfo)=>{
-                console.log('EMIT', moveInfo)
                 if (moveInfo.newTurn === undefined) debugger
-
-                // launcher.events.emit('move.end', moveInfo);
 
                 this.emit(Events.request.COMMIT_MOVE, {
                     player: game.get('playerID'),
@@ -47,7 +46,7 @@ export class DOMBoardPlugin extends PluginBase {
 
         this.on(Events.request.RECONNECT_DATA, () => {
             this.emit(Events.request.SEND_RECONNECT_DATA, {
-                layout: Object.keys(this.board.boardLayout).map((val, index)=>{
+                layout: Object.keys(this.board.boardLayout.data).map((val, index)=>{
                     return {
                         position: this.board.boardLayout[val].position.id, 
                         isWhite: this.board.boardLayout[val].isWhite, 
@@ -62,10 +61,25 @@ export class DOMBoardPlugin extends PluginBase {
             });
         });
 
+        this.on(Events.state.BOARD_UPDATE, ({crumbs}, ...args) => {
+
+            // this stops an unnecessary reload
+            if (crumbs && crumbs[0] == "set" && Position.PSEUDO_POSITIONS.includes(args[0])) return;
+            
+            this.board.resetTiles();
+            this.board.updatePieces();
+        });
+
+        this.on(Events.state.BOARD_MOVE, (_, { fromPos, toPos }) => {
+            this.board.setPrevColor(fromPos);
+            this.board.setPrevColor(toPos);
+            this.board.playChessSound();
+        });
+
         this.on(Events.request.SET_BOARD_LAYOUT, (_, args) => {
             const chessBoard = this.board;
 
-            chessBoard.boardLayout = {};
+            chessBoard.boardLayout._unproxied.data = {};
             for (let i = 0; i < args.layout.length; i++){
                 switch (args.layout[i].type) {
                     case Bear.name:

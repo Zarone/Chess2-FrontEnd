@@ -28,7 +28,6 @@ export class Cookie{
         let cookies = document.cookie.split("; ")
         for (let i = 0; i < cookies.length; i++){
             let [elName, elValue] = cookies[i].split("=")
-            console.log(elName, elValue, elName==cookieName)
             if (elName == cookieName) {
                 return elValue;
             }

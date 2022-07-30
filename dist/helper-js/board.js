@@ -62,7 +62,11 @@ export class Position {
     }
 
     isJail() {
-        return ['x', 'y'].includes(this.column);
+        return Position.JAIL_POSITIONS.includes(this.column);
+    }
+
+    isJailControlledBy(player) {
+        return player === 'White' ? this.column == 'y' : this.column == 'x';
     }
 
     isWithinBounds() {
@@ -97,6 +101,11 @@ export class Position {
         });
     }
 
+    equals (otherPos) {
+        otherPos = Position.adapt(otherPos);
+        return this.id == otherPos.id;
+    }
+
     static toID = [
         null, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
     ]
@@ -111,6 +120,9 @@ export class Position {
         'g': 7,
         'h': 8,
     }
+
+    static JAIL_POSITIONS = ['x', 'y'];
+    static PSEUDO_POSITIONS = ['TEMP', 'MONKEY_START'];
 
     static getVerticalAndHorizontal(id) {
         if ( id instanceof Position ) return id.coords;
@@ -127,5 +139,30 @@ export class Position {
         return (Position.toID[horizontal] || "!") + vertical
     }
 
-    
+    static adapt (o) {
+        if ( typeof o === 'string' ) return new this(o);
+        if ( o instanceof this ) return o;
+        console.error(`Cannot adapt to ${this.name}: `, o)
+        throw new Error(
+            `Cannot adapt to ${this.name}:`, o);
+    }
+
+    static isValidPositionID (id) {
+        if ( this.PSEUDO_POSITIONS.includes(id) ) return true;
+        if ( id.length == 2 ) {
+            let [col, row] = id;
+            row = Number.parseInt(row);
+
+            if ( col == 'z' ) return row == 1;
+
+            if ( this.JAIL_POSITIONS.includes(col) ) {
+                return [1,2].includes(row);
+            }
+
+            if ( Object.keys(this.toNum).includes(col) ) {
+                return row > 0 && row < 9;
+            }
+        }
+        return false;
+    }
 }

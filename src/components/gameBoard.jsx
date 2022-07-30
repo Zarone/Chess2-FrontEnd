@@ -2,21 +2,27 @@ import React, { useEffect, useState }  from "react"
 import { onLoad } from "../../dist/game"
 
 import boardStyle from "../../dist/styles/board.module.css"
-import getCustomStyle from "./styleManager"
+import {getCustomStyle} from "../helper-js/StyleManager"
 
 import Settings from "./settings"
 import { initAndGetSound } from "../../dist/helper-js/cookieManager"
+import { GameModes } from "../helper-js/GameModes"
 
 export default function GameBoard(props) {
 
     const [customStyle, setCustomStyleSheet] = useState(getCustomStyle(props.customStyle))
-    const [reversed, setReversed] = useState({reversed: false});
+    const [reversed, setReversed] = useState({reversed: false, flipped: false});
     const [soundOn, setSoundToggle] = useState(initAndGetSound());
+
+    const [gameMode, setGameMode] = useState({})
     
+    const [_, forceUpdate] = useState();
+
     useEffect(()=>{
         onLoad({...boardStyle, ...customStyle}, props.customStyle).then(res=>{
             let tempReverse = res.reversedPointer
             setReversed(tempReverse)
+            setGameMode(res.gameMode)
         });
     }, [])
     
@@ -30,7 +36,7 @@ export default function GameBoard(props) {
             globalThis.gameboard.updatePieces();
         }
 
-        globalThis.cookie.style = props.customStyle;
+        globalThis.cookie.style = props.customStyle.name;
 
     }, [props.customStyle])
 
@@ -42,16 +48,34 @@ export default function GameBoard(props) {
     }, [soundOn])
 
     const onReverse = () => {
-      reversed.reversed = !reversed.reversed
+        reversed.reversed = !reversed.reversed
+    }
+
+    const onFlip = () => {
+        reversed.flipped = !reversed.flipped
+        forceUpdate({});
     }
 
     return <React.Fragment>
         <div className="container-fluid d-flex justify-content-around align-items-center">
             <div className={`container custom-bg-tertiary mt-3 mb-3 rounded`} style={{margin: 0}}>
-                <p id="roomID" className="display-6 text-white">Room ID: </p>
-            </div>
+                <p id="roomID" className="display-6 text-white">
+                    { 
+                        !gameMode.singleplayer ? 
+                            "Room ID: "
+                            : "Singleplayer (no AI)" 
+                    }
+                </p> 
+            </div> 
             <Settings customStyle={props.customStyle} setCustomStyle={props.setCustomStyle} soundOn={soundOn} setSoundToggle={setSoundToggle}></Settings>
-            <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%"}} onClick={onReverse}>Reverse</button>
+            { !gameMode.singleplayer ? <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%"}} onClick={onReverse}>Reverse</button> : "" }
+            { 
+                gameMode.singleplayer ? 
+                    <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%", backgroundColor: (()=>{console.log("reload", reversed.flipped);return true; })() && reversed.flipped ? "#4488c8":"#d4d6d6"}} onClick={onFlip}>
+                        Flip On Turn
+                    </button> : 
+                    "" 
+            }
         </div>
         <div className="container">
             <div className="container mt-3 mb-3 rounded">
@@ -72,7 +96,7 @@ export default function GameBoard(props) {
                         ("87654321")
                             .split("")
                             .map((number, numberIndex) => {
-                                return ("hgfedcba")
+                                return ("abcdefgh")
                                 .split("")
                                 .map((letter, letterIndex) => {
                                     const isWhite = ( (numberIndex + letterIndex) % 2 == 0);

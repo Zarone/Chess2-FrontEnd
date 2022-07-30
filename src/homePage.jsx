@@ -3,15 +3,16 @@ import * as ReactDOM from "react-dom";
 import Header from "./components/header"
 import SettingsMenu from "./components/settingsMenu";
 import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
+import "../dist/helper-js/join";
+import { styleList } from "./helper-js/StyleManager";
 
 export default function HomePage(props){
 
-    const [customStyle, setCustomStyle] = useState((cookieInit() && globalThis.cookie.style) || "oat")
+    const [customStyle, setCustomStyle] = useState(styleList[cookieInit() && globalThis.cookie.style] || styleList.oat)
     const [soundOn, setSoundToggle] = useState(initAndGetSound())
 
-    
     useEffect(()=>{
-        globalThis.cookie.style = customStyle
+        globalThis.cookie.style = customStyle.name
         console.log(globalThis.cookie.style)
     }, [customStyle])
 
@@ -23,7 +24,7 @@ export default function HomePage(props){
 
     return <React.Fragment>
     <script src="../dist/foam-bin.js"></script>
-    <Header />
+    <script src="./helper-js/join.js" type="module"></script>
     <section>
         <div className="container-fluid text-white pt-5">
             <div className="container my-5 custom-bg-primary pb-5 rounded">
@@ -43,15 +44,21 @@ export default function HomePage(props){
                             <h2>Quick Play</h2>
 
                             <div className="d-grid">
-                                <button type="button" id="raw-join" className="btn btn-primary btn-block">Play (un-timed)</button>
+                                <button type="button" id="raw-singleplayer" className="btn btn-primary btn-block">Play (singleplayer)</button>
                                 <p>
-                                    Press this button if you just want to jump into an online game!
+                                    Press this button if you just want to jump into a singleplayer game!
                                 </p>
                             </div>
                             <div className="d-grid">
                                 <button type="button" id="raw-join-timed" className="btn btn-primary btn-block">Play (timed 15 minutes)</button>
                                 <p>
                                     Press this button if you just want to jump into a timed online game!
+                                </p>
+                            </div>
+                            <div className="d-grid">
+                                <button type="button" id="raw-join" className="btn btn-primary btn-block">Play (un-timed)</button>
+                                <p>
+                                    Press this button if you just want to jump into an online game!
                                 </p>
                             </div>
 

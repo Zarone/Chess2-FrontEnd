@@ -33,9 +33,15 @@ export class Emitter {
     }
 
     emit (topic, ...args) {
-
+        
         let crumbs;
         if (topic instanceof Event){
+            if (topic.id != "state.whiteTimer" && topic.id != "state.blackTimer") {
+                console.groupCollapsed("[Emit]", topic.id);
+                console.log('[Args]', ...args);
+                console.log('[Emitter]', topic.emitters.size == 0 ? "Root or ApiVersion < 1" : topic.emitters)
+                console.groupEnd();
+            }
             crumbs = topic.id.split('.');
         } else {
             debugger
@@ -44,13 +50,37 @@ export class Emitter {
         }
 
         let prefix = '';
+        let outputs = {}
         while ( crumbs.length > 0 ) {
+            
+            let crumbOutput = []
+            
             prefix += '.' + crumbs.shift();
             const listeners = this.listeners[prefix];
             if ( ! listeners || listeners.length < 1 ) continue;
             for ( const listener of listeners ) {
-                listener({ crumbs }, ...args);
+                let output = listener({ crumbs }, ...args);
+                crumbOutput.push(output);
             }
+
+            outputs[prefix] = crumbOutput;
         }
+
+        return outputs;
+    }
+}
+
+export class SubEmitter {
+    constructor (prefix, delegate) {
+        this.prefix = prefix;
+        this.delegate = delegate;
+    }
+
+    on(topic, ...a) {
+        return this.delegate.on(Event.create(this.prefix + '.' + topic), ...a);
+    }
+
+    emit(topic, ...a) {
+        return this.delegate.emit(Event.create(this.prefix + '.' + topic), ...a);
     }
 }
