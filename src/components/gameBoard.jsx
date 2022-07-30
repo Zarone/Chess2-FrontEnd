@@ -63,7 +63,7 @@ export default function GameBoard(props) {
                     { 
                         !gameMode.singleplayer ? 
                             "Room ID: "
-                            : "Singleplayer (no AI)" 
+                            : gameMode.label
                     }
                 </p> 
             </div> 
