@@ -42,14 +42,11 @@ foam.ENUM({
     package: 'chess2',
     name: 'GameMode',
 
-    values: [
-        { name: GameModes.PLAYER_VS_PLAYER.modeName , label: 'Two Players'   },
-        { name: GameModes.SINGLE_PLAYER.modeName    , label: 'Single Player'   },
-
-        // TODO: implement these game modes
-        // { name: 'PLAYER_ALONE'       , label: 'Singleplayer'  },
-        // { name: 'PLAYER_VS_COMPUTER' , label: 'Battle the AI' },
-    ]
+    // 'GameModes' is the source of truth now, so generate
+    // enum options dynamically
+    values: Object.keys(GameModes).map(k => {
+        return { name: GameModes[k].modeName, label: GameModes[k].label };
+    }).filter(gm => gm.name != 'TEST_MODE')
 });
 
 foam.CLASS({
@@ -70,7 +67,7 @@ foam.CLASS({
             name: 'roomID',
             class: 'String',
             visibility: function (mode) {
-                return mode == this.GameMode.SINGLE_PLAYER ? 'HIDDEN' : 'RW';
+                return GameModes[mode.name].singleplayer ? 'HIDDEN' : 'RW';
             }
         },
         {
@@ -154,7 +151,7 @@ foam.CLASS({
                         .addClasses(['btn', 'btn-primary', 'btn-block'])
                         .attrs({
                             disabled: this.slot(function (data$roomID, data$mode) {
-                                if ( data$mode === self.GameMode.SINGLE_PLAYER ) {
+                                if ( GameModes[data$mode.name].singleplayer ) {
                                     return false;
                                 }
                                 return ! data$roomID;
