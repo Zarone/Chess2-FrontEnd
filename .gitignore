@@ -18,6 +18,8 @@ dist/helper-js/PowerClass.js
 dist/helper-js/StyleManager.js
 dist/game/plugins/TestGameMode.js
 
+dist/assets/*.wasm
+
 src/game/Game.js
 src/game/plugins/GameModeBasePlugin.js
 src/helper-js/GameModes.js
