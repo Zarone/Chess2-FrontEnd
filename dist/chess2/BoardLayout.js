@@ -162,6 +162,9 @@ export class BoardLayout extends PowerClass {
     }
 
     validateMove (game, currentTurn, moveInfo) {
+
+        if (!this.boardLayout[moveInfo.fromPos]) return new Error("[Validate Move] Try to move from blank tile")
+
         // Note: nothing else uses CurrentTurn class yet, so this is always true
         currentTurn = Turn.adapt(currentTurn);
         let newTurn = Turn.adapt(moveInfo.newTurn);

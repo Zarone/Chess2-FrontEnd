@@ -30,7 +30,7 @@ export class PieceHooksPlugin extends PluginBase {
             game.set('rookActiveWhite', false);
             const boardLayout = game.get('boardLayout');
 
-            console.log('set rook active?', victim != undefined);
+            // console.log('set rook active?', victim != undefined);
 
             // if a piece was taken
             if (victim != undefined){
@@ -57,7 +57,7 @@ export class PieceHooksPlugin extends PluginBase {
 
             let rowName = toPos.row
 
-            console.log('=====FISH=====', piece.isWhite, rowName, toPos.id);
+            // console.log('=====FISH=====', piece.isWhite, rowName, toPos.id);
             if (
                 (piece.isWhite && rowName=="8") ||
                 (!piece.isWhite && rowName=="1")

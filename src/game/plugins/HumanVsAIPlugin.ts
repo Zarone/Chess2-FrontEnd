@@ -4,6 +4,7 @@ import { Game } from "../Game";
 import { getQuerystring } from "../../../dist/helper-js/utils";
 import { GameMode } from "../../helper-js/GameModes.js";
 import { computerType, EnemyComputerConstructorArgs, EnemyComputerSettings } from "../../helper-js/EnemyComputerSettings"
+import { Position } from "../../../dist/helper-js/board.js";
 
 type AI = {
     [key in computerType]: (turn: string, plugin: HumanVsAIPlugin) => void;
@@ -14,6 +15,8 @@ type AI = {
 
 
 export class HumanVsAIPlugin extends GameModeBasePlugin {
+    // testing address
+    // http://localhost:5500/game.html?friendRoom=false&timeLimit=100&computerLevel=5&computerType=ALGORITHMIC&gamemode=HUMAN_VS_AI
 
     static apiVersion = 1
 
@@ -24,6 +27,12 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
         Events.request.VALIDATE_MOVE,
         Events.request.TRY_MAKE_MOVE,
         Events.request.COMMIT_MOVE
+    ]
+    
+    static broadcasts = [
+        Events.request.TRY_MAKE_MOVE,
+        Events.request.VALIDATE_MOVE,
+        Events.request.FORCE_MOVE
     ]
 
     computerSettings: EnemyComputerSettings;
@@ -64,11 +73,13 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
 
             ai[this.computerSettings.act](turn, this);
             let aiRes = ai.output;
-            console.log(aiRes)
-            // let [primaryMove, secondaryMove] = aiRes; 
-            // let [fromPos, toPos] = primaryMove;
-
-            // this.emit(Events.request.FORCE_MOVE, {fromPos, toPos, newTurn: "White"})
+            console.log("[AI Output]", aiRes)
+            
+            let [primaryMove, secondaryMove] = aiRes; 
+            
+            let [fromPos, toPos] = primaryMove;
+            
+            this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(fromPos), toPos: new Position(toPos), newTurn: "White"})
 
         });
 

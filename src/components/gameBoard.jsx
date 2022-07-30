@@ -71,7 +71,7 @@ export default function GameBoard(props) {
             { !gameMode.singleplayer ? <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%"}} onClick={onReverse}>Reverse</button> : "" }
             { 
                 gameMode.singleplayer ? 
-                    <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%", backgroundColor: (()=>{console.log("reload", reversed.flipped);return true; })() && reversed.flipped ? "#4488c8":"#d4d6d6"}} onClick={onFlip}>
+                    <button type="button" className="btn btn-light" data-toggle="modal" style={{height: "100%", backgroundColor: (()=>{return true; })() && reversed.flipped ? "#4488c8":"#d4d6d6"}} onClick={onFlip}>
                         Flip On Turn
                     </button> : 
                     "" 
