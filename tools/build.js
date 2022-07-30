@@ -5,7 +5,7 @@ const args = process.argv.slice(2);
 
 const flags = {
     foam: true,
-    go: false
+    go: true 
 };
 
 for ( k in flags ) {

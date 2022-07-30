@@ -25,6 +25,7 @@ export default function HomePage(props){
     return <React.Fragment>
     <script src="../dist/foam-bin.js"></script>
     <script src="./helper-js/join.js" type="module"></script>
+    <Header />
     <section>
         <div className="container-fluid text-white pt-5">
             <div className="container my-5 custom-bg-primary pb-5 rounded">

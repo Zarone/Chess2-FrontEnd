@@ -1,6 +1,7 @@
 import { Events } from "../../../dist/game/Events.js";
 import { GameModeBasePlugin } from "./GameModeBasePlugin";
 import { Game } from "../Game";
+import { getQuerystring } from "../../../dist/helper-js/utils";
 
 interface AI {
     getVersion: ()=>string,
@@ -23,6 +24,11 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
         super.install(game);
 
         this.on(Events.LAUNCH, () => {
+            const timeLimit = getQuerystring().timeLimit * 60;
+            game.set('finalTimeLimit', timeLimit);
+            game.set('blackTimer', timeLimit);
+            game.set('whiteTimer', timeLimit);
+            
             game.set('isWhite', true);
             game.set('currentTurn', 'White');
             this.launch(game);
