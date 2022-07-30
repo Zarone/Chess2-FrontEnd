@@ -1,9 +1,18 @@
+import { GameModes } from "../../src/helper-js/GameModes"
 import { Position } from "./board.js"
 
 const herokuServerID = "https://chess2-api.herokuapp.com"
 const herokuSocketID = "ws://chess2-api.herokuapp.com"
 const localServerID = "http://127.0.0.1:8080"
 const localSocketID = "ws://127.0.0.1:8080"
+
+export function goToGame({modeName, roomID, timeLimit}){
+    let url = "../game.html?friendRoom=true";
+    if ( roomID ) url += `&roomID=${roomID}`;
+    url += `&timeLimit=${timeLimit || 100}`;
+    url += `&gamemode=${modeName || GameModes.SINGLE_PLAYER.modeName}`;
+    window.location.href = url;
+}
 
 export const canMoveColor = "red"
 export const prevMoveColor = "green"
