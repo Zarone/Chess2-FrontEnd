@@ -1,5 +1,9 @@
 package test
 
+// I couldn't find a good way to implement a testing
+// system without using the browser, but the code
+// could be useful later, so I'm keeping it.
+
 import (
 	"chesstwoai/processor"
 	"syscall/js"

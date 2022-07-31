@@ -15,8 +15,6 @@ type AI = {
 
 
 export class HumanVsAIPlugin extends GameModeBasePlugin {
-    // testing address
-    // http://localhost:5500/game.html?friendRoom=false&timeLimit=100&computerLevel=5&computerType=ALGORITHMIC&gamemode=HUMAN_VS_AI
 
     static apiVersion = 1
 

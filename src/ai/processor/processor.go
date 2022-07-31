@@ -2,7 +2,6 @@ package processor
 
 import (
 	"chesstwoai/boardmanager"
-	"fmt"
 	"strings"
 	"syscall/js"
 )
@@ -49,7 +48,6 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	plugin := args[1]
 	boardRaw := args[2]
 
-	fmt.Println(boardRaw.Get("a1").Get("isWhite").Bool())
 	boardmanager.BoardRawToArrayBoard(boardRaw)
 
 	// Do nothing if it's the human player's turn

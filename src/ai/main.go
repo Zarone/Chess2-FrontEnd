@@ -1,10 +1,11 @@
 package main
 
+// testing address
+// http://localhost:5500/game.html?friendRoom=false&timeLimit=100&computerLevel=5&computerType=ALGORITHMIC&gamemode=HUMAN_VS_AI
+
 import (
 	"chesstwoai/processor"
-	"os"
 	"syscall/js"
-	"fmt"
 )
 
 func getVersion(this js.Value, args []js.Value) any {
@@ -13,8 +14,6 @@ func getVersion(this js.Value, args []js.Value) any {
 
 
 func main() {
-
-	fmt.Println(os.Args)
 
 	c := make(chan struct{}, 0)
 	js.Global().Set("getVersion", js.FuncOf(getVersion))
