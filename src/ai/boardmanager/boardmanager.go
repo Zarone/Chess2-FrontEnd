@@ -16,6 +16,7 @@ const (
 	Monkey pieceType = "Monkey"
 	Queen pieceType = "Queen"
 	Rook pieceType = "Rook"
+	NullPiece pieceType = "undefined"
 )
 
 type tile struct {
@@ -36,8 +37,10 @@ func (t tile) info() string {
 		color = "G"
 	} else if (t.isWhite){
 		color = "W"
-	} else {
+	} else if (t.pieceType != NullPiece){
 		color = "B"
+	} else {
+		color = " "
 	}
 
 	var secondaryChar string
@@ -59,6 +62,7 @@ func (t tile) info() string {
 
 func (gb gameBoard) print(){
 	for i := 0; i < 8; i++ {
+		fmt.Printf("%v ", 8-i)
 		for j := 0; j < 8; j++ {
 			fmt.Print(gb[i*8+j].info())
 		}
@@ -75,13 +79,27 @@ func BoardRawToArrayBoard(boardRaw js.Value) gameBoard {
 			tileString := fmt.Sprintf("%s%d", string(rune(ASCII_OFFSET+j)), i+1)
 			piece := boardRaw.Get(tileString)
 			if (!piece.IsUndefined()){
+
+				isWhite := piece.Get("isWhite")
+				isGray := isWhite.IsNull()
+				var boolIsWhite bool
+				if (!isGray) {
+					boolIsWhite = isWhite.Bool()
+				} else {
+					boolIsWhite = false;
+				}
+				
 				boardArray[j+(7-i)*8] = tile{
-					isWhite: piece.Get("isWhite").Bool(),
+					isWhite: boolIsWhite,
 					pieceType: (pieceType)(piece.Get("constructor").Get("name").String()),
 				}
-				fmt.Println( tileString, piece.Get("constructor").Get("name") )
+				// fmt.Println( tileString, piece.Get("constructor").Get("name") )
 			} else {
-				fmt.Println( tileString, "undefined" )
+				boardArray[j+(7-i)*8] = tile{
+					isWhite: false,
+					pieceType: NullPiece,
+				}
+				// fmt.Println( tileString, "undefined" )
 			}
 		}
 	}

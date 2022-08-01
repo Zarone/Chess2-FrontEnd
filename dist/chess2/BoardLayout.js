@@ -302,6 +302,13 @@ export class BoardLayouts {
 
         ["z1", 'Bear'],
     ]
+    
+    static MONKEY_SAVE_TEST_BLACK = [
+        ["h5", 'Monkey', false],
+        ["y2", 'King', false],
+        ["g5", 'Fish', false],
+        ["z1", 'Bear'],
+    ]
 
     static MONKEY_SAVE_TEST = [
         ["a4", 'Monkey', true],

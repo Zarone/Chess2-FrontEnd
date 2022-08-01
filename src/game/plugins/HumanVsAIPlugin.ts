@@ -7,10 +7,10 @@ import { computerType, EnemyComputerConstructorArgs, EnemyComputerSettings } fro
 import { Position } from "../../../dist/helper-js/board.js";
 
 type AI = {
-    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any ) => void;
+    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean ) => void;
 } & {
     getVersion: () => string;
-    output: [[string, string], [string, string]];
+    output: [string, string, string][];
 };
 
 
@@ -69,16 +69,14 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
         this.on(Events.request.COMMIT_MOVE, () => {
             const turn = game.get('currentTurn');
 
-            console.log(game.get("boardLayout").data)
-            ai[this.computerSettings.act](turn, this, game.get("boardLayout").data);
+            console.log("[AI input]", game.get("boardLayout").data)
+            ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'));
             let aiRes = ai.output;
             console.log("[AI output]", aiRes)
             
-            let [primaryMove, secondaryMove] = aiRes; 
-            
-            let [fromPos, toPos] = primaryMove;
-            
-            this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(fromPos), toPos: new Position(toPos), newTurn: "White"})
+            for (let i = 0; i < aiRes.length; i++){
+                this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
+            }
 
         });
 

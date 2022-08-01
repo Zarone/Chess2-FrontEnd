@@ -2,6 +2,7 @@ package processor
 
 import (
 	"chesstwoai/boardmanager"
+	"fmt"
 	"strings"
 	"syscall/js"
 )
@@ -14,7 +15,8 @@ func ActHeuristic(this js.Value, args []js.Value) any {
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	actTail("g7", "g6", "", "")
+	output := []interface{}{ []interface{}{"h5", "y2", "Black Rescue"}, []interface{}{"TEMP", "f5", "White"} }
+	actTail(output)
 	return nil
 }
 
@@ -22,20 +24,18 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 
 	initData := actHead(this, args);
 	plugin := initData[0].(js.Value)
+	var thisColor string = initData[1].(string)
+	var enemyColor string = initData[2].(string)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	actTail("g7", "g6", "", "")
+	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
+	actTail(output)
 	return nil
 }
 
-func actTail(pFrom string, pTo string, sFrom string, sTo string) {
-	var outputPrimary = []interface{}{pFrom, pTo}
-	var outputSecondary = []interface{}{sFrom, sTo}	
-	var output []interface{}
-	output = append(output, outputPrimary, outputSecondary)
-	
+func actTail(output []interface{}) {
 	js.Global().Set("output", js.ValueOf(output))
 }
 
@@ -47,14 +47,21 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	turn := args[0].String()
 	plugin := args[1]
 	boardRaw := args[2]
+	var isWhite bool = args[3].Bool()
 
 	boardmanager.BoardRawToArrayBoard(boardRaw)
 
-	// Do nothing if it's the human player's turn
-	if strings.HasPrefix(turn, "White") {
-		plugin.Get("errorFromAI").Invoke(js.ValueOf("AI cannot move because it's white's turn"))
-		return []any{plugin}
+	var thisColor string
+	var enemyColor string
+	if (isWhite) {
+		thisColor = "White"; enemyColor = "Black";
 	} else {
-		return []any{plugin}
+		thisColor="Black"; enemyColor = "White"
 	}
+
+	// Do nothing if it's the human player's turn
+	if strings.HasPrefix(turn, enemyColor) {
+		plugin.Get("errorFromAI").Invoke(js.ValueOf("AI cannot move because it's white's turn"))
+	} 
+	return []any{plugin, thisColor, enemyColor}
 }
