@@ -1,19 +1,19 @@
 package boardmanager
 
 type PieceType struct {
-	name string;
+	Name string;
 
-	getMoves func(int8, GameBoard) []rawMove;
+	GetMoves func(int16, GameBoard) possibleMoves;
 }
 
-func test(a int8, b GameBoard) []rawMove {
+func test(a int16, b GameBoard) possibleMoves {
 	return []rawMove{  }
 }
 
 var (
-	Bear PieceType = PieceType{"Bear", test}
+	Bear PieceType = PieceType{"Bear", BearMove}
 	Elephant PieceType = PieceType{"Elephant", test}
-	Fish PieceType = PieceType{"Fish", test}
+	Fish PieceType = PieceType{"Fish", FishMove}
 	FishQueen PieceType = PieceType{"FishQueen", test}
 	King PieceType = PieceType{"King", test}
 	Monkey PieceType = PieceType{"Monkey", test}
@@ -24,21 +24,21 @@ var (
 
 func nameToPiece(name string) PieceType {
 	switch name {
-		case Bear.name:
+		case Bear.Name:
 			return Bear
-		case Elephant.name:
+		case Elephant.Name:
 			return Elephant
-		case Fish.name:
+		case Fish.Name:
 			return Fish
-		case FishQueen.name:
+		case FishQueen.Name:
 			return FishQueen
-		case King.name:
+		case King.Name:
 			return King;
-		case Monkey.name:
+		case Monkey.Name:
 			return Monkey
-		case Queen.name:
+		case Queen.Name:
 			return Queen;
-		case Rook.name:
+		case Rook.Name:
 			return Rook;
 	}
 	return NullPiece

@@ -4,35 +4,35 @@ import (
 	"fmt"
 )
 
-type tile struct {
+type Tile struct {
 	isWhite bool;
-	pieceType PieceType;
+	ThisPieceType PieceType;
 }
 
 
-func (t tile) info() string {
+func (t Tile) info() string {
 
 	var color string
-	if (t.pieceType.name == Bear.name){
+	if (t.ThisPieceType.Name == Bear.Name){
 		color = "G"
 	} else if (t.isWhite){
 		color = "W"
-	} else if (t.pieceType.name != NullPiece.name){
+	} else if (t.ThisPieceType.Name != NullPiece.Name){
 		color = "B"
 	} else {
 		color = " "
 	}
 
 	var secondaryChar string
-	if (len(t.pieceType.name) > 4){
-		secondaryChar = string(t.pieceType.name[4])
+	if (len(t.ThisPieceType.Name) > 4){
+		secondaryChar = string(t.ThisPieceType.Name[4])
 	} else {
 		secondaryChar = " "
 	}
 	
 	var primaryChar string
-	if (len(t.pieceType.name) > 0){
-		primaryChar = string(t.pieceType.name[0])
+	if (len(t.ThisPieceType.Name) > 0){
+		primaryChar = string(t.ThisPieceType.Name[0])
 	} else {
 		primaryChar = " "
 	}
