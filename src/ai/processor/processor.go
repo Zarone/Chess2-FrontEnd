@@ -8,14 +8,15 @@ import (
 )
 
 func ActHeuristic(this js.Value, args []js.Value) any {
-
 	initData := actHead(this, args);
 	plugin := initData[0].(js.Value)
+	var thisColor string = initData[1].(string)
+	var enemyColor string = initData[2].(string)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	output := []interface{}{ []interface{}{"h5", "y2", "Black Rescue"}, []interface{}{"TEMP", "f5", "White"} }
+	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
 	return nil
 }
@@ -29,6 +30,9 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
+
+	// STEPS
+	// 1. For the simple pieces (elephant, fish, queen, king)
 
 	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
