@@ -20,7 +20,7 @@ func BearMove(pos int16, state State) possibleMoves {
 				{1, 0}, {0, 0}, {-1, 0},
 				{1, -1}, {0, -1}, {-1, -1},
 			}, state.Gb[pos].isWhite ) },
-			conditionType{},
+			conditionType{empty},
 		)
 	}
 
@@ -33,7 +33,7 @@ func FishMove(pos int16, state State) possibleMoves {
 	moves.add(
 		pos, state, 
 		moveType{coordsToFunc([][2]int16{{0, 1}, {1, 1}, {-1, 1}, {1, 0}, {-1, 0}}, state.Gb[pos].isWhite)}, 
-		conditionType{},
+		conditionType{notSameType},
 	)
 
 	fmt.Println("moves", moves)

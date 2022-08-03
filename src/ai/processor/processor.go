@@ -42,20 +42,12 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	//     	b ) Defended, as in if the rook dies then another piece can take revenge.
 	//	   and also it must be next to a piece of either color
 
-	// for i:=0;i<64;i++{
-
-	// }
-
-	moves := state.Gb[8].ThisPieceType.GetMoves(8, state)
-
-	for i:=0;i<len(moves);i++{
-		plugin.Get("complain").Invoke(js.ValueOf(moves[i].Output(thisColor, enemyColor)))
-
-	}
+	fmt.Println("Fish")
+	state.Gb[8].ThisPieceType.GetMoves(8, state).Print()
+	fmt.Println("Bear")
+	state.Gb[68].ThisPieceType.GetMoves(68, state).Print()
 
 	// plugin.Get("complain").Invoke(js.ValueOf( board[68].ThisPieceType.GetMoves(68, board)[0].Output(thisColor, enemyColor) ))
-
-	// output := [0].Output(thisColor, enemyColor);
 
 	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
