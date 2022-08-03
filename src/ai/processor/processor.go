@@ -46,16 +46,18 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 
 	// }
 
+	moves := board[8].ThisPieceType.GetMoves(8, board)
 
+	for i:=0;i<len(moves);i++{
+		plugin.Get("complain").Invoke(js.ValueOf(moves[i].Output(thisColor, enemyColor)))
 
-	// plugin.Get("complain").Invoke(js.ValueOf(board[8].ThisPieceType.GetMoves(8, board)[0].Output(thisColor, enemyColor)))
+	}
 
 	// plugin.Get("complain").Invoke(js.ValueOf( board[68].ThisPieceType.GetMoves(68, board)[0].Output(thisColor, enemyColor) ))
 
 	// output := [0].Output(thisColor, enemyColor);
 
-	output := board[8].ThisPieceType.GetMoves(8, board)[0].Output(thisColor, enemyColor)
-	// output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
+	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
 	return nil
 }

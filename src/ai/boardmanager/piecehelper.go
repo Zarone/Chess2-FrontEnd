@@ -12,9 +12,18 @@ type rawPartialMove struct {
 type rawMove []rawPartialMove
 
 func intToPosString(pos int16) string {
+
+	switch pos {
+		case 64: return "x1"
+		case 65: return "x2"
+		case 66: return "y1"
+		case 67: return "y2"
+		case 68: return "z1"
+	}
+
 	col := pos%8;
 	row := pos/8;
-	fmt.Println(pos, "col", col, "row", row)
+	fmt.Println("pos", pos, "col", col, "row", row)
 	return fmt.Sprintf("%v%v", string(rune(ASCII_OFFSET+col)), 8-row)
 }
 
@@ -61,39 +70,24 @@ func getRawMoveDefault(fromPos int16, toPos int16) rawMove{
 	return []rawPartialMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: ""}}
 }
 
-func newMovement(x int16, y int16) int16 {
-	return x+y*8
-}
-
-func up(pos int16, gb GameBoard, conditions []func(conditionArgs) bool) possibleMoves {
-	var moves possibleMoves;
-	
-	fromPos := pos;
-	toPos := pos + newMovement(0, 1)
-
-	for i:=0; i<len(conditions);i++{
-		if (!conditions[i](conditionArgs{fromPos, toPos, gb})) { return possibleMoves{} };
-	}
-
-	moves = append(moves, getRawMoveDefault(
-		fromPos, toPos,	
-	))
-	return moves;
-}
-
 func coordsToFunc(coords [][2]int16, isWhite bool) singleMove {
 	
 	var inverseModifier int16 = -1
 	if (!isWhite) { inverseModifier = 1; }
-	fmt.Println("inverseMod", inverseModifier)
 	
 	return func( pos int16, gb GameBoard, conditions []func(conditionArgs) bool ) possibleMoves {
 		var moves possibleMoves;
 
 		for i:=0;i<len(coords);i++{
-			toPos := pos + newMovement(inverseModifier*coords[i][0], inverseModifier*coords[i][1]);
+			
+			col := pos%8
+			row := pos/8
 
-			if toPos > -1 && toPos < 64 {
+			newCol := col+coords[i][0]
+			newRow := row+inverseModifier*coords[i][1]
+
+			if newCol < 8 && newCol > -1 && newRow < 8 && newRow > -1 {
+				toPos := newCol+newRow*8
 				conditionMet := true;
 				for j:=0;j<len(conditions);j++{
 					if (!conditions[i](conditionArgs{fromPos: pos, toPos: toPos, gb: gb})) {
