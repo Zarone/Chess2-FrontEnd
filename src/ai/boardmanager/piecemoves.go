@@ -50,3 +50,21 @@ func QueenMove(pos int16, state State) possibleMoves {
 	fmt.Println("moves", moves)
 	return moves;
 }
+
+func RookMove(pos int16, state State) possibleMoves {
+	
+	var moves possibleMoves;
+	moves.add(
+		pos, state,
+		moveType{allSlots},
+		conditionType{empty},
+	)
+	moves.add(
+		pos, state,
+		moveType{straightNextTo},
+		conditionType{notSameType, rookCondition},
+	)
+	fmt.Println("moves", moves)
+	return moves;
+
+}

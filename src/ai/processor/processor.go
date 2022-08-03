@@ -49,8 +49,13 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// fmt.Println("Bear")
 	// state.Gb[68].ThisPieceType.GetMoves(68, state).Print()
 
-	fmt.Println("Queen")
-	state.Gb[9].ThisPieceType.GetMoves(9, state).Print()
+	// // based on presets for QUEEN_TEST board layout
+	// fmt.Println("Queen")
+	// state.Gb[9].ThisPieceType.GetMoves(9, state).Print()
+
+	// based on presets for ROOK_PARTY board layout
+	fmt.Println("Rook")
+	state.Gb[54].ThisPieceType.GetMoves(54, state).Print()
 
 	// plugin.Get("complain").Invoke(js.ValueOf( board[68].ThisPieceType.GetMoves(68, board)[0].Output(thisColor, enemyColor) ))
 

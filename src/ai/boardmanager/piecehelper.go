@@ -201,8 +201,22 @@ func queen(pos int16, state State, conditions []func(conditionArgs) bool) possib
 		}
 	}
 
-		// moves = append(moves, 
-		// 	coordsToFunc( [][2]int16{{i, i}, {-i, i}, {i, -i}, {-i, -i}} , state.Gb[pos].isWhite )(pos, state, conditions)...
-		// )
+	return moves;
+}
+
+func all(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
+	var moves possibleMoves;
+	for i:=int16(0); i<64; i++ {
+		conditionsMet := true;
+		for j:=0; j<len(conditions); j++ {
+			if !(conditions[i](conditionArgs{fromPos: i, toPos: pos, state: state})) {
+				conditionsMet = false;
+				break;
+			}
+		}
+		if conditionsMet {
+			moves = append(moves, getRawMoveDefault(pos, i))
+		}
+	}
 	return moves;
 }
