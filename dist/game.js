@@ -66,7 +66,7 @@ export const onLoad = async (styleSheet, styleName) => {
 
     const game = launcher.game;
 
-    game.set('boardLayout', BoardFactory.create(BoardLayouts.DEFAULT));
+    game.set('boardLayout', BoardFactory.create(BoardLayouts.QUEEN_TEST));
 
     // === TEMPORARY: update variables used by unmigrated code ===
     game.on(Events.state.ROOM_ID, (_, v) => roomID = v);

@@ -1,6 +1,8 @@
 package boardmanager
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type rawPartialMove struct {
 	fromPos int16;
@@ -64,8 +66,6 @@ func (moves possibleMoves) Print(){
 
 		fmt.Print("\n")
 
-
-
 	}
 }
 
@@ -100,6 +100,18 @@ func intToPosString(pos int16) string {
 	return fmt.Sprintf("%v%v", string(rune(ASCII_OFFSET+col)), 8-row)
 }
 
+func posToRowCol (pos int16) (int16, int16) {
+	return pos%8, pos/8
+}
+
+func rowColToPos (row int16, col int16) int16 {
+	return row*8+col
+}
+
+func inBorders(row int16, col int16) bool {
+	return row < 8 && row > -1 && col < 8 && col > -1
+}
+
 func coordsToFunc(coords [][2]int16, isWhite bool) singleMove {
 	
 	var inverseModifier int16 = -1
@@ -116,7 +128,7 @@ func coordsToFunc(coords [][2]int16, isWhite bool) singleMove {
 			newCol := col+coords[i][0]
 			newRow := row+inverseModifier*coords[i][1]
 
-			if newCol < 8 && newCol > -1 && newRow < 8 && newRow > -1 {
+			if inBorders(newRow, newCol) {
 				toPos := newCol+newRow*8
 				conditionMet := true;
 				for j:=0;j<len(conditions);j++{
@@ -133,4 +145,74 @@ func coordsToFunc(coords [][2]int16, isWhite bool) singleMove {
 
 		return moves;
 	}
+}
+
+func diagonal(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
+	moves := possibleMoves{}
+	
+	row, col := posToRowCol(pos);
+	fmt.Println(
+		"row", row,
+		"col", col,
+	)
+	
+	for r:=int16(-1);r<2;r+=2 {
+		for c:=int16(-1);c<2;c+=2 {
+			for i:=int16(1);i<8;i++{
+				fmt.Println(r, c, i)
+				newRow := row+r*i
+				newCol := col+c*i
+				fmt.Println(
+					"newRow", newRow,
+					"newCol", newCol,
+					"isBorders", inBorders(newRow, newCol),
+				)
+				if (inBorders(newRow, newCol) ){
+					newPos := rowColToPos(newRow,newCol)
+					
+					conditionsMet := true;
+					thisConditionArgs := conditionArgs{fromPos: pos, toPos: newPos, state: state}
+
+					for j:=0; j<len(conditions); j++ {
+						if !conditions[j](thisConditionArgs){
+							conditionsMet = false;
+							break;
+						}
+					}
+
+					if (!empty(thisConditionArgs)){
+						if notSameType(thisConditionArgs){							
+							if (conditionsMet){
+								moves = append(moves, getRawMoveDefault(pos, newPos))
+							}
+						}
+						break;
+					} else {
+						if conditionsMet {
+							moves = append(moves, getRawMoveDefault(pos, newPos))
+						}
+					}
+
+				} else {
+					break
+				}
+			}
+		}
+	}
+
+		// moves = append(moves, 
+		// 	coordsToFunc( [][2]int16{{i, i}, {-i, i}, {i, -i}, {-i, -i}} , state.Gb[pos].isWhite )(pos, state, conditions)...
+		// )
+	return moves;
+}
+
+
+func horizontal(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
+	moves := possibleMoves{}
+	for i:=int16(0);i<8;i++{
+		moves = append(moves, 
+			coordsToFunc( [][2]int16{{0, i}, {i, 0}, {0, -i}, {-i, 0}} , state.Gb[pos].isWhite )(pos, state, conditions)...
+		)
+	}
+	return moves;
 }

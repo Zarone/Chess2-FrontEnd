@@ -332,4 +332,9 @@ export class BoardLayouts {
         ['f4', 'Fish', true],
         ['g5', 'Fish', false],
     ]
+
+    static QUEEN_TEST = [
+        ["b7", 'Queen', false],
+        ["g2", 'Queen', true]
+    ]
 }

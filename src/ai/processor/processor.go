@@ -42,10 +42,15 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	//     	b ) Defended, as in if the rook dies then another piece can take revenge.
 	//	   and also it must be next to a piece of either color
 
-	fmt.Println("Fish")
-	state.Gb[8].ThisPieceType.GetMoves(8, state).Print()
-	fmt.Println("Bear")
-	state.Gb[68].ThisPieceType.GetMoves(68, state).Print()
+
+	// // based on presets for DEFAULT board layout
+	// fmt.Println("Fish")
+	// state.Gb[8].ThisPieceType.GetMoves(8, state).Print()
+	// fmt.Println("Bear")
+	// state.Gb[68].ThisPieceType.GetMoves(68, state).Print()
+
+	fmt.Println("Queen")
+	state.Gb[9].ThisPieceType.GetMoves(9, state).Print()
 
 	// plugin.Get("complain").Invoke(js.ValueOf( board[68].ThisPieceType.GetMoves(68, board)[0].Output(thisColor, enemyColor) ))
 
