@@ -3,10 +3,10 @@ package boardmanager
 type PieceType struct {
 	Name string;
 
-	GetMoves func(int16, GameBoard) possibleMoves;
+	GetMoves func(int16, State) possibleMoves;
 }
 
-func test(a int16, b GameBoard) possibleMoves {
+func test(a int16, b State) possibleMoves {
 	return []rawMove{  }
 }
 

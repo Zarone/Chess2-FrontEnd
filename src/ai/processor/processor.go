@@ -27,7 +27,7 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	plugin := initData[0].(js.Value)
 	var thisColor string = initData[1].(string)
 	var enemyColor string = initData[2].(string)
-	board := initData[3].(boardmanager.GameBoard)
+	state := initData[3].(boardmanager.State)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
@@ -46,7 +46,7 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 
 	// }
 
-	moves := board[8].ThisPieceType.GetMoves(8, board)
+	moves := state.Gb[8].ThisPieceType.GetMoves(8, state)
 
 	for i:=0;i<len(moves);i++{
 		plugin.Get("complain").Invoke(js.ValueOf(moves[i].Output(thisColor, enemyColor)))
@@ -76,9 +76,9 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	boardRaw := args[2]
 	var isWhite bool = args[3].Bool()
 
-	board := boardmanager.BoardRawToArrayBoard(boardRaw)
+	state := boardmanager.State{Gb: boardmanager.BoardRawToArrayBoard(boardRaw), RookWhiteActive: false, RookBlackActive: false}
 	fmt.Println("Initializing board")
-	board.Print()
+	state.Gb.Print()
 
 	var thisColor string
 	var enemyColor string
@@ -92,5 +92,5 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	if strings.HasPrefix(turn, enemyColor) {
 		plugin.Get("errorFromAI").Invoke(js.ValueOf("AI cannot move because it's white's turn"))
 	} 
-	return []any{plugin, thisColor, enemyColor, board}
+	return []any{plugin, thisColor, enemyColor, state}
 }

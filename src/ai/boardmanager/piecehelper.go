@@ -11,22 +11,6 @@ type rawPartialMove struct {
 
 type rawMove []rawPartialMove
 
-func intToPosString(pos int16) string {
-
-	switch pos {
-		case 64: return "x1"
-		case 65: return "x2"
-		case 66: return "y1"
-		case 67: return "y2"
-		case 68: return "z1"
-	}
-
-	col := pos%8;
-	row := pos/8;
-	fmt.Println("pos", pos, "col", col, "row", row)
-	return fmt.Sprintf("%v%v", string(rune(ASCII_OFFSET+col)), 8-row)
-}
-
 func (move rawMove) Output(playerColor string, enemyColor string) []interface{} {
 	var output []interface{}
 	for i:=0;i<len(move);i++{
@@ -47,27 +31,43 @@ type moveType []singleMove
 
 type conditionType []func(conditionArgs) bool
 
-type possibleMoves []rawMove
-
-func (moves *possibleMoves) add(
-	currentPos int16,
-	gb GameBoard,
-	move moveType, 
-	conditions conditionType,
-) {
-	for i := 0; i < len(move); i++ {
-		(*moves) = append((*moves), move[i](currentPos, gb, conditions)...)
-	}
-}
-
 type conditionArgs struct {
 	fromPos int16;
 	toPos int16;
 	gb GameBoard;
 }
 
+type possibleMoves []rawMove
+
+func (moves *possibleMoves) add(
+	currentPos int16,
+	state State,
+	move moveType, 
+	conditions conditionType,
+	) {
+		for i := 0; i < len(move); i++ {
+		(*moves) = append((*moves), move[i](currentPos, state.Gb, conditions)...)
+	}
+}
+
 func getRawMoveDefault(fromPos int16, toPos int16) rawMove{
 	return []rawPartialMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: ""}}
+}
+
+func intToPosString(pos int16) string {
+
+	switch pos {
+		case 64: return "x1"
+		case 65: return "x2"
+		case 66: return "y1"
+		case 67: return "y2"
+		case 68: return "z1"
+	}
+
+	col := pos%8;
+	row := pos/8;
+	fmt.Println("pos", pos, "col", col, "row", row)
+	return fmt.Sprintf("%v%v", string(rune(ASCII_OFFSET+col)), 8-row)
 }
 
 func coordsToFunc(coords [][2]int16, isWhite bool) singleMove {

@@ -2,7 +2,7 @@ package boardmanager
 
 import "fmt"
 
-func BearMove(pos int16, gb GameBoard) possibleMoves {
+func BearMove(pos int16, state State) possibleMoves {
 	var moves possibleMoves
 
 	if (pos == 68) { 
@@ -14,12 +14,12 @@ func BearMove(pos int16, gb GameBoard) possibleMoves {
 		)
 	} else {
 		moves.add(
-			pos, gb, 
+			pos, state, 
 			moveType{ coordsToFunc([][2]int16{
 				{1, 1}, {0, 1}, {-1, 1},
 				{1, 0}, {0, 0}, {-1, 0},
 				{1, -1}, {0, -1}, {-1, -1},
-			}, gb[pos].isWhite ) },
+			}, state.Gb[pos].isWhite ) },
 			conditionType{},
 		)
 	}
@@ -28,11 +28,11 @@ func BearMove(pos int16, gb GameBoard) possibleMoves {
 	return moves
 }
 
-func FishMove(pos int16, gb GameBoard) possibleMoves {
+func FishMove(pos int16, state State) possibleMoves {
 	var moves possibleMoves;
 	moves.add(
-		pos, gb, 
-		moveType{coordsToFunc([][2]int16{{0, 1}, {1, 1}, {-1, 1}, {1, 0}, {-1, 0}}, gb[pos].isWhite)}, 
+		pos, state, 
+		moveType{coordsToFunc([][2]int16{{0, 1}, {1, 1}, {-1, 1}, {1, 0}, {-1, 0}}, state.Gb[pos].isWhite)}, 
 		conditionType{},
 	)
 

@@ -7,7 +7,7 @@ import { computerType, EnemyComputerConstructorArgs, EnemyComputerSettings } fro
 import { Position } from "../../../dist/helper-js/board.js";
 
 type AI = {
-    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean ) => void;
+    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean, rookActiveWhite: boolean, rookActiveBlack: boolean) => void;
 } & {
     getVersion: () => string;
     output: [string, string, string][];
@@ -70,7 +70,7 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
             const turn = game.get('currentTurn');
 
             console.log("[AI input]", game.get("boardLayout").data)
-            ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'));
+            ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));
             let aiRes = ai.output;
             console.log("[AI output]", aiRes)
             

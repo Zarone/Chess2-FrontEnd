@@ -8,6 +8,12 @@ import (
 // The 8x8 board, plus 2 jail positions for each player, plus bear starting position = 69
 type GameBoard [69]Tile
 
+type State struct {
+	Gb GameBoard;
+	RookWhiteActive bool;
+	RookBlackActive bool;
+}
+
 func (gb GameBoard) Print(){
 	for i := 0; i < 8; i++ {
 		fmt.Printf("%v ", 8-i)
