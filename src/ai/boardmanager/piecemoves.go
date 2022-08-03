@@ -44,7 +44,7 @@ func QueenMove(pos int16, state State) possibleMoves {
 	var moves possibleMoves;
 	moves.add(
 		pos, state,
-		moveType{diagonal, horizontal},
+		moveType{queen},
 		conditionType{notSameType},
 	)
 	fmt.Println("moves", moves)

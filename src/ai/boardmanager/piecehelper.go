@@ -147,7 +147,7 @@ func coordsToFunc(coords [][2]int16, isWhite bool) singleMove {
 	}
 }
 
-func diagonal(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
+func queen(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
 	moves := possibleMoves{}
 	
 	row, col := posToRowCol(pos);
@@ -156,8 +156,9 @@ func diagonal(pos int16, state State, conditions []func(conditionArgs) bool) pos
 		"col", col,
 	)
 	
-	for r:=int16(-1);r<2;r+=2 {
-		for c:=int16(-1);c<2;c+=2 {
+	for r:=int16(-1);r<2;r+=1 {
+		for c:=int16(-1);c<2;c+=1 {
+			if (r==0&&c==0) { continue; }
 			for i:=int16(1);i<8;i++{
 				fmt.Println(r, c, i)
 				newRow := row+r*i
@@ -203,16 +204,5 @@ func diagonal(pos int16, state State, conditions []func(conditionArgs) bool) pos
 		// moves = append(moves, 
 		// 	coordsToFunc( [][2]int16{{i, i}, {-i, i}, {i, -i}, {-i, -i}} , state.Gb[pos].isWhite )(pos, state, conditions)...
 		// )
-	return moves;
-}
-
-
-func horizontal(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
-	moves := possibleMoves{}
-	for i:=int16(0);i<8;i++{
-		moves = append(moves, 
-			coordsToFunc( [][2]int16{{0, i}, {i, 0}, {0, -i}, {-i, 0}} , state.Gb[pos].isWhite )(pos, state, conditions)...
-		)
-	}
 	return moves;
 }
