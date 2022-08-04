@@ -41,3 +41,12 @@ func getAllMoves(state boardmanager.State, isWhite bool) boardmanager.PossibleMo
 	moves.Print("After deferred")
 	return moves;
 }
+
+type node struct {
+	state boardmanager.State;
+	children []boardmanager.State;
+}
+
+func getNodeTree(state boardmanager.State) node {
+	return node{state: state, children: []boardmanager.State{}}
+}

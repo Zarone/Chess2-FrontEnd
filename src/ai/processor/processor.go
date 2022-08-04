@@ -26,44 +26,15 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	initData := actHead(this, args);
 	plugin := initData[0].(js.Value)
 	var thisColor string = initData[1].(string)
-	isWhite := thisColor == "White"
+	// isWhite := thisColor == "White"
 	var enemyColor string = initData[2].(string)
 	state := initData[3].(boardmanager.State)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	/*moves := */getAllMoves(state, isWhite);
-
-	// // based on presets for DEFAULT board layout
-	// fmt.Println("Fish")
-	// state.Gb[8].ThisPieceType.GetMoves(8, state).Print()
-	// fmt.Println("Bear")
-	// state.Gb[68].ThisPieceType.GetMoves(68, state).Print()
-	// fmt.Println("Elephant", state.Gb[10].ThisPieceType.Name)
-	// state.Gb[10].ThisPieceType.GetMoves(10, state).Print()
-
-	// based on presets for QUEEN_TEST board layout
-	// fmt.Println("Queen")
-	// output := state.Gb[9].ThisPieceType.GetMoves(9, state)[20].Output(thisColor, enemyColor)
-
-	// // based on presets for ROOK_PARTY board layout
-	// fmt.Println("Rook", state.Gb[54].ThisPieceType.Name)
-	// state.Gb[54].ThisPieceType.GetMoves(54, state).Print()
-
-	// // based on presets for KING_TEST board layout
-	// fmt.Println("Rook", state.Gb[1].ThisPieceType.Name)
-	// state.Gb[1].ThisPieceType.GetMoves(1, state).Print()
-
-	// // based on presets for MONKEY_TEST board layout
-	// fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
-	// state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
-	// // output := state.Gb[28].ThisPieceType.GetMoves(28, state)[3].Output(thisColor, enemyColor)
-
-	// // based on presets for MONKEY_RESCUE_TEST layout
-	// fmt.Println("Monkey", state.Gb[31].ThisPieceType.Name);
-	// state.Gb[31].ThisPieceType.GetMoves(31, state).Print()
-	// output := state.Gb[31].ThisPieceType.GetMoves(31, state)
+	// moves := getAllMoves(state, isWhite);
+	getNodeTree(state)	
 
 	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
