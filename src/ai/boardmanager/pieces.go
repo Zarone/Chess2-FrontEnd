@@ -15,7 +15,7 @@ func test(a int16, b State) possibleMoves {
 
 var (
 	Bear      PieceType = PieceType{"Bear", BearMove}
-	Elephant  PieceType = PieceType{"Elephant", test}
+	Elephant  PieceType = PieceType{"Elephant", ElephantMove}
 	Fish      PieceType = PieceType{"Fish", FishMove}
 	FishQueen PieceType = PieceType{"FishQueen", QueenMove}
 	King      PieceType = PieceType{"King", test}

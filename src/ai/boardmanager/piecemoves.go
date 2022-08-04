@@ -68,3 +68,16 @@ func RookMove(pos int16, state State) possibleMoves {
 	return moves;
 
 }
+
+func ElephantMove(pos int16, state State) possibleMoves {
+	
+	var moves possibleMoves;
+	moves.add(
+		pos, state,
+		moveType{ coordsToFunc([][2]int16{{2, 2}, {-2, 2}, {-2, -2}, {2, -2}}, state.Gb[pos].isWhite ) },
+		conditionType{empty},
+	)
+	fmt.Println("moves", moves)
+	return moves;
+
+}

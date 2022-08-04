@@ -48,14 +48,16 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// state.Gb[8].ThisPieceType.GetMoves(8, state).Print()
 	// fmt.Println("Bear")
 	// state.Gb[68].ThisPieceType.GetMoves(68, state).Print()
+	fmt.Println("Elephant", state.Gb[10].ThisPieceType.Name)
+	state.Gb[10].ThisPieceType.GetMoves(10, state).Print()
 
 	// // based on presets for QUEEN_TEST board layout
 	// fmt.Println("Queen")
 	// state.Gb[9].ThisPieceType.GetMoves(9, state).Print()
 
 	// based on presets for ROOK_PARTY board layout
-	fmt.Println("Rook", state.Gb[54].ThisPieceType.Name)
-	state.Gb[54].ThisPieceType.GetMoves(54, state).Print()
+	// fmt.Println("Rook", state.Gb[54].ThisPieceType.Name)
+	// state.Gb[54].ThisPieceType.GetMoves(54, state).Print()
 
 	// plugin.Get("complain").Invoke(js.ValueOf( board[68].ThisPieceType.GetMoves(68, board)[0].Output(thisColor, enemyColor) ))
 
@@ -71,7 +73,7 @@ func actTail(output []interface{}) {
 func actHead(this js.Value, args []js.Value) ([]any) {
 
 	fmt.Println("Initial Args", args)
-	
+
 	if len(args) < 2 {
 		panic("nope")
 	}
