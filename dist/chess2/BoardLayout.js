@@ -342,4 +342,13 @@ export class BoardLayouts {
         ["b8", 'King', false],
         ["g1", 'King', true]
     ]
+
+    static MONKEY_TEST = [
+        ["e5", 'Monkey', false],
+        ["f5", 'Monkey', false],
+        ["d5", 'Monkey', false],
+        ["e4", 'Monkey', false],
+        ["a1", 'Fish', true],
+        ['g5', 'Fish', true]
+    ]
 }

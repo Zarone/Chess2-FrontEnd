@@ -19,7 +19,7 @@ var (
 	Fish      PieceType = PieceType{"Fish", FishMove}
 	FishQueen PieceType = PieceType{"FishQueen", QueenMove}
 	King      PieceType = PieceType{"King", KingMove}
-	Monkey    PieceType = PieceType{"Monkey", test}
+	Monkey    PieceType = PieceType{"Monkey", MonkeyMove}
 	Queen     PieceType = PieceType{"Queen", QueenMove}
 	Rook      PieceType = PieceType{"Rook", RookMove}
 	NullPiece PieceType = PieceType{"undefined", test}

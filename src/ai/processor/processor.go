@@ -27,7 +27,7 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	plugin := initData[0].(js.Value)
 	var thisColor string = initData[1].(string)
 	var enemyColor string = initData[2].(string)
-	// state := initData[3].(boardmanager.State)
+	state := initData[3].(boardmanager.State)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
@@ -60,11 +60,14 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// fmt.Println("Rook", state.Gb[54].ThisPieceType.Name)
 	// state.Gb[54].ThisPieceType.GetMoves(54, state).Print()
 
-	// based on presets for KING_TEST board layout
+	// // based on presets for KING_TEST board layout
 	// fmt.Println("Rook", state.Gb[1].ThisPieceType.Name)
 	// state.Gb[1].ThisPieceType.GetMoves(1, state).Print()
 	
 
+	// based on presets for MONKEY_TEST board layout
+	fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
+	state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
 
 	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)

@@ -101,7 +101,7 @@ func intToPosString(pos int16) string {
 }
 
 func posToRowCol (pos int16) (int16, int16) {
-	return pos%8, pos/8
+	return pos/8, pos%8
 }
 
 func rowColToPos (row int16, col int16) int16 {
