@@ -27,6 +27,9 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
         Events.request.TRY_MAKE_MOVE,
         Events.request.FORCE_MOVE,
         Events.request.VALIDATE_MOVE,
+        Events.request.RECONNECT_DATA,
+        Events.request.CLEAR_MODALS,
+        Events.request.SET_BOARD_LAYOUT,
     ];
 
     install (game) {
@@ -146,8 +149,10 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
         });
 
         socket.on("needReconnectData", args => {
+            console.log('AAA', args)
             const { roomID, playerID } = game.state;
             if ( roomID != args.roomID || playerID == args.playerID ) return;
+            console.log('BBB', args)
             this.emit(Events.request.RECONNECT_DATA);
             // if (roomID == args.roomID && playerID != args.playerID){
             //     console.log("EMITTING DATA FOR RECONNECT, CURRENT BOARD: ", chessBoard.boardLayout)

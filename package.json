@@ -4,6 +4,8 @@
   "description": "This is a simple game demo built by... me. Zachary Alfano. It's based on the video [I Made a BETTER Chess](https://youtu.be/mcivL8u176Y) by [Oats Jenkins](https://www.youtube.com/c/OatsJenkins).",
   "main": "chess2.js",
   "scripts": {
+    "go": "node tools/build.js",
+    "goTest": "cd src/ai && go build -o ./test.wasm",
     "dev": "node tools/build.js && webpack serve --config ./webpack.config.js --mode development --port 5500",
     "build": "node tools/build.js && webpack build --config ./webpack.config.js --mode production",
     "test": "webpack build --config ./webpack.config.test.js --mode development && node --nolazy --experimental-modules test/bin/bundle/test.js",

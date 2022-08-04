@@ -4,7 +4,7 @@ const path_ = require('path');
 const args = process.argv.slice(2);
 
 const flags = {
-    foam: true,
+    foam: false,
     go: true 
 };
 

@@ -30,11 +30,15 @@ export class GameModeBasePlugin extends PluginBase {
             })
 
             this.on(Events.request.TRY_MAKE_MOVE, (_: {}, moveInfo: MoveInfo)=>{
-                let validateResponse = this.emit(Events.request.VALIDATE_MOVE, moveInfo);
-    
-                if ( validateResponse instanceof Error ) {
-                    return validateResponse;
+                let validateResponse: {[key: string]: (Error|boolean)[]} = this.emit(Events.request.VALIDATE_MOVE, moveInfo);
+                
+                for ( let i = 0; i < validateResponse["."+Events.request.VALIDATE_MOVE].length; i++ ){
+                    let response = validateResponse["."+Events.request.VALIDATE_MOVE][i]
+                    if ( response instanceof Error ) {
+                        throw response;
+                    }
                 }
+
     
                 this.emit(Events.request.FORCE_MOVE, moveInfo)
 

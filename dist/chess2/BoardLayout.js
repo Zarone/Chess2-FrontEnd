@@ -162,6 +162,9 @@ export class BoardLayout extends PowerClass {
     }
 
     validateMove (game, currentTurn, moveInfo) {
+
+        if (!this.boardLayout[moveInfo.fromPos]) return new Error("[Validate Move] Try to move from blank tile")
+
         // Note: nothing else uses CurrentTurn class yet, so this is always true
         currentTurn = Turn.adapt(currentTurn);
         let newTurn = Turn.adapt(moveInfo.newTurn);
@@ -299,6 +302,13 @@ export class BoardLayouts {
 
         ["z1", 'Bear'],
     ]
+    
+    static MONKEY_SAVE_TEST_BLACK = [
+        ["h5", 'Monkey', false],
+        ["y2", 'King', false],
+        ["g5", 'Fish', false],
+        ["z1", 'Bear'],
+    ]
 
     static MONKEY_SAVE_TEST = [
         ["a4", 'Monkey', true],
@@ -321,5 +331,10 @@ export class BoardLayouts {
         ['e5', 'Fish', false],
         ['f4', 'Fish', true],
         ['g5', 'Fish', false],
+    ]
+
+    static QUEEN_TEST = [
+        ["b7", 'Queen', false],
+        ["g2", 'Queen', true]
     ]
 }

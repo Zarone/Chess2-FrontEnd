@@ -2,11 +2,17 @@ import { Events } from "../../../dist/game/Events.js";
 import { GameModeBasePlugin } from "./GameModeBasePlugin";
 import { Game } from "../Game";
 import { getQuerystring } from "../../../dist/helper-js/utils";
+import { GameMode } from "../../helper-js/GameModes.js";
+import { computerType, EnemyComputerConstructorArgs, EnemyComputerSettings } from "../../helper-js/EnemyComputerSettings"
+import { Position } from "../../../dist/helper-js/board.js";
 
-interface AI {
-    getVersion: ()=>string,
-    act: (turn: string, plugin: HumanVsAIPlugin) => void
-}
+type AI = {
+    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean, rookActiveWhite: boolean, rookActiveBlack: boolean) => void;
+} & {
+    getVersion: () => string;
+    output: [string, string, string][];
+};
+
 
 export class HumanVsAIPlugin extends GameModeBasePlugin {
 
@@ -17,8 +23,25 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
         Events.LAUNCH,
         Events.request.FORCE_MOVE,
         Events.request.VALIDATE_MOVE,
-        Events.request.TRY_MAKE_MOVE
+        Events.request.TRY_MAKE_MOVE,
+        Events.request.COMMIT_MOVE
     ]
+    
+    static broadcasts = [
+        Events.request.TRY_MAKE_MOVE,
+        Events.request.VALIDATE_MOVE,
+        Events.request.FORCE_MOVE
+    ]
+
+    computerSettings: EnemyComputerSettings;
+
+    constructor(
+        {gameMode, computerSettings}: 
+        {gameMode: GameMode, computerSettings: EnemyComputerConstructorArgs})
+    {
+        super({gameMode})
+        this.computerSettings = new EnemyComputerSettings(computerSettings);
+    }
 
     install (game: Game) {
         super.install(game);
@@ -43,9 +66,18 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
 
         const ai = ((globalThis as any) as AI);
 
-        this.on(Events.state.CURRENT_TURN, () => {
+        this.on(Events.request.COMMIT_MOVE, () => {
             const turn = game.get('currentTurn');
-            ai.act(turn, this);
+
+            console.log("[AI input]", game.get("boardLayout").data)
+            ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));
+            let aiRes = ai.output;
+            console.log("[AI output]", aiRes)
+            
+            for (let i = 0; i < aiRes.length; i++){
+                this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
+            }
+
         });
 
         console.log("AI", ai.getVersion());
@@ -55,5 +87,10 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
     // (these are not errors; just complaints)
     complain (message: string) {
         console.log(`[AI complaint] ${message} :/`);
+    }
+
+    // And these are actually errors, also from the AI
+    errorFromAI(message: string){
+        console.log(`[AI (more angry) complaint] ${message} :O`)
     }
 }
