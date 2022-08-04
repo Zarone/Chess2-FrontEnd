@@ -3,6 +3,7 @@ import { SinglePlayerPlugin } from "../../dist/game/plugins/SinglePlayerPlugin"
 import { PluginBase } from "../../dist/game/plugins/BasePlugin";
 import { TestGameModePlugin } from "../game/plugins/TestGameModePlugin";
 import { HumanVsAIPlugin } from "../game/plugins/HumanVsAIPlugin";
+import { SpectatorPlugin } from "../game/plugins/SpectatorPlugin";
 
 interface pluginConstructor {
     new (prop: {}) : PluginBase;
@@ -39,5 +40,6 @@ export const GameModes = {
     SINGLE_PLAYER: new GameMode(true, SinglePlayerPlugin, "SINGLE_PLAYER", "Single Player"),
     PLAYER_VS_PLAYER: new GameMode(false, MultiplayerPlugin, "PLAYER_VS_PLAYER", "Two Players"),
     TEST_MODE: new GameMode(true, TestGameModePlugin, "TEST_MODE", "Test Mode"),
-    HUMAN_VS_AI: new GameMode(true, HumanVsAIPlugin, "HUMAN_VS_AI", "AI Opponent", true)
+    HUMAN_VS_AI: new GameMode(true, HumanVsAIPlugin, "HUMAN_VS_AI", "AI Opponent", true),
+    SPECTATOR: new GameMode(false, SpectatorPlugin, "SPECTATOR", "Spectate")
 }

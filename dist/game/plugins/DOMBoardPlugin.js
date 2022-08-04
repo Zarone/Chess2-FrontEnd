@@ -79,7 +79,7 @@ export class DOMBoardPlugin extends PluginBase {
         this.on(Events.request.SET_BOARD_LAYOUT, (_, args) => {
             const chessBoard = this.board;
 
-            chessBoard.boardLayout._unproxied.data = {};
+            chessBoard.boardLayout.data = {};
             for (let i = 0; i < args.layout.length; i++){
                 switch (args.layout[i].type) {
                     case Bear.name:
