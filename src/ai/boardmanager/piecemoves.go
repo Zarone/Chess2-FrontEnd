@@ -89,9 +89,7 @@ func KingMove(pos int16, state State) PossibleMoves {
 	moves.add(
 		pos, state,
 		moveType{ coordsToFunc([][2]int16{
-			{1, 1}, {0, 1}, {-1, 1},
-			{1, 0}, {0, 0}, {-1, 0},
-			{1, -1}, {0, -1}, {-1, -1},
+			
 		}, state.Gb[pos].IsWhite)},
 		conditionType{notSameType},
 	)
@@ -156,7 +154,6 @@ func MonkeyMove(pos int16, state State) PossibleMoves {
 		
 					nextToJail := getCorrespondingJail(visiting, state.Gb[pos].IsWhite)
 					if (nextToJail!=-1)&&(state.Gb[nextToJail].hasBanana){
-
 						backupSlice = append(backupSlice, 
 							rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE},
 							rawPartialMove{fromPos: 69, toPos: newPos, sameColor: false, turnType: TURN_DEFAULT},
@@ -169,6 +166,16 @@ func MonkeyMove(pos int16, state State) PossibleMoves {
 			}
 		}
 	}
+
+	moves.add(
+		pos, state,
+		moveType{ coordsToFunc([][2]int16{
+			{1, 1}, {0, 1}, {-1, 1},
+			{1, 0}, {0, 0}, {-1, 0},
+			{1, -1}, {0, -1}, {-1, -1},
+		}, state.Gb[pos].IsWhite) },
+		conditionType{empty},
+	)
 
 	fmt.Println("moves", moves)
 	return moves;

@@ -71,14 +71,14 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// fmt.Println("Rook", state.Gb[1].ThisPieceType.Name)
 	// state.Gb[1].ThisPieceType.GetMoves(1, state).Print()
 
-	// // based on presets for MONKEY_TEST board layout
-	// fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
-	// state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
+	// based on presets for MONKEY_TEST board layout
+	fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
+	state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
 	// output := state.Gb[28].ThisPieceType.GetMoves(28, state)[3].Output(thisColor, enemyColor)
 
-	// based on presets for MONKEY_RESCUE_TEST layout
-	fmt.Println("Monkey", state.Gb[31].ThisPieceType.Name);
-	state.Gb[31].ThisPieceType.GetMoves(31, state).Print()
+	// // based on presets for MONKEY_RESCUE_TEST layout
+	// fmt.Println("Monkey", state.Gb[31].ThisPieceType.Name);
+	// state.Gb[31].ThisPieceType.GetMoves(31, state).Print()
 	// output := state.Gb[31].ThisPieceType.GetMoves(31, state)
 
 

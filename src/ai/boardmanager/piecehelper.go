@@ -51,9 +51,16 @@ func (moves PossibleMoves) Print(){
 	var canReach = make(map[int16]bool);
 
 	for j:=0; j<len(moves); j++{
-		fmt.Println("possible move", moves[j][ len(moves[j])-1 ].toPos)
-		canReach[moves[j][ len(moves[j])-1 ].toPos] = true;
+		// fmt.Println("possible move", moves[j])
+		
+		if ( len(moves[j])>1 && moves[j][ len(moves[j])-2 ].turnType == TURN_JAIL ){
+			canReach[moves[j][ len(moves[j])-2 ].toPos] = true
+		} else {
+			canReach[moves[j][ len(moves[j])-1 ].toPos] = true;
+		}
+		
 		if ( len(moves[j])>1 && moves[j][len(moves[j])-2].turnType == TURN_RESCUE ){
+			fmt.Println(moves[j][len(moves[j])-2])
 			canReach[moves[j][len( moves[j] ) - 2].toPos] = true;
 		}
 	}
@@ -283,6 +290,7 @@ func checkRoyalty(pos int16, state State, move *rawMove) {
 }
 
 func getCorrespondingJail(pos int16, isWhite bool) int16 {
+
 	if (isWhite){
 		switch pos {
 		case 24:
