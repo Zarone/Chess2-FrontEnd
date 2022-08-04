@@ -5,8 +5,9 @@ import (
 )
 
 type Tile struct {
-	isWhite bool;
+	IsWhite bool;
 	ThisPieceType PieceType;
+	hasBanana bool;
 }
 
 
@@ -15,7 +16,7 @@ func (t Tile) info() string {
 	var color string
 	if (t.ThisPieceType.Name == Bear.Name){
 		color = "G"
-	} else if (t.isWhite){
+	} else if (t.IsWhite){
 		color = "W"
 	} else if (t.ThisPieceType.Name != NullPiece.Name){
 		color = "B"

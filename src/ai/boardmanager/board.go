@@ -42,18 +42,25 @@ func addToBoard(raw js.Value, gb *GameBoard, index int, tile string){
 		} else {
 			boolIsWhite = false;
 		}
+
+		hasBananaRaw := piece.Get("hasBanana")
+		hasBanana := false;
+		fmt.Println("hasBananaRaw", hasBananaRaw)
+		if (!hasBananaRaw.IsUndefined()){
+			hasBanana = hasBananaRaw.Bool()
+		}
 		
 		(*gb)[index] = Tile{
-			isWhite: boolIsWhite,
+			IsWhite: boolIsWhite,
 			ThisPieceType: nameToPiece(piece.Get("constructor").Get("name").String()),
+			hasBanana: hasBanana,
 		}
-		// fmt.Println( tileString, piece.Get("constructor").Get("name") )
 	} else {
 		(*gb)[index] = Tile{
-			isWhite: false,
+			IsWhite: false,
 			ThisPieceType: NullPiece,
+			hasBanana: false,
 		}
-		// fmt.Println( tileString, "undefined" )
 	}
 }
 
@@ -72,7 +79,5 @@ func BoardRawToArrayBoard(boardRaw js.Value) GameBoard {
 	addToBoard(boardRaw, &boardArray, 66, "y1")
 	addToBoard(boardRaw, &boardArray, 67, "y2")
 	addToBoard(boardRaw, &boardArray, 68, "z1")
-	// fmt.Println( boardArray )
-	// boardArray.Print()
 	return boardArray
 }

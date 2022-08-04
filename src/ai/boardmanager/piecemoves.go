@@ -2,8 +2,8 @@ package boardmanager
 
 import "fmt"
 
-func BearMove(pos int16, state State) possibleMoves {
-	var moves possibleMoves
+func BearMove(pos int16, state State) PossibleMoves {
+	var moves PossibleMoves
 
 	if (pos == 68) { 
 		moves = append(moves, 
@@ -19,7 +19,7 @@ func BearMove(pos int16, state State) possibleMoves {
 				{1, 1}, {0, 1}, {-1, 1},
 				{1, 0}, {0, 0}, {-1, 0},
 				{1, -1}, {0, -1}, {-1, -1},
-			}, state.Gb[pos].isWhite ) },
+			}, state.Gb[pos].IsWhite ) },
 			conditionType{empty},
 		)
 	}
@@ -28,11 +28,11 @@ func BearMove(pos int16, state State) possibleMoves {
 	return moves
 }
 
-func FishMove(pos int16, state State) possibleMoves {
-	var moves possibleMoves;
+func FishMove(pos int16, state State) PossibleMoves {
+	var moves PossibleMoves;
 	moves.add(
 		pos, state, 
-		moveType{coordsToFunc([][2]int16{{0, 1}, {1, 1}, {-1, 1}, {1, 0}, {-1, 0}}, state.Gb[pos].isWhite)}, 
+		moveType{coordsToFunc([][2]int16{{0, 1}, {1, 1}, {-1, 1}, {1, 0}, {-1, 0}}, state.Gb[pos].IsWhite)}, 
 		conditionType{notSameType},
 	)
 
@@ -40,8 +40,8 @@ func FishMove(pos int16, state State) possibleMoves {
 	return moves;
 }
 
-func QueenMove(pos int16, state State) possibleMoves {
-	var moves possibleMoves;
+func QueenMove(pos int16, state State) PossibleMoves {
+	var moves PossibleMoves;
 	moves.add(
 		pos, state,
 		moveType{queen},
@@ -51,9 +51,9 @@ func QueenMove(pos int16, state State) possibleMoves {
 	return moves;
 }
 
-func RookMove(pos int16, state State) possibleMoves {
+func RookMove(pos int16, state State) PossibleMoves {
 	
-	var moves possibleMoves;
+	var moves PossibleMoves;
 	moves.add(
 		pos, state,
 		moveType{allSlots},
@@ -69,12 +69,12 @@ func RookMove(pos int16, state State) possibleMoves {
 
 }
 
-func ElephantMove(pos int16, state State) possibleMoves {
+func ElephantMove(pos int16, state State) PossibleMoves {
 	
-	var moves possibleMoves;
+	var moves PossibleMoves;
 	moves.add(
 		pos, state,
-		moveType{ coordsToFunc([][2]int16{{2, 2}, {-2, 2}, {-2, -2}, {2, -2}}, state.Gb[pos].isWhite ) },
+		moveType{ coordsToFunc([][2]int16{{2, 2}, {-2, 2}, {-2, -2}, {2, -2}}, state.Gb[pos].IsWhite ) },
 		conditionType{empty},
 	)
 	fmt.Println("moves", moves)
@@ -82,9 +82,9 @@ func ElephantMove(pos int16, state State) possibleMoves {
 
 }
 
-func KingMove(pos int16, state State) possibleMoves {
+func KingMove(pos int16, state State) PossibleMoves {
 
-	var moves possibleMoves;
+	var moves PossibleMoves;
 
 	moves.add(
 		pos, state,
@@ -92,7 +92,7 @@ func KingMove(pos int16, state State) possibleMoves {
 			{1, 1}, {0, 1}, {-1, 1},
 			{1, 0}, {0, 0}, {-1, 0},
 			{1, -1}, {0, -1}, {-1, -1},
-		}, state.Gb[pos].isWhite)},
+		}, state.Gb[pos].IsWhite)},
 		conditionType{notSameType},
 	)
 
@@ -100,9 +100,9 @@ func KingMove(pos int16, state State) possibleMoves {
 	return moves;
 }
 
-func MonkeyMove(pos int16, state State) possibleMoves {
+func MonkeyMove(pos int16, state State) PossibleMoves {
 
-	var moves possibleMoves;
+	var moves PossibleMoves;
 
 	// do a depth first search
 	alreadyAdded := map[int16]bool{};
@@ -111,22 +111,17 @@ func MonkeyMove(pos int16, state State) possibleMoves {
 	for (len(toVisit) > 0){
 		visitingNode := toVisit[len(toVisit)-1]
 		visiting := visitingNode[len(visitingNode)-1]
-		// fmt.Println("visiting", visiting)
 		alreadyAdded[visiting] = true;
 		
-		// fmt.Println("toVisit before", toVisit)
 		toVisit = toVisit[:len(toVisit)-1]
-		// fmt.Println("toVisit after", toVisit)
 
 		for i:=int16(-1); i<2; i++{
 			for j:=int16(-1); j<2; j++ {
 				if (i==0&&j==0) { continue; }
 				row, col := posToRowCol(visiting);
-				// fmt.Println("row", row, "col", col)
 
 				newRow := row + 2*i;
 				newCol := col + 2*j;
-				// fmt.Println("newRow", newRow, "newCol", newCol)
 
 				newPos := rowColToPos(newRow, newCol)
 				intermediateRow := row + i;
@@ -136,36 +131,46 @@ func MonkeyMove(pos int16, state State) possibleMoves {
 
 				alreadyVisited := alreadyAdded[newPos]
 				withinBorders := inBorders(newRow, newCol);
-				newElement := !alreadyAdded[newPos];
-				somethingToJumpOff := withinBorders && state.Gb[rowColToPos(intermediateRow, intermediateCol)].ThisPieceType.Name != "undefined";
+				somethingToJumpOff := withinBorders && state.Gb[rowColToPos(intermediateRow, intermediateCol)].ThisPieceType.Name != NullPiece.Name;
 				targetDifferentColor := withinBorders && notSameType(thisConditionArgs)
-				if (!alreadyVisited && withinBorders && newElement && somethingToJumpOff && targetDifferentColor){
-					// fmt.Println("Pass")
-					newPath := append(visitingNode, newPos)
-					
+
+				if (!alreadyVisited && withinBorders && somethingToJumpOff && targetDifferentColor){
+						
 					var newMove rawMove;
-					for k:=1; k<len(newPath); k++{
-						newMove = append(newMove, rawPartialMove{fromPos: newPath[k-1], toPos: newPath[k], sameColor: true, turnType: " Jumping"})
+					for k:=1; k<len(visitingNode); k++{
+						newMove = append(newMove, rawPartialMove{fromPos: visitingNode[k-1], toPos: visitingNode[k], sameColor: true, turnType: TURN_JUMPING})
 					}
 
-					lastElement := len(newMove)-1
-					newMove[lastElement].sameColor = false;
-					newMove[lastElement].turnType= "";
+					var backupSlice rawMove;
+					copy(backupSlice, newMove)
+
+					newMove = append(newMove, rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: newPos, sameColor: false, turnType: TURN_DEFAULT})
 
 					checkRoyalty(newPos, state, &newMove)
 
 
 					moves = append(moves, newMove)
 					if (empty(thisConditionArgs)){
-						toVisit = append(toVisit, newPath) 
+						toVisit = append(toVisit, append(visitingNode, newPos)) 
 					}
-				} else {
-					// fmt.Println("Fail")
+		
+					nextToJail := getCorrespondingJail(visiting, state.Gb[pos].IsWhite)
+					if (nextToJail!=-1)&&(state.Gb[nextToJail].hasBanana){
+
+						backupSlice = append(backupSlice, 
+							rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE},
+							rawPartialMove{fromPos: 69, toPos: newPos, sameColor: false, turnType: TURN_DEFAULT},
+						)
+
+						moves = append(moves, backupSlice)
+					}
 				}
+
 			}
 		}
 	}
 
+	fmt.Println("moves", moves)
 	return moves;
 
 }
