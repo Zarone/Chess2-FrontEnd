@@ -36,34 +36,35 @@ type singleMove (func(int16, State, []func(conditionArgs) bool) PossibleMoves)
 
 type moveType []singleMove
 
-type conditionType []func(conditionArgs) bool
-
-type conditionArgs struct {
-	fromPos int16;
-	toPos int16;
-	state State;
-}
+type ConditionType []func(conditionArgs) bool
 
 type PossibleMoves []rawMove
 
-func (moves PossibleMoves) Print(){
-	
-	var canReach = make(map[int16]bool);
-
+func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
+	var canReach = make(map[int16]bool)
 	for j:=0; j<len(moves); j++{
 		// fmt.Println("possible move", moves[j])
-		
-		if ( len(moves[j])>1 && moves[j][ len(moves[j])-2 ].turnType == TURN_JAIL ){
+	
+		length := len(moves[j])
+
+		if ( length>1 && moves[j][ length-2 ].turnType == TURN_JAIL ){
 			canReach[moves[j][ len(moves[j])-2 ].toPos] = true
 		} else {
 			canReach[moves[j][ len(moves[j])-1 ].toPos] = true;
 		}
 		
-		if ( len(moves[j])>1 && moves[j][len(moves[j])-2].turnType == TURN_RESCUE ){
-			fmt.Println(moves[j][len(moves[j])-2])
+		if ( length>1 && moves[j][ length-2 ].turnType == TURN_RESCUE && includeSecondary){
 			canReach[moves[j][len( moves[j] ) - 2].toPos] = true;
 		}
 	}
+	return canReach
+}
+
+func (moves PossibleMoves) Print(heading string){
+	
+	fmt.Println(heading);
+
+	var canReach = moves.CanReach(true);
 
 	for row:=int16(0); row<8; row++{
 
@@ -116,7 +117,7 @@ func (moves *PossibleMoves) add(
 	currentPos int16,
 	state State,
 	move moveType, 
-	conditions conditionType,
+	conditions ConditionType,
 	) {
 		for i := 0; i < len(move); i++ {
 		(*moves) = append((*moves), move[i](currentPos, state, conditions)...)
@@ -308,4 +309,13 @@ func getCorrespondingJail(pos int16, isWhite bool) int16 {
 	}
 
 	return -1;
+}
+
+func isAdjacentPiece(pos int16, state State) bool {
+	row, col := posToRowCol(pos)
+	if inBorders(row+1, col) && state.Gb[rowColToPos(row+1, col)].ThisPieceType.Name != NullPiece.Name { return true; }
+	if inBorders(row-1, col) && state.Gb[rowColToPos(row-1, col)].ThisPieceType.Name != NullPiece.Name { return true; }
+	if inBorders(row, col+1) && state.Gb[rowColToPos(row, col+1)].ThisPieceType.Name != NullPiece.Name { return true; }
+	if inBorders(row, col-1) && state.Gb[rowColToPos(row, col-1)].ThisPieceType.Name != NullPiece.Name { return true; }
+	return false;
 }

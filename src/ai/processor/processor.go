@@ -26,30 +26,14 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	initData := actHead(this, args);
 	plugin := initData[0].(js.Value)
 	var thisColor string = initData[1].(string)
-	// isWhite := thisColor == "White"
+	isWhite := thisColor == "White"
 	var enemyColor string = initData[2].(string)
 	state := initData[3].(boardmanager.State)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	// STEPS FOR GETTING PIECES
-	// 	1. For the simple pieces (bear, elephant, fish, queen, king), just get all possible moves.
-	//	   Make sure to add movement to jail if they capture royalty.
-	//  2. For each monkey, use create node map to search for each space they can move to
-	//  3. For each monkey, check if they can do any rescue
-	//  4. For each rook, find spaces that are either
-	//		a ) Not able to be taken the next turn.
-	//     	b ) Defended, as in if the rook dies then another piece can take revenge.
-	//	   and also it must be next to a piece of either color
-
-	// var moves boardmanager.PossibleMoves;
-	// for i:=int16(0); i<64; i++ {
-	// 	if state.Gb[i].IsWhite == isWhite {
-	// 		moves = append(moves, state.Gb[i].ThisPieceType.GetMoves(i, state)...)
-	// 	}
-	// }
-	// moves.Print()
+	/*moves := */getAllMoves(state, isWhite);
 
 	// // based on presets for DEFAULT board layout
 	// fmt.Println("Fish")
@@ -71,16 +55,15 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// fmt.Println("Rook", state.Gb[1].ThisPieceType.Name)
 	// state.Gb[1].ThisPieceType.GetMoves(1, state).Print()
 
-	// based on presets for MONKEY_TEST board layout
-	fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
-	state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
-	// output := state.Gb[28].ThisPieceType.GetMoves(28, state)[3].Output(thisColor, enemyColor)
+	// // based on presets for MONKEY_TEST board layout
+	// fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
+	// state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
+	// // output := state.Gb[28].ThisPieceType.GetMoves(28, state)[3].Output(thisColor, enemyColor)
 
 	// // based on presets for MONKEY_RESCUE_TEST layout
 	// fmt.Println("Monkey", state.Gb[31].ThisPieceType.Name);
 	// state.Gb[31].ThisPieceType.GetMoves(31, state).Print()
 	// output := state.Gb[31].ThisPieceType.GetMoves(31, state)
-
 
 	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)

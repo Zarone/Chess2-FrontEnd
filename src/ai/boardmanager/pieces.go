@@ -5,10 +5,10 @@ import "fmt"
 type PieceType struct {
 	Name string
 
-	GetMoves func(int16, State) PossibleMoves
+	GetMoves func(int16, State, ConditionType) PossibleMoves
 }
 
-func test(a int16, b State) PossibleMoves {
+func test(a int16, b State, _ ConditionType) PossibleMoves {
 	fmt.Println("test move triggered")
 	return []rawMove{}
 }

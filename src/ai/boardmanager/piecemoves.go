@@ -2,7 +2,7 @@ package boardmanager
 
 import "fmt"
 
-func BearMove(pos int16, state State) PossibleMoves {
+func BearMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	var moves PossibleMoves
 
 	if (pos == 68) { 
@@ -20,7 +20,7 @@ func BearMove(pos int16, state State) PossibleMoves {
 				{1, 0}, {0, 0}, {-1, 0},
 				{1, -1}, {0, -1}, {-1, -1},
 			}, state.Gb[pos].IsWhite ) },
-			conditionType{empty},
+			ConditionType{empty},
 		)
 	}
 
@@ -28,61 +28,64 @@ func BearMove(pos int16, state State) PossibleMoves {
 	return moves
 }
 
-func FishMove(pos int16, state State) PossibleMoves {
+func FishMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	var moves PossibleMoves;
 	moves.add(
 		pos, state, 
 		moveType{coordsToFunc([][2]int16{{0, 1}, {1, 1}, {-1, 1}, {1, 0}, {-1, 0}}, state.Gb[pos].IsWhite)}, 
-		conditionType{notSameType},
+		ConditionType{notSameType},
 	)
 
 	fmt.Println("moves", moves)
 	return moves;
 }
 
-func QueenMove(pos int16, state State) PossibleMoves {
+func QueenMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	var moves PossibleMoves;
 	moves.add(
 		pos, state,
 		moveType{queen},
-		conditionType{notSameType},
+		ConditionType{notSameType},
 	)
 	fmt.Println("moves", moves)
 	return moves;
 }
 
-func RookMove(pos int16, state State) PossibleMoves {
+func RookMove(pos int16, state State, filterConditions ConditionType) PossibleMoves {
 	
 	var moves PossibleMoves;
+
 	moves.add(
 		pos, state,
 		moveType{allSlots},
-		conditionType{empty},
+		append(ConditionType{empty}, filterConditions...),
 	)
+	
 	moves.add(
 		pos, state,
 		moveType{straightNextTo},
-		conditionType{notSameType, rookCondition},
+		ConditionType{notSameType, rookCondition},
 	)
+
 	fmt.Println("moves", moves)
 	return moves;
 
 }
 
-func ElephantMove(pos int16, state State) PossibleMoves {
+func ElephantMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	
 	var moves PossibleMoves;
 	moves.add(
 		pos, state,
 		moveType{ coordsToFunc([][2]int16{{2, 2}, {-2, 2}, {-2, -2}, {2, -2}}, state.Gb[pos].IsWhite ) },
-		conditionType{empty},
+		ConditionType{empty},
 	)
 	fmt.Println("moves", moves)
 	return moves;
 
 }
 
-func KingMove(pos int16, state State) PossibleMoves {
+func KingMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 	var moves PossibleMoves;
 
@@ -91,14 +94,14 @@ func KingMove(pos int16, state State) PossibleMoves {
 		moveType{ coordsToFunc([][2]int16{
 			
 		}, state.Gb[pos].IsWhite)},
-		conditionType{notSameType},
+		ConditionType{notSameType},
 	)
 
 	fmt.Println("moves", moves)
 	return moves;
 }
 
-func MonkeyMove(pos int16, state State) PossibleMoves {
+func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 	var moves PossibleMoves;
 
@@ -174,7 +177,7 @@ func MonkeyMove(pos int16, state State) PossibleMoves {
 			{1, 0}, {0, 0}, {-1, 0},
 			{1, -1}, {0, -1}, {-1, -1},
 		}, state.Gb[pos].IsWhite) },
-		conditionType{empty},
+		ConditionType{empty},
 	)
 
 	fmt.Println("moves", moves)
