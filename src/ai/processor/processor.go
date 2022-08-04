@@ -27,7 +27,7 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	plugin := initData[0].(js.Value)
 	var thisColor string = initData[1].(string)
 	var enemyColor string = initData[2].(string)
-	state := initData[3].(boardmanager.State)
+	// state := initData[3].(boardmanager.State)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
@@ -52,9 +52,9 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// fmt.Println("Elephant", state.Gb[10].ThisPieceType.Name)
 	// state.Gb[10].ThisPieceType.GetMoves(10, state).Print()
 
-	// // based on presets for QUEEN_TEST board layout
+	// based on presets for QUEEN_TEST board layout
 	// fmt.Println("Queen")
-	// state.Gb[9].ThisPieceType.GetMoves(9, state).Print()
+	// output := state.Gb[9].ThisPieceType.GetMoves(9, state)[20].Output(thisColor, enemyColor)
 
 	// // based on presets for ROOK_PARTY board layout
 	// fmt.Println("Rook", state.Gb[54].ThisPieceType.Name)
@@ -65,12 +65,12 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// state.Gb[1].ThisPieceType.GetMoves(1, state).Print()
 	
 
-	// based on presets for MONKEY_TEST board layout
-	fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
+	// // based on presets for MONKEY_TEST board layout
+	// fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
 	// state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
-	output := state.Gb[28].ThisPieceType.GetMoves(28, state)[3].Output(thisColor, enemyColor)
+	// output := state.Gb[28].ThisPieceType.GetMoves(28, state)[3].Output(thisColor, enemyColor)
 
-	// output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
+	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
 	return nil
 }

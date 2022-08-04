@@ -350,6 +350,7 @@ export class BoardLayouts {
         ["e4", 'Monkey', false],
         ["a1", 'Fish', true],
         ['g5', 'Fish', true],
-        ["e2", "Fish", false]
+        ["e2", "Fish", false],
+        ["e1", 'King', true]
     ]
 }

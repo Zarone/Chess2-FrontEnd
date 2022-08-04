@@ -7,10 +7,10 @@ func BearMove(pos int16, state State) possibleMoves {
 
 	if (pos == 68) { 
 		moves = append(moves, 
-			getRawMoveDefault(pos, 27),
-			getRawMoveDefault(pos, 28),
-			getRawMoveDefault(pos, 35),
-			getRawMoveDefault(pos, 36),
+			getRawMoveDefault(pos, 27, state),
+			getRawMoveDefault(pos, 28, state),
+			getRawMoveDefault(pos, 35, state),
+			getRawMoveDefault(pos, 36, state),
 		)
 	} else {
 		moves.add(
@@ -111,22 +111,22 @@ func MonkeyMove(pos int16, state State) possibleMoves {
 	for (len(toVisit) > 0){
 		visitingNode := toVisit[len(toVisit)-1]
 		visiting := visitingNode[len(visitingNode)-1]
-		fmt.Println("visiting", visiting)
+		// fmt.Println("visiting", visiting)
 		alreadyAdded[visiting] = true;
 		
-		fmt.Println("toVisit before", toVisit)
+		// fmt.Println("toVisit before", toVisit)
 		toVisit = toVisit[:len(toVisit)-1]
-		fmt.Println("toVisit after", toVisit)
+		// fmt.Println("toVisit after", toVisit)
 
 		for i:=int16(-1); i<2; i++{
 			for j:=int16(-1); j<2; j++ {
 				if (i==0&&j==0) { continue; }
 				row, col := posToRowCol(visiting);
-				fmt.Println("row", row, "col", col)
+				// fmt.Println("row", row, "col", col)
 
 				newRow := row + 2*i;
 				newCol := col + 2*j;
-				fmt.Println("newRow", newRow, "newCol", newCol)
+				// fmt.Println("newRow", newRow, "newCol", newCol)
 
 				newPos := rowColToPos(newRow, newCol)
 				intermediateRow := row + i;
@@ -140,10 +140,10 @@ func MonkeyMove(pos int16, state State) possibleMoves {
 				somethingToJumpOff := withinBorders && state.Gb[rowColToPos(intermediateRow, intermediateCol)].ThisPieceType.Name != "undefined";
 				targetDifferentColor := withinBorders && notSameType(thisConditionArgs)
 				if (!alreadyVisited && withinBorders && newElement && somethingToJumpOff && targetDifferentColor){
-					fmt.Println("Pass")
+					// fmt.Println("Pass")
 					newPath := append(visitingNode, newPos)
 					
-					var newMove []rawPartialMove;
+					var newMove rawMove;
 					for k:=1; k<len(newPath); k++{
 						newMove = append(newMove, rawPartialMove{fromPos: newPath[k-1], toPos: newPath[k], sameColor: true, turnType: " Jumping"})
 					}
@@ -152,13 +152,15 @@ func MonkeyMove(pos int16, state State) possibleMoves {
 					newMove[lastElement].sameColor = false;
 					newMove[lastElement].turnType= "";
 
+					checkRoyalty(newPos, state, &newMove)
+
 
 					moves = append(moves, newMove)
 					if (empty(thisConditionArgs)){
 						toVisit = append(toVisit, newPath) 
 					}
 				} else {
-					fmt.Println("Fail")
+					// fmt.Println("Fail")
 				}
 			}
 		}

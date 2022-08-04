@@ -13,14 +13,19 @@ func test(a int16, b State) possibleMoves {
 	return []rawMove{}
 }
 
+// this just prevents the reference loop:
+// 	- King => KingMove => checkRoyalty => King.Name
+var KING_NAME = "King"
+var QUEEN_NAME = "Queen"
+
 var (
 	Bear      PieceType = PieceType{"Bear", BearMove}
 	Elephant  PieceType = PieceType{"Elephant", ElephantMove}
 	Fish      PieceType = PieceType{"Fish", FishMove}
 	FishQueen PieceType = PieceType{"FishQueen", QueenMove}
-	King      PieceType = PieceType{"King", KingMove}
+	King      PieceType = PieceType{KING_NAME, KingMove}
 	Monkey    PieceType = PieceType{"Monkey", MonkeyMove}
-	Queen     PieceType = PieceType{"Queen", QueenMove}
+	Queen     PieceType = PieceType{QUEEN_NAME, QueenMove}
 	Rook      PieceType = PieceType{"Rook", RookMove}
 	NullPiece PieceType = PieceType{"undefined", test}
 )

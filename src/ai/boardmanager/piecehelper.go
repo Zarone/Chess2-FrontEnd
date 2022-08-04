@@ -80,8 +80,10 @@ func (moves *possibleMoves) add(
 	}
 }
 
-func getRawMoveDefault(fromPos int16, toPos int16) rawMove{
-	return []rawPartialMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: ""}}
+func getRawMoveDefault(fromPos int16, toPos int16, state State) rawMove{
+	moves := rawMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: ""}}
+	checkRoyalty(toPos, state, &moves)
+	return moves;
 }
 
 func intToPosString(pos int16) string {
@@ -92,6 +94,7 @@ func intToPosString(pos int16) string {
 		case 66: return "y1"
 		case 67: return "y2"
 		case 68: return "z1"
+		case -1: return "TEMP"
 	}
 
 	col := pos%8;
@@ -138,7 +141,8 @@ func coordsToFunc(coords [][2]int16, isWhite bool) singleMove {
 					}
 				}
 				if (conditionMet){
-					moves = append(moves, getRawMoveDefault(pos, toPos))	
+					move := getRawMoveDefault(pos, toPos, state)
+					moves = append(moves, move)
 				}
 			}
 		}
@@ -182,15 +186,18 @@ func queen(pos int16, state State, conditions []func(conditionArgs) bool) possib
 					}
 
 					if (!empty(thisConditionArgs)){
-						if notSameType(thisConditionArgs){							
+						fmt.Println("not empty", thisConditionArgs.fromPos, thisConditionArgs.toPos)
+						if notSameType(thisConditionArgs){
+							fmt.Println("not same type")
 							if (conditionsMet){
-								moves = append(moves, getRawMoveDefault(pos, newPos))
+								fmt.Println("conditions met")
+								moves = append(moves, getRawMoveDefault(pos, newPos, state))
 							}
 						}
 						break;
 					} else {
 						if conditionsMet {
-							moves = append(moves, getRawMoveDefault(pos, newPos))
+							moves = append(moves, getRawMoveDefault(pos, newPos, state))
 						}
 					}
 
@@ -215,7 +222,7 @@ func allSlots(pos int16, state State, conditions []func(conditionArgs) bool) pos
 			}
 		}
 		if conditionsMet {
-			moves = append(moves, getRawMoveDefault(pos, i))
+			moves = append(moves, getRawMoveDefault(pos, i, state))
 		}
 	}
 	return moves;
@@ -223,4 +230,32 @@ func allSlots(pos int16, state State, conditions []func(conditionArgs) bool) pos
 
 func straightNextTo(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
 	return coordsToFunc([][2]int16{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}, state.Gb[pos].isWhite)(pos, state, conditions)
+}
+
+func checkRoyalty(pos int16, state State, move *rawMove) {
+	if state.Gb[pos].ThisPieceType.Name == QUEEN_NAME || state.Gb[pos].ThisPieceType.Name == KING_NAME{
+		var target int16;
+
+		if state.Gb[pos].isWhite {
+			if state.Gb[64].ThisPieceType.Name == "undefined" {
+				target = 64
+			} else {
+				target = 65
+			}
+		} else {
+			if state.Gb[66].ThisPieceType.Name == "undefined" {
+				target = 66;
+			} else {
+				target = 67;
+			}
+		}
+
+		lastElement := len(*move)-1;
+		(*move)[lastElement].sameColor = true;
+		(*move)[lastElement].turnType = " Jail"
+
+		// -1 corresponds to "TEMP"
+		*move = append(*move, rawPartialMove{fromPos: -1, toPos: target, sameColor: false, turnType: ""})
+
+	}
 }
