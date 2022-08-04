@@ -106,11 +106,13 @@ func MonkeyMove(pos int16, state State) possibleMoves {
 
 	// do a depth first search
 	alreadyAdded := map[int16]bool{};
-	toVisit := []int16{pos};
+	toVisit := [][]int16{{pos}};
 
 	for (len(toVisit) > 0){
-		visiting := toVisit[len(toVisit)-1]
+		visitingNode := toVisit[len(toVisit)-1]
+		visiting := visitingNode[len(visitingNode)-1]
 		fmt.Println("visiting", visiting)
+		alreadyAdded[visiting] = true;
 		
 		fmt.Println("toVisit before", toVisit)
 		toVisit = toVisit[:len(toVisit)-1]
@@ -132,15 +134,28 @@ func MonkeyMove(pos int16, state State) possibleMoves {
 
 				thisConditionArgs := conditionArgs{fromPos: pos, toPos: newPos, state: state}
 
+				alreadyVisited := alreadyAdded[newPos]
 				withinBorders := inBorders(newRow, newCol);
 				newElement := !alreadyAdded[newPos];
 				somethingToJumpOff := withinBorders && state.Gb[rowColToPos(intermediateRow, intermediateCol)].ThisPieceType.Name != "undefined";
-				targetDifferentColor := notSameType(thisConditionArgs)
-				if (withinBorders && newElement && somethingToJumpOff && targetDifferentColor){
+				targetDifferentColor := withinBorders && notSameType(thisConditionArgs)
+				if (!alreadyVisited && withinBorders && newElement && somethingToJumpOff && targetDifferentColor){
 					fmt.Println("Pass")
-					moves = append(moves, []rawPartialMove{{fromPos: visiting, toPos: newPos, sameColor: true, turnType: " Jumping"}})
+					newPath := append(visitingNode, newPos)
+					
+					var newMove []rawPartialMove;
+					for k:=1; k<len(newPath); k++{
+						newMove = append(newMove, rawPartialMove{fromPos: newPath[k-1], toPos: newPath[k], sameColor: true, turnType: " Jumping"})
+					}
+
+					lastElement := len(newMove)-1
+					newMove[lastElement].sameColor = false;
+					newMove[lastElement].turnType= "";
+
+
+					moves = append(moves, newMove)
 					if (empty(thisConditionArgs)){
-						toVisit = append(toVisit, newPos)
+						toVisit = append(toVisit, newPath) 
 					}
 				} else {
 					fmt.Println("Fail")

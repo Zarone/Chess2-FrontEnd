@@ -67,9 +67,10 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 
 	// based on presets for MONKEY_TEST board layout
 	fmt.Println("Monkey", state.Gb[28].ThisPieceType.Name)
-	state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
+	// state.Gb[28].ThisPieceType.GetMoves(28, state).Print()
+	output := state.Gb[28].ThisPieceType.GetMoves(28, state)[3].Output(thisColor, enemyColor)
 
-	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
+	// output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
 	return nil
 }
