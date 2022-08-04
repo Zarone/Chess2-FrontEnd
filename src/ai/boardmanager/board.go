@@ -73,6 +73,6 @@ func BoardRawToArrayBoard(boardRaw js.Value) GameBoard {
 	addToBoard(boardRaw, &boardArray, 67, "y2")
 	addToBoard(boardRaw, &boardArray, 68, "z1")
 	// fmt.Println( boardArray )
-	boardArray.Print()
+	// boardArray.Print()
 	return boardArray
 }

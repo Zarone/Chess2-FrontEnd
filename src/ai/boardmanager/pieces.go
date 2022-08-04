@@ -21,7 +21,7 @@ var (
 	King      PieceType = PieceType{"King", test}
 	Monkey    PieceType = PieceType{"Monkey", test}
 	Queen     PieceType = PieceType{"Queen", QueenMove}
-	Rook      PieceType = PieceType{"Rook", test}
+	Rook      PieceType = PieceType{"Rook", RookMove}
 	NullPiece PieceType = PieceType{"undefined", test}
 )
 

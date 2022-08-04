@@ -54,7 +54,7 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// state.Gb[9].ThisPieceType.GetMoves(9, state).Print()
 
 	// based on presets for ROOK_PARTY board layout
-	fmt.Println("Rook")
+	fmt.Println("Rook", state.Gb[54].ThisPieceType.Name)
 	state.Gb[54].ThisPieceType.GetMoves(54, state).Print()
 
 	// plugin.Get("complain").Invoke(js.ValueOf( board[68].ThisPieceType.GetMoves(68, board)[0].Output(thisColor, enemyColor) ))
@@ -70,6 +70,8 @@ func actTail(output []interface{}) {
 
 func actHead(this js.Value, args []js.Value) ([]any) {
 
+	fmt.Println("Initial Args", args)
+	
 	if len(args) < 2 {
 		panic("nope")
 	}
@@ -77,8 +79,11 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	plugin := args[1]
 	boardRaw := args[2]
 	var isWhite bool = args[3].Bool()
+	rookActiveWhite := args[4].Bool()
+	rookActiveBlack := args[5].Bool()
 
-	state := boardmanager.State{Gb: boardmanager.BoardRawToArrayBoard(boardRaw), RookWhiteActive: false, RookBlackActive: false}
+
+	state := boardmanager.State{Gb: boardmanager.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack}
 	fmt.Println("Initializing board")
 	state.Gb.Print()
 

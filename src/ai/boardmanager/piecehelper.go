@@ -204,12 +204,12 @@ func queen(pos int16, state State, conditions []func(conditionArgs) bool) possib
 	return moves;
 }
 
-func all(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
+func allSlots(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
 	var moves possibleMoves;
 	for i:=int16(0); i<64; i++ {
 		conditionsMet := true;
 		for j:=0; j<len(conditions); j++ {
-			if !(conditions[i](conditionArgs{fromPos: i, toPos: pos, state: state})) {
+			if !(conditions[j](conditionArgs{fromPos: pos, toPos: i, state: state})) {
 				conditionsMet = false;
 				break;
 			}
@@ -219,4 +219,8 @@ func all(pos int16, state State, conditions []func(conditionArgs) bool) possible
 		}
 	}
 	return moves;
+}
+
+func straightNextTo(pos int16, state State, conditions []func(conditionArgs) bool) possibleMoves {
+	return coordsToFunc([][2]int16{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}, state.Gb[pos].isWhite)(pos, state, conditions)
 }

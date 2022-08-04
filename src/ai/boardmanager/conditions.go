@@ -7,3 +7,11 @@ func empty(args conditionArgs) bool {
 func notSameType(args conditionArgs) bool {
 	return empty(args) || args.state.Gb[args.fromPos].isWhite != args.state.Gb[args.toPos].isWhite
 }
+
+func rookCondition(args conditionArgs) bool {
+	if (args.state.Gb[args.fromPos].isWhite){
+		return args.state.RookWhiteActive
+	} else {
+		return args.state.RookBlackActive
+	}
+}
