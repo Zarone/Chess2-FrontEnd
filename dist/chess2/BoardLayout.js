@@ -337,4 +337,9 @@ export class BoardLayouts {
         ["b7", 'Queen', false],
         ["g2", 'Queen', true]
     ]
+
+    static KING_TEST = [
+        ["b8", 'King', false],
+        ["g1", 'King', true]
+    ]
 }
