@@ -26,17 +26,19 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	initData := actHead(this, args);
 	plugin := initData[0].(js.Value)
 	var thisColor string = initData[1].(string)
-	// isWhite := thisColor == "White"
+	isWhite := thisColor == "White"
 	var enemyColor string = initData[2].(string)
 	state := initData[3].(boardmanager.State)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	// moves := getAllMoves(state, isWhite);
-	getNodeTree(state)	
+	moves := getAllMoves(state, isWhite);
+	// getNodeTree(state)
+	fmt.Println(zobristMap(state))
 
-	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
+	output := moves[0].Output(thisColor, enemyColor)
+	// output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
 	return nil
 }
@@ -60,7 +62,7 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	rookActiveBlack := args[5].Bool()
 
 
-	state := boardmanager.State{Gb: boardmanager.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack}
+	state := boardmanager.State{Gb: boardmanager.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack, IsWhite: isWhite}
 	fmt.Println("Initializing board")
 	state.Gb.Print()
 

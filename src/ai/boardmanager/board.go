@@ -12,6 +12,7 @@ type State struct {
 	Gb GameBoard;
 	RookWhiteActive bool;
 	RookBlackActive bool;
+	IsWhite bool;
 }
 
 func (gb GameBoard) Print(){

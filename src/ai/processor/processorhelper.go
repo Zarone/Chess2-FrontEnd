@@ -3,6 +3,7 @@ package processor
 import (
 	"chesstwoai/boardmanager"
 	"fmt"
+	"math/rand"
 )
 
 func wrapper (myFunc func(int16), index int16) func(){
@@ -49,4 +50,42 @@ type node struct {
 
 func getNodeTree(state boardmanager.State) node {
 	return node{state: state, children: []boardmanager.State{}}
+}
+
+var zobristTable [69][16]int64;
+var zobristTurnOffset int64;
+var hasInitializedTable = false;
+
+func uint8b(b bool) uint8{
+	if b {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+func zobristMap(state boardmanager.State) int64 {
+
+	if (!hasInitializedTable){
+		for i:=0; i<69; i++{
+			for j:=0; j>14; j++{
+				zobristTable[i][j] = rand.Int63();
+			}
+		}
+		zobristTurnOffset = rand.Int63();
+		hasInitializedTable = true;
+		fmt.Println("Initialized zobrist table")
+	}
+
+	var thisHash int64 = 0;
+	if (state.IsWhite) { thisHash = zobristTurnOffset; }
+
+	for i:=0; i<69; i++{
+		if state.Gb[i].ThisPieceType.Name != boardmanager.NullPiece.Name {
+			thisHash ^= zobristTable[i][state.Gb[i].ThisPieceType.ID + 8*uint8b(state.Gb[i].IsWhite)]
+		}
+	}
+
+	return thisHash
+
 }

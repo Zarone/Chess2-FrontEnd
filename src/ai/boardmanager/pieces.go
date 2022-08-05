@@ -6,6 +6,8 @@ type PieceType struct {
 	Name string
 
 	GetMoves func(int16, State, ConditionType) PossibleMoves
+
+	ID uint8
 }
 
 func test(a int16, b State, _ ConditionType) PossibleMoves {
@@ -19,15 +21,15 @@ var KING_NAME = "King"
 var QUEEN_NAME = "Queen"
 
 var (
-	Bear      PieceType = PieceType{"Bear", BearMove}
-	Elephant  PieceType = PieceType{"Elephant", ElephantMove}
-	Fish      PieceType = PieceType{"Fish", FishMove}
-	FishQueen PieceType = PieceType{"FishQueen", QueenMove}
-	King      PieceType = PieceType{KING_NAME, KingMove}
-	Monkey    PieceType = PieceType{"Monkey", MonkeyMove}
-	Queen     PieceType = PieceType{QUEEN_NAME, QueenMove}
-	Rook      PieceType = PieceType{"Rook", RookMove}
-	NullPiece PieceType = PieceType{"undefined", test}
+	Bear      PieceType = PieceType{"Bear", BearMove, 0}
+	Elephant  PieceType = PieceType{"Elephant", ElephantMove, 1}
+	Fish      PieceType = PieceType{"Fish", FishMove, 2}
+	FishQueen PieceType = PieceType{"FishQueen", QueenMove, 3}
+	King      PieceType = PieceType{KING_NAME, KingMove, 4}
+	Monkey    PieceType = PieceType{"Monkey", MonkeyMove, 5}
+	Queen     PieceType = PieceType{QUEEN_NAME, QueenMove, 6}
+	Rook      PieceType = PieceType{"Rook", RookMove, 7}
+	NullPiece PieceType = PieceType{"undefined", test, 8}
 )
 
 func nameToPiece(name string) PieceType {
