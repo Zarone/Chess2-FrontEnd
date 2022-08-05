@@ -1,7 +1,5 @@
 package boardmanager
 
-import "fmt"
-
 type PieceType struct {
 	Name string
 
@@ -11,8 +9,8 @@ type PieceType struct {
 }
 
 func test(a int16, b State, _ ConditionType) PossibleMoves {
-	fmt.Println("test move triggered")
-	return []rawMove{}
+	// fmt.Println("test move triggered")
+	return []RawMove{}
 }
 
 // this just prevents the reference loop:

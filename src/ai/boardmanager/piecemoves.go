@@ -1,7 +1,5 @@
 package boardmanager
 
-import "fmt"
-
 func BearMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	var moves PossibleMoves
 
@@ -24,7 +22,7 @@ func BearMove(pos int16, state State, _ ConditionType) PossibleMoves {
 		)
 	}
 
-	fmt.Println("moves", moves)
+	// fmt.Println("moves", moves)
 	return moves
 }
 
@@ -36,7 +34,7 @@ func FishMove(pos int16, state State, _ ConditionType) PossibleMoves {
 		ConditionType{notSameType},
 	)
 
-	fmt.Println("moves", moves)
+	// fmt.Println("moves", moves)
 	return moves;
 }
 
@@ -47,7 +45,7 @@ func QueenMove(pos int16, state State, _ ConditionType) PossibleMoves {
 		moveType{queen},
 		ConditionType{notSameType},
 	)
-	fmt.Println("moves", moves)
+	// fmt.Println("moves", moves)
 	return moves;
 }
 
@@ -67,7 +65,7 @@ func RookMove(pos int16, state State, filterConditions ConditionType) PossibleMo
 		ConditionType{notSameType, rookCondition},
 	)
 
-	fmt.Println("moves", moves)
+	// fmt.Println("moves", moves)
 	return moves;
 
 }
@@ -80,7 +78,7 @@ func ElephantMove(pos int16, state State, _ ConditionType) PossibleMoves {
 		moveType{ coordsToFunc([][2]int16{{2, 2}, {-2, 2}, {-2, -2}, {2, -2}}, state.Gb[pos].IsWhite ) },
 		ConditionType{empty},
 	)
-	fmt.Println("moves", moves)
+	// fmt.Println("moves", moves)
 	return moves;
 
 }
@@ -97,7 +95,7 @@ func KingMove(pos int16, state State, _ ConditionType) PossibleMoves {
 		ConditionType{notSameType},
 	)
 
-	fmt.Println("moves", moves)
+	// fmt.Println("moves", moves)
 	return moves;
 }
 
@@ -137,12 +135,12 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 				if (!alreadyVisited && withinBorders && somethingToJumpOff && targetDifferentColor){
 						
-					var newMove rawMove;
+					var newMove RawMove;
 					for k:=1; k<len(visitingNode); k++{
 						newMove = append(newMove, rawPartialMove{fromPos: visitingNode[k-1], toPos: visitingNode[k], sameColor: true, turnType: TURN_JUMPING})
 					}
 
-					var backupSlice rawMove;
+					var backupSlice RawMove;
 					copy(backupSlice, newMove)
 
 					newMove = append(newMove, rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: newPos, sameColor: false, turnType: TURN_DEFAULT})
@@ -180,7 +178,7 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 		ConditionType{empty},
 	)
 
-	fmt.Println("moves", moves)
+	// fmt.Println("moves", moves)
 	return moves;
 
 }

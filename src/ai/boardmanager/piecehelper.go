@@ -16,9 +16,9 @@ var TURN_RESCUE string = " Rescue"
 var TURN_JUMPING string = " Jumping"
 var TURN_JAIL string = " Jail"
 
-type rawMove []rawPartialMove
+type RawMove []rawPartialMove
 
-func (move rawMove) Output(playerColor string, enemyColor string) []interface{} {
+func (move RawMove) Output(playerColor string, enemyColor string) []interface{} {
 	var output []interface{}
 	for i:=0;i<len(move);i++{
 		var turn string;
@@ -38,7 +38,7 @@ type moveType []singleMove
 
 type ConditionType []func(conditionArgs) bool
 
-type PossibleMoves []rawMove
+type PossibleMoves []RawMove
 
 func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 	var canReach = make(map[int16]bool)
@@ -58,6 +58,14 @@ func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 		}
 	}
 	return canReach
+}
+
+func (moves PossibleMoves) ToState(baseState State) []State {
+	var states []State;
+	for _, element := range moves {
+		states = append(states, baseState.MakeMove(element))
+	}
+	return states;
 }
 
 func (moves PossibleMoves) Print(heading string){
@@ -124,8 +132,8 @@ func (moves *PossibleMoves) add(
 	}
 }
 
-func getRawMoveDefault(fromPos int16, toPos int16, state State) rawMove{
-	moves := rawMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: TURN_DEFAULT}}
+func getRawMoveDefault(fromPos int16, toPos int16, state State) RawMove{
+	moves := RawMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: TURN_DEFAULT}}
 	checkRoyalty(toPos, state, &moves)
 	return moves;
 }
@@ -262,7 +270,7 @@ func straightNextTo(pos int16, state State, conditions []func(conditionArgs) boo
 	return coordsToFunc([][2]int16{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}, state.Gb[pos].IsWhite)(pos, state, conditions)
 }
 
-func checkRoyalty(pos int16, state State, move *rawMove) {
+func checkRoyalty(pos int16, state State, move *RawMove) {
 	if state.Gb[pos].ThisPieceType.Name == QUEEN_NAME || state.Gb[pos].ThisPieceType.Name == KING_NAME{
 		var target int16;
 

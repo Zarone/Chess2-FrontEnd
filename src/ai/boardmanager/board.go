@@ -15,6 +15,11 @@ type State struct {
 	IsWhite bool;
 }
 
+func (state State) MakeMove(move RawMove) State {
+	fmt.Println(move)
+	return state;
+}
+
 func (gb GameBoard) Print(){
 	for i := 0; i < 8; i++ {
 		fmt.Printf("%v ", 8-i)
@@ -46,7 +51,7 @@ func addToBoard(raw js.Value, gb *GameBoard, index int, tile string){
 
 		hasBananaRaw := piece.Get("hasBanana")
 		hasBanana := false;
-		fmt.Println("hasBananaRaw", hasBananaRaw)
+		// fmt.Println("hasBananaRaw", hasBananaRaw)
 		if (!hasBananaRaw.IsUndefined()){
 			hasBanana = hasBananaRaw.Bool()
 		}
