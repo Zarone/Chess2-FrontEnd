@@ -16,8 +16,31 @@ type State struct {
 }
 
 func (state State) MakeMove(move RawMove) State {
-	fmt.Println(move)
-	return state;
+	var newState State;
+	newState.IsWhite = !state.IsWhite;
+	copy(newState.Gb[:], state.Gb[:])
+	lastElem := len(move)-1
+	secondToLastElem := lastElem-1
+	
+	fmt.Print("\n", move.Output("", ""), "\n")
+	
+	if len(move) > 1 {
+		if (move[secondToLastElem].turnType == TURN_JUMPING){
+			newState.Gb[move[lastElem].toPos] = state.Gb[move[0].fromPos];
+			newState.Gb[move[0].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
+		} else if (move[secondToLastElem].turnType == TURN_JAIL) {
+			newState.Gb[move[lastElem].toPos] = state.Gb[move[secondToLastElem].toPos]
+			newState.Gb[move[secondToLastElem].toPos] = state.Gb[move[0].fromPos] 
+			newState.Gb[move[0].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
+		} else {
+			panic("un-managed multi-move")
+		}
+	} else {
+		newState.Gb[move[lastElem].toPos] = state.Gb[move[lastElem].fromPos];
+		newState.Gb[move[lastElem].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
+	}
+	newState.Gb.Print()
+	return newState
 }
 
 func (gb GameBoard) Print(){

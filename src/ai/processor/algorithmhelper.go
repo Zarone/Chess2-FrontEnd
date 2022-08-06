@@ -3,6 +3,7 @@ package processor
 import (
 	"chesstwoai/boardmanager"
 	"fmt"
+	"math"
 	"math/rand"
 )
 
@@ -31,7 +32,7 @@ func zobristMap(state boardmanager.State) int64 {
 
 	if (!hasInitializedTable){
 		for i:=0; i<69; i++{
-			for j:=0; j>14; j++{
+			for j:=0; j<16; j++{
 				zobristTable[i][j] = rand.Int63();
 			}
 		}
@@ -45,11 +46,6 @@ func zobristMap(state boardmanager.State) int64 {
 
 	for i:=0; i<69; i++{
 		if state.Gb[i].ThisPieceType.Name != boardmanager.NullPiece.Name {
-			fmt.Println(
-				"thisHash", thisHash,
-				"indexes", i, state.Gb[i].ThisPieceType.ID + 8*uint8b(state.Gb[i].IsWhite), 
-				"XOR", zobristTable[i][state.Gb[i].ThisPieceType.ID + 8*uint8b(state.Gb[i].IsWhite)],
-			)
 			thisHash ^= zobristTable[i][state.Gb[i].ThisPieceType.ID + 8*uint8b(state.Gb[i].IsWhite)]
 		}
 	}
@@ -69,8 +65,14 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		return staticEvaluation(state);
 	}
 
-	states := getAllMoves(state).ToState(state)
-	fmt.Println("States", states)
+	moves := getAllMoves(state)
+	/*states := */moves.ToState(state)
+	// fmt.Println("States", states)
+	// for _, state := range states {
+		// fmt.Print("\n")
+		// fmt.Println(moves[index].Output("", "")...)
+		// state.Gb.Print()
+	// }
 
 	if state.IsWhite {
 		// for each move
@@ -99,5 +101,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 }
 
 func bestMove(state boardmanager.State) boardmanager.RawMove{
+	
+	searchTree(state, 1, int16(math.Inf(-1)), int16(math.Inf(1)))
 	return getAllMoves(state)[0]
 }
