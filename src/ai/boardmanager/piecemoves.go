@@ -113,15 +113,15 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	// do a depth first search
 	alreadyAdded := map[int16]bool{}
 	toVisit := [][]int16{{pos}}
-
+	
 	for len(toVisit) > 0 {
 		visitingNode := toVisit[len(toVisit)-1]
 		fmt.Println("visitingNode", visitingNode)
 		visiting := visitingNode[len(visitingNode)-1]
 		alreadyAdded[visiting] = true
-
+		
 		toVisit = toVisit[:len(toVisit)-1]
-
+		
 		for i := int16(-1); i < 2; i++ {
 			for j := int16(-1); j < 2; j++ {
 				if i == 0 && j == 0 {
@@ -171,7 +171,7 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 						backupSlice = append(backupSlice,
 							rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: newPos, sameColor: true, turnType: TURN_JUMPING},
 							rawPartialMove{fromPos: newMove[len(newMove)-1].toPos, toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE},
-							rawPartialMove{fromPos: 69, toPos: newPos, sameColor: false, turnType: TURN_DEFAULT},
+							rawPartialMove{fromPos: 69, toPos: visitingNode[len(visitingNode)-1], sameColor: false, turnType: TURN_DEFAULT},
 						)
 
 						moves = append(moves, backupSlice)
@@ -179,6 +179,16 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 				}
 
 			}
+		}
+	}
+
+	// if you're right next to the jail
+	baseNextToJail := getCorrespondingJail(pos, state.Gb[pos].IsWhite)
+	if (baseNextToJail != -1){
+		var newRescueMoves PossibleMoves
+		for _, move := range moves {
+			newRescueMove = append(RawMove{}, move...)
+			newRescueMoves = append(newRescueMoves, )
 		}
 	}
 

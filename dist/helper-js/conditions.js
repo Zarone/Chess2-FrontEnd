@@ -264,5 +264,5 @@ export function sameMonkeyTurn({board, from, thisTurn}){
 }
 
 export function nonInitMonkeyJump({board, to, thisTurn}){
-    return thisTurn.split(" ")[1]=="Rescue" && !board["MONKEY_START"] || (to != board["MONKEY_START"].position.id);
+    return thisTurn.split(" ")[1]=="Rescue" || !board["MONKEY_START"] || (to != board["MONKEY_START"].position.id);
 }

@@ -22,7 +22,7 @@ func (state State) MakeMove(move RawMove) State {
 	lastElem := len(move)-1
 	secondToLastElem := lastElem-1
 	
-	fmt.Print("\n", move.Output("", ""), "\n")
+	fmt.Print("\n", move.Output("Black", "White"), "\n")
 	
 	if len(move) > 1 {
 		if (move[secondToLastElem].turnType == TURN_JUMPING){

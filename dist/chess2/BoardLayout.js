@@ -172,7 +172,7 @@ export class BoardLayout extends PowerClass {
         const samePlayer = currentTurn.player == newTurn.player;
 
         const monkeyJumpingStart =
-            currentTurn.is(NORMAL) && newTurn.is(JUMPING) && samePlayer;
+            currentTurn.is(Either(NORMAL, RESCUE)) && newTurn.is(JUMPING) && samePlayer;
         
         const monkeyJumpingContinue =
             currentTurn.is(JUMPING) && newTurn.is(JUMPING) && samePlayer;
@@ -304,7 +304,7 @@ export class BoardLayouts {
     ]
     
     static MONKEY_SAVE_TEST_BLACK = [
-        ["f5", 'Monkey', false],
+        ["h5", 'Monkey', false],
         ["y2", 'King', false],
         ["g5", 'Fish', false],
         ["z1", 'Bear'],

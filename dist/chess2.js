@@ -304,14 +304,14 @@ export class ChessBoard {
 
             if (
                 ! oldToPos &&
-                (Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo) > 1) &&
+                (fromPos == "TEMP" || (Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo)) > 1) &&
                 this.findJumpingMoves(this.boardLayout[toPos]).length > 0
             ) {
                 monkeyJumpingNonRescue = true;
             }
             this.boardLayout[toPos] = oldToPos;
             this.boardLayout[fromPos] = oldFromPos;
-                
+
             if (tempMonkeyLastMoveStorage) this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
         }
         this.draggingJumpingMoney = false;
@@ -326,9 +326,8 @@ export class ChessBoard {
 
             delete this.boardLayout[fromPos]
 
-            let oldHasBanana = this.boardLayout[toPos] != undefined && this.boardLayout[toPos].hasBanana
             const { piece } = this.boardLayout.move(toPos, nextTo, { noTemp: true });
-            piece.hasBanana = oldHasBanana;
+            piece.hasBanana = false;
             // this.boardLayout[nextTo] = this.boardLayout[toPos]
             // this.boardLayout[nextTo].position = nextTo
             // this.boardLayout[nextTo].hasBanana = false;
@@ -341,7 +340,15 @@ export class ChessBoard {
                 this.boardLayout["MONKEY_START"] = new Monkey (fromPos, this.boardLayout[fromPos].isWhite);
             }
 
+            // this temporarily stores what is currently in TEMP
+            let temporaryTEMP;
+
+            if (fromPos == "TEMP") temporaryTEMP = this.boardLayout["TEMP"];
+
             this.boardLayout.move(fromPos, toPos);
+
+            if (fromPos == "TEMP") this.boardLayout["TEMP"] = temporaryTEMP;
+
             // this.boardLayout[toPos] = this.boardLayout[fromPos]
             // delete this.boardLayout[fromPos]
             // this.boardLayout[toPos].position = toPos;
