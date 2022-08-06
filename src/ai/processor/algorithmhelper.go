@@ -103,5 +103,5 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 func bestMove(state boardmanager.State) boardmanager.RawMove{
 	
 	searchTree(state, 1, int16(math.Inf(-1)), int16(math.Inf(1)))
-	return getAllMoves(state)[1]
+	return getAllMoves(state)[7]
 }

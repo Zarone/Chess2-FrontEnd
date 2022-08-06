@@ -113,6 +113,7 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	// do a depth first search
 	alreadyAdded := map[int16]bool{}
 	toVisit := [][]int16{{pos}}
+	allPaths := [][]int16{{pos}}
 	
 	for len(toVisit) > 0 {
 		visitingNode := toVisit[len(toVisit)-1]
@@ -153,9 +154,6 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 						newMove = append(newMove, rawPartialMove{fromPos: visitingNode[k-1], toPos: visitingNode[k], sameColor: true, turnType: TURN_JUMPING})
 					}
 
-					var backupSlice RawMove
-					copy(backupSlice, newMove)
-
 					newMove = append(newMove, rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: newPos, sameColor: false, turnType: TURN_DEFAULT})
 
 					checkRoyalty(newPos, state, &newMove)
@@ -163,32 +161,46 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 					moves = append(moves, newMove)
 					if empty(thisConditionArgs) {
 						toVisit = append(toVisit, append(visitingNode, newPos))
+						allPaths = append(allPaths, append(visitingNode, newPos))
 					}
 
-					nextToJail := getCorrespondingJail(newPos, state.Gb[pos].IsWhite)
-					if (nextToJail != -1) && (state.Gb[nextToJail].hasBanana) {
-						fmt.Println("backupSlice", backupSlice)
-						backupSlice = append(backupSlice,
-							rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: newPos, sameColor: true, turnType: TURN_JUMPING},
-							rawPartialMove{fromPos: newMove[len(newMove)-1].toPos, toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE},
-							rawPartialMove{fromPos: 69, toPos: visitingNode[len(visitingNode)-1], sameColor: false, turnType: TURN_DEFAULT},
-						)
-
-						moves = append(moves, backupSlice)
-					}
 				}
 
 			}
 		}
 	}
 
-	// if you're right next to the jail
-	baseNextToJail := getCorrespondingJail(pos, state.Gb[pos].IsWhite)
-	if (baseNextToJail != -1){
-		var newRescueMoves PossibleMoves
-		for _, move := range moves {
-			newRescueMove = append(RawMove{}, move...)
-			newRescueMoves = append(newRescueMoves, )
+	for key, value := range allPaths {
+		fmt.Println("key", key, "value", value)
+		for thisIndex, thisPos := range value {
+			nextToJail := getCorrespondingJail(thisPos, state.Gb[thisPos].IsWhite)
+			if nextToJail!=-1 {
+				fmt.Println("nextToJail", nextToJail)
+
+				var newMove RawMove;
+				for i:=0; i<thisIndex; i++{
+					newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
+				}
+				newMove = append(newMove, rawPartialMove{fromPos: value[thisIndex], toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE})
+				
+				
+				valueLen := len(value)
+				if valueLen == 2 {
+					newMove = append(newMove, rawPartialMove{fromPos: 69, toPos: value[0], sameColor: false, turnType: TURN_DEFAULT})
+				} else {
+					newMove = append(newMove, rawPartialMove{fromPos: 69, toPos: value[2], sameColor: true, turnType: TURN_JUMPING})
+					for i:=thisIndex+1; i<(valueLen-1); i++{
+						newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
+					}
+					newMove[len(newMove)-1].sameColor = false;
+					newMove[len(newMove)-1].turnType = TURN_DEFAULT;
+				}
+
+				moves = append(moves, newMove)
+				
+
+				break;
+			}
 		}
 	}
 
