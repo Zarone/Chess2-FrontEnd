@@ -32,6 +32,8 @@ func (state State) MakeMove(move RawMove) State {
 			newState.Gb[move[lastElem].toPos] = state.Gb[move[secondToLastElem].toPos]
 			newState.Gb[move[secondToLastElem].toPos] = state.Gb[move[0].fromPos] 
 			newState.Gb[move[0].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
+		} else if (move[secondToLastElem].turnType == TURN_RESCUE) {
+			// panic("un-managed rescue")
 		} else {
 			panic("un-managed multi-move")
 		}
@@ -39,7 +41,7 @@ func (state State) MakeMove(move RawMove) State {
 		newState.Gb[move[lastElem].toPos] = state.Gb[move[lastElem].fromPos];
 		newState.Gb[move[lastElem].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
 	}
-	newState.Gb.Print()
+	// newState.Gb.Print()
 	return newState
 }
 

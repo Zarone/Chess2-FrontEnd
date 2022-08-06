@@ -326,8 +326,9 @@ export class ChessBoard {
 
             delete this.boardLayout[fromPos]
 
+            let oldHasBanana = this.boardLayout[toPos] != undefined && this.boardLayout[toPos].hasBanana
             const { piece } = this.boardLayout.move(toPos, nextTo, { noTemp: true });
-            piece.hasBanana = false;
+            piece.hasBanana = oldHasBanana;
             // this.boardLayout[nextTo] = this.boardLayout[toPos]
             // this.boardLayout[nextTo].position = nextTo
             // this.boardLayout[nextTo].hasBanana = false;

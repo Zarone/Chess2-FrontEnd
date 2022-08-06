@@ -1,3 +1,4 @@
+import { Monkey } from "../pieces-js/Monkey.js"
 import { getVerticalAndHorizontal, nextToJail, verticalAndHorizontalToID } from "./utils.js"
 
 export function noPiece({board, to}){
@@ -255,13 +256,13 @@ export function rookActive({board, rookActiveWhite, rookActiveBlack, from}){
 }
 
 export function canMonkeyPrisonJump({board, from, to}) {
-    return (from == nextToJail(to) && board[to] && board[to].hasBanana)
+    return (board[from] && board[from].constructor.name == Monkey.name && board[to] && board[to].hasBanana)
 }
 
 export function sameMonkeyTurn({board, from, thisTurn}){
     return ((thisTurn == "White Jumping" && board[from].isWhite) || (thisTurn == "Black Jumping" && !board[from].isWhite))
 }
 
-export function nonInitMonkeyJump({board, to}){
-    return !board["MONKEY_START"] || (to != board["MONKEY_START"].position.id);
+export function nonInitMonkeyJump({board, to, thisTurn}){
+    return thisTurn.split(" ")[1]=="Rescue" && !board["MONKEY_START"] || (to != board["MONKEY_START"].position.id);
 }
