@@ -20,16 +20,11 @@ var zobristTable [69][16]int64;
 var zobristTurnOffset int64;
 var hasInitializedTable = false;
 
-func uint8b(b bool) uint8{
-	if b {
-		return 1
-	} else {
-		return 0
-	}
-}
+// 2 ^ 16
+const transpositionSize int = 65536
 
-func zobristMap(state boardmanager.State) int64 {
-
+func getZobristHash(state boardmanager.State) int64 {
+	
 	if (!hasInitializedTable){
 		for i:=0; i<69; i++{
 			for j:=0; j<16; j++{
@@ -54,6 +49,26 @@ func zobristMap(state boardmanager.State) int64 {
 
 }
 
+func getTranspositionKey(state boardmanager.State) int {
+	return int(getZobristHash(state) % int64(transpositionSize))
+}
+
+func uint8b(b bool) uint8{
+	if b {
+		return 1
+	} else {
+		return 0
+	}
+}
+
+func maxInt16(a int16, b int16) int16 {
+	if ( a > b ){
+		return a;
+	} else {
+		return b
+	}
+}
+
 func staticEvaluation(state boardmanager.State) int16{
 	return 0;
 }
@@ -61,18 +76,10 @@ func staticEvaluation(state boardmanager.State) int16{
 // alpha is the best available move for white
 // beta is the best available move for black
 func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16) {
-	if depth == 0 {
-		return staticEvaluation(state);
-	}
+	if depth == 0 { return staticEvaluation(state); }
 
 	moves := getAllMoves(state)
-	/*states := */moves.ToState(state)
-	// fmt.Println("States", states)
-	// for _, state := range states {
-		// fmt.Print("\n")
-		// fmt.Println(moves[index].Output("", "")...)
-		// state.Gb.Print()
-	// }
+	states := moves.ToState(state)
 
 	if state.IsWhite {
 		// for each move
@@ -85,6 +92,29 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 	if alpha >= beta
 		// 		break
 		// 	return best move
+		var bestMove int16 = math.MinInt16
+		for index, move := range states {
+
+			fmt.Println(moves[index].Output("White", "Black"))
+
+			var eval int16;
+			if depth > 1 {
+				// add logic to search transposition table.
+				// don't forget to make hash a part of state
+				// so that it can just mutate on game action.
+				eval = searchTree(move, depth-1, alpha, beta)
+			} else {
+				eval = searchTree(move, depth-1, alpha, beta)
+			}
+
+			
+			fmt.Println("eval", eval);
+			bestMove = maxInt16(bestMove, eval);
+
+			alpha = maxInt16(alpha, bestMove)
+			if (alpha >= beta) {break;}
+		}
+		return int16(bestMove)
 	} else {
 		// for each move
 		// 	best move = math.Inf(1)

@@ -1,7 +1,5 @@
 package boardmanager
 
-import "fmt"
-
 func BearMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	var moves PossibleMoves
 
@@ -170,7 +168,7 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 	for _, value := range allPaths {
 		valueLen := len(value)
-		fmt.Println(value)
+		// fmt.Println(value)
 		
 		if valueLen < 2 { continue; }
 		for thisIndex, thisPos := range value {
@@ -179,7 +177,7 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 				if (thisIndex == valueLen-1) { continue; }
 
-				fmt.Println("value", value, "thisPos", thisPos)
+				// fmt.Println("value", value, "thisPos", thisPos)
 				var newMove RawMove
 				for i := 0; i < thisIndex; i++ {
 					newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
@@ -193,7 +191,7 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 				newMove[len(newMove)-1].sameColor = false
 				newMove[len(newMove)-1].turnType = TURN_DEFAULT
 
-				fmt.Println("newMove", newMove)				
+				// fmt.Println("newMove", newMove)				
 				moves = append(moves, newMove)
 
 				break

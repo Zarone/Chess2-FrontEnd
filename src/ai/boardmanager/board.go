@@ -22,7 +22,7 @@ func (state State) MakeMove(move RawMove) State {
 	lastElem := len(move)-1
 	secondToLastElem := lastElem-1
 	
-	fmt.Print("\n", move.Output("Black", "White"), "\n")
+	// fmt.Print("\n", move.Output("Black", "White"), "\n")
 	
 	nullTile := Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece}
 
@@ -58,7 +58,7 @@ func (state State) MakeMove(move RawMove) State {
 		newState.Gb[move[lastElem].toPos] = state.Gb[move[lastElem].fromPos];
 		newState.Gb[move[lastElem].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
 	}
-	newState.Gb.Print()
+	// newState.Gb.Print()
 	return newState
 }
 
