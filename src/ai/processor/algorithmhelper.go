@@ -69,18 +69,25 @@ func maxInt16(a int16, b int16) int16 {
 	}
 }
 
-func staticEvaluation(state boardmanager.State) int16{
-	return 0;
+func minInt16(a int16, b int16) int16 {
+	if (a < b) {
+		return a;
+	} else {
+		return b;
+	}
 }
-
 // alpha is the best available move for white
 // beta is the best available move for black
-func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16) {
-	if depth == 0 { return staticEvaluation(state); }
+func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16, boardmanager.RawMove) {
+	if depth == 0 { return staticEvaluation(state), nil; }
 
 	moves := getAllMoves(state)
 	states := moves.ToState(state)
 
+	fmt.Println("moves", moves)
+	
+	var bestMoveIndex int = -1;
+	var bestMove int16;
 	if state.IsWhite {
 		// for each move
 		// 	best move = math.Inf(-1)
@@ -92,29 +99,30 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 	if alpha >= beta
 		// 		break
 		// 	return best move
-		var bestMove int16 = math.MinInt16
+		bestMove = math.MinInt16
 		for index, move := range states {
 
-			fmt.Println(moves[index].Output("White", "Black"))
+			fmt.Println("move", moves[index].Output("White", "Black"))
 
 			var eval int16;
 			if depth > 1 {
 				// add logic to search transposition table.
 				// don't forget to make hash a part of state
 				// so that it can just mutate on game action.
-				eval = searchTree(move, depth-1, alpha, beta)
+				eval, _ = searchTree(move, depth-1, alpha, beta)
 			} else {
-				eval = searchTree(move, depth-1, alpha, beta)
+				eval, _ = searchTree(move, depth-1, alpha, beta)
 			}
-
 			
 			fmt.Println("eval", eval);
-			bestMove = maxInt16(bestMove, eval);
+			if (eval > bestMove){
+				bestMove = eval;
+				bestMoveIndex = index;
+			}
 
 			alpha = maxInt16(alpha, bestMove)
 			if (alpha >= beta) {break;}
 		}
-		return int16(bestMove)
 	} else {
 		// for each move
 		// 	best move = math.Inf(1)
@@ -126,12 +134,29 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 	if alpha >= beta
 		// 		break
 		// 	return best move
+		bestMove = math.MaxInt16
+		for index, move := range states {
+			fmt.Println(moves[index].Output("White", "Black"))
+
+			var eval int16;
+			eval, _ = searchTree(move, depth-1, alpha, beta)
+
+			fmt.Println("eval", eval)
+			if (eval < bestMove) {
+				bestMove = eval;
+				bestMoveIndex = index;
+			}
+
+			
+			beta = minInt16(beta, bestMove)
+			if (alpha >= beta) {break;}
+		}
 	}
-	return 0;
+	return bestMove, moves[bestMoveIndex]
 }
 
 func bestMove(state boardmanager.State) boardmanager.RawMove{
 	
-	searchTree(state, 1, int16(math.Inf(-1)), int16(math.Inf(1)))
-	return getAllMoves(state)[6]
+	_, move := searchTree(state, 1, math.MinInt16, math.MaxInt16)
+	return move//getAllMoves(state)[6]
 }

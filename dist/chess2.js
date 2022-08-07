@@ -286,7 +286,7 @@ export class ChessBoard {
         let tookKingOrQueen = false;
         let monkeyJumping = false;
         let tempPiece = undefined;
-
+        
         if ( this.boardLayout[fromPos].constructor.name == Monkey.name ) {
             let {vertical: verticalFrom, horizontal: horizontalFrom} = getVerticalAndHorizontal(fromPos)
             let {vertical: verticalTo, horizontal: horizontalTo} = getVerticalAndHorizontal(toPos)
@@ -300,11 +300,10 @@ export class ChessBoard {
                 tempMonkeyLastMoveStorage = new Monkey( this.boardLayout["MONKEY_START"].position, this.boardLayout["MONKEY_START"].isWhite )
                 delete this.boardLayout["MONKEY_START"]
             }
-            
 
             if (
                 ! oldToPos &&
-                (fromPos == "TEMP" || (Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo)) > 1) &&
+                (fromPos == "TEMP" || Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo) > 1) &&
                 this.findJumpingMoves(this.boardLayout[toPos]).length > 0
             ) {
                 monkeyJumpingNonRescue = true;

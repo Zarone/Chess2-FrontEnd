@@ -34,9 +34,9 @@ func getAllMoves(state boardmanager.State) boardmanager.PossibleMoves {
 		}
 	}
 	// moves.Print("Before deferred")
-	// for i := 0; i < len(deferred); i++ {
-	// 	deferred[i]()
-	// }
+	for i := 0; i < len(deferred); i++ {
+		deferred[i]()
+	}
 	// moves.Print("After deferred")
 	return moves;
 }

@@ -5,6 +5,8 @@ import { getQuerystring } from "../../../dist/helper-js/utils";
 import { GameMode } from "../../helper-js/GameModes.js";
 import { computerType, EnemyComputerConstructorArgs, EnemyComputerSettings } from "../../helper-js/EnemyComputerSettings"
 import { Position } from "../../../dist/helper-js/board.js";
+import { Turn } from "../../../dist/game/model/Turn.js";
+import { JUMPING, NORMAL } from "../../../dist/helper-js/TurnUtil.js";
 
 type AI = {
     [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean, rookActiveWhite: boolean, rookActiveBlack: boolean) => void;
@@ -68,6 +70,7 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
 
         this.on(Events.request.COMMIT_MOVE, () => {
             const turn = game.get('currentTurn');
+            if (!Turn.adapt(turn).is(NORMAL)) return;
 
             console.log("[AI input]", game.get("boardLayout").data)
             ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));
