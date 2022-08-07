@@ -24,16 +24,33 @@ func (state State) MakeMove(move RawMove) State {
 	
 	fmt.Print("\n", move.Output("Black", "White"), "\n")
 	
+	nullTile := Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece}
+
+	containsRescue := false;
+	rescueIndex := -1
+	for index, partialMove := range move {
+		if partialMove.turnType == TURN_RESCUE{
+			containsRescue = true;
+			rescueIndex = index;
+			break;
+		}
+	}
+
 	if len(move) > 1 {
-		if (move[secondToLastElem].turnType == TURN_JUMPING){
+		if (move[secondToLastElem].turnType == TURN_JUMPING && !containsRescue){
 			newState.Gb[move[lastElem].toPos] = state.Gb[move[0].fromPos];
-			newState.Gb[move[0].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
+			newState.Gb[move[0].fromPos] = nullTile
 		} else if (move[secondToLastElem].turnType == TURN_JAIL) {
 			newState.Gb[move[lastElem].toPos] = state.Gb[move[secondToLastElem].toPos]
 			newState.Gb[move[secondToLastElem].toPos] = state.Gb[move[0].fromPos] 
-			newState.Gb[move[0].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
-		} else if (move[secondToLastElem].turnType == TURN_RESCUE) {
-			// panic("un-managed rescue")
+			newState.Gb[move[0].fromPos] = nullTile
+		} else if containsRescue {
+			if (move[0].fromPos != move[lastElem].toPos){
+				newState.Gb[move[lastElem].toPos] = state.Gb[move[0].fromPos];
+				newState.Gb[move[0].fromPos] = nullTile
+			}
+			newState.Gb[move[rescueIndex].fromPos] = state.Gb[move[rescueIndex].toPos]
+			newState.Gb[move[rescueIndex].toPos] = nullTile
 		} else {
 			panic("un-managed multi-move")
 		}
@@ -41,7 +58,7 @@ func (state State) MakeMove(move RawMove) State {
 		newState.Gb[move[lastElem].toPos] = state.Gb[move[lastElem].fromPos];
 		newState.Gb[move[lastElem].fromPos] = Tile{hasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
 	}
-	// newState.Gb.Print()
+	newState.Gb.Print()
 	return newState
 }
 

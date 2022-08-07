@@ -117,7 +117,6 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	
 	for len(toVisit) > 0 {
 		visitingNode := toVisit[len(toVisit)-1]
-		fmt.Println("visitingNode", visitingNode)
 		visiting := visitingNode[len(visitingNode)-1]
 		alreadyAdded[visiting] = true
 		
@@ -148,7 +147,6 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 				if !alreadyVisited && withinBorders && somethingToJumpOff && targetDifferentColor {
 
-					fmt.Println("newPos checking monkey", intToPosString(visiting), intToPosString(newPos))
 					var newMove RawMove
 					for k := 1; k < len(visitingNode); k++ {
 						newMove = append(newMove, rawPartialMove{fromPos: visitingNode[k-1], toPos: visitingNode[k], sameColor: true, turnType: TURN_JUMPING})
@@ -170,36 +168,35 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 		}
 	}
 
-	for key, value := range allPaths {
-		fmt.Println("key", key, "value", value)
+	for _, value := range allPaths {
+		valueLen := len(value)
+		fmt.Println(value)
+		
+		if valueLen < 2 { continue; }
 		for thisIndex, thisPos := range value {
 			nextToJail := getCorrespondingJail(thisPos, state.Gb[thisPos].IsWhite)
-			if nextToJail!=-1 {
-				fmt.Println("nextToJail", nextToJail)
+			if nextToJail != -1 {
 
-				var newMove RawMove;
-				for i:=0; i<thisIndex; i++{
+				if (thisIndex == valueLen-1) { continue; }
+
+				fmt.Println("value", value, "thisPos", thisPos)
+				var newMove RawMove
+				for i := 0; i < thisIndex; i++ {
 					newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
 				}
 				newMove = append(newMove, rawPartialMove{fromPos: value[thisIndex], toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE})
-				
-				
-				valueLen := len(value)
-				if valueLen == 2 {
-					newMove = append(newMove, rawPartialMove{fromPos: 69, toPos: value[0], sameColor: false, turnType: TURN_DEFAULT})
-				} else {
-					newMove = append(newMove, rawPartialMove{fromPos: 69, toPos: value[2], sameColor: true, turnType: TURN_JUMPING})
-					for i:=thisIndex+1; i<(valueLen-1); i++{
-						newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
-					}
-					newMove[len(newMove)-1].sameColor = false;
-					newMove[len(newMove)-1].turnType = TURN_DEFAULT;
+
+				newMove = append(newMove, rawPartialMove{fromPos: 69, toPos: value[thisIndex + 1 ], sameColor: true, turnType: TURN_JUMPING})
+				for i := thisIndex + 1; i < (valueLen - 1); i++ {
+					newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
 				}
+				newMove[len(newMove)-1].sameColor = false
+				newMove[len(newMove)-1].turnType = TURN_DEFAULT
 
+				fmt.Println("newMove", newMove)				
 				moves = append(moves, newMove)
-				
 
-				break;
+				break
 			}
 		}
 	}
