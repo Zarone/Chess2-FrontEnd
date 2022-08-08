@@ -61,12 +61,29 @@ func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 	return canReach
 }
 
-func (moves PossibleMoves) ToState(baseState State) []State {
-	var states []State = make([]State, len(moves));
-	for index, element := range moves {
-		states[index] = baseState.MakeMove(element)
+func (moves PossibleMoves) ToState(overwritingStates *(*[]State), baseState State) {
+	
+	moveLen := len(moves)
+	if ( *overwritingStates == nil || moveLen > len(**overwritingStates)){
+		tempStates := make([]State, moveLen)
+		*overwritingStates = &tempStates;
 	}
-	return states;
+
+	for index, element := range moves {
+		(**overwritingStates)[index] = baseState.MakeMove(element)
+	}
+
+	// var states []State = make([]State, len(moves));
+	// for index, element := range moves {
+	// 	states[index] = baseState.MakeMove(element)
+	// }
+	// return states;
+
+	// var states []State;
+	// for _, element := range moves {
+	// 	states = append(states, baseState.MakeMove(element))
+	// }
+	// return states
 }
 
 func (moves PossibleMoves) Print(heading string){
@@ -258,10 +275,15 @@ func queen(pos int16, state State, conditions []func(conditionArgs) bool) Possib
 
 func allSlots(pos int16, state State, conditions []func(conditionArgs) bool) PossibleMoves {
 	var moves PossibleMoves;
+	var conditionsMet bool;
+	var conditionsLen int;
+	var conditionArgument = conditionArgs{fromPos: pos, toPos: 0, state: state}
 	for i:=int16(0); i<64; i++ {
-		conditionsMet := true;
-		for j:=0; j<len(conditions); j++ {
-			if !(conditions[j](conditionArgs{fromPos: pos, toPos: i, state: state})) {
+		conditionsMet = true;
+		conditionsLen = len(conditions)
+		for j:=0; j<conditionsLen; j++ {
+			conditionArgument.toPos = i;
+			if !(conditions[j](conditionArgument)) {
 				conditionsMet = false;
 				break;
 			}

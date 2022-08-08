@@ -69,19 +69,31 @@ func minInt16(a int16, b int16) int16 {
 		return b;
 	}
 }
+
+const MAX_DEPTH = 2;
+
+// this is a way of optimizing states, so that instead
+// of allocating new memory for each collection of 
+// states, you just rewrite the old ones. This wouldn't
+// work if you were using multithreading.
+var statesInEachLayer [MAX_DEPTH]*[]boardmanager.State
+func getStatePtr(depth uint8) *[]boardmanager.State {
+	return statesInEachLayer[depth];
+}
+
 // alpha is the best available move for white
 // beta is the best available move for black
 func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16, boardmanager.RawMove) {
 	if depth == 0 { return staticEvaluation(state), nil; }
 
 	moves := getAllMoves(state)
-	states := moves.ToState(state)
 
-	for i:=0; i<len(states); i++{
-		fmt.Println(moves[i].Output("White", "Black"))
-		states[i].Gb.Print()
-	}
+	// you only need one state per layer, since
+	// everything runs consecutively
+
+	states := getStatePtr(depth);
 	
+	moves.ToState(&states, state)
 	
 	var bestMoveIndex int = -1;
 	var bestMove int16;
@@ -97,7 +109,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 		break
 		// 	return best move
 		bestMove = math.MinInt16
-		for index, move := range states {
+		for index, move := range *states {
 
 			// fmt.Println("move", moves[index].Output("White", "Black"))
 
@@ -132,7 +144,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 		break
 		// 	return best move
 		bestMove = math.MaxInt16
-		for index, move := range states {
+		for index, move := range *states {
 			// fmt.Println("move", moves[index].Output("White", "Black"))
 
 			var eval int16;
@@ -154,6 +166,9 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 func BestMove(state boardmanager.State) boardmanager.RawMove{
 	
-	_, move := searchTree(state, 1, math.MinInt16, math.MaxInt16)
+	// the reason the depth here is "MAX_DEPTH - 1" is because, for example,
+	// if you have a depth of 2, then you would have layer 0 (which would 
+	// computer static evaluations) and then your 2nd layer (layer 1)
+	_, move := searchTree(state, MAX_DEPTH-1, math.MinInt16, math.MaxInt16)
 	return move//getAllMoves(state)[6]
 }
