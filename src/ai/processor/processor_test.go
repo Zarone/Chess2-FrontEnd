@@ -94,6 +94,6 @@ var defaultState boardmanager.State = boardmanager.State{
 func TestBestMove(t *testing.T){
 
 	for i:=0; i<1; i++{
-		BestMove(defaultState, t)
+		BestMove(defaultState)
 	}
 }

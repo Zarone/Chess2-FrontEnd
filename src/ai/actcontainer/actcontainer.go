@@ -34,7 +34,7 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	move := processor.BestMove(state, nil);
+	move := processor.BestMove(state);
 	thisHash := processor.GetZobristHash(state)
 	fmt.Println("Zobrist map of state", thisHash)
 
