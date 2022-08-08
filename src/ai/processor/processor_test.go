@@ -60,6 +60,15 @@ var defaultState boardmanager.State = boardmanager.State{
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
+	
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Elephant, HasBanana: false},
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Elephant, HasBanana: false},
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
+		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
 
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Rook, HasBanana: false},
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Monkey, HasBanana: false},
@@ -69,15 +78,6 @@ var defaultState boardmanager.State = boardmanager.State{
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Monkey, HasBanana: false},
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Rook, HasBanana: false},
-
-		boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Elephant, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Elephant, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
 
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
