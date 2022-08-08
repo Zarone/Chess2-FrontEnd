@@ -5,7 +5,8 @@
   "main": "chess2.js",
   "scripts": {
     "go": "node tools/build.js",
-    "goTest": "cd src/ai && go build -o ./test.wasm",
+    "goTest": "cd src/ai && go test ./processor/ -test.v",
+    "goBench": "cd src/ai && go test ./processor/ -cpuprofile cpu.prof -bench . && go tool pprof cpu.prof && cls",
     "dev": "node tools/build.js && webpack serve --config ./webpack.config.js --mode development --port 5500",
     "build": "node tools/build.js && webpack build --config ./webpack.config.js --mode production",
     "test": "webpack build --config ./webpack.config.test.js --mode development && node --nolazy --experimental-modules test/bin/bundle/test.js",

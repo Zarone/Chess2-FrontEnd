@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"math"
 	"math/rand"
-	"time"
+	"testing"
 )
 
 type node struct {
@@ -24,7 +24,7 @@ var hasInitializedTable = false;
 // 2 ^ 16
 const transpositionSize int = 65536
 
-func getZobristHash(state boardmanager.State) int64 {
+func GetZobristHash(state boardmanager.State) int64 {
 	
 	if (!hasInitializedTable){
 		for i:=0; i<69; i++{
@@ -52,7 +52,7 @@ func getZobristHash(state boardmanager.State) int64 {
 
 func getTranspositionKey(state boardmanager.State) int {
 	fmt.Println("REMINDER: make transposition map hold array of possible hash codes, so that collisions are reduced")
-	return int(getZobristHash(state) % int64(transpositionSize))
+	return int(GetZobristHash(state) % int64(transpositionSize))
 }
 
 func uint8b(b bool) uint8{
@@ -80,17 +80,18 @@ func minInt16(a int16, b int16) int16 {
 }
 // alpha is the best available move for white
 // beta is the best available move for black
-func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16, boardmanager.RawMove) {
+func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, t *testing.T) (int16, boardmanager.RawMove) {
 	if depth == 0 { return staticEvaluation(state), nil; }
 
-	start := time.Now()
 	moves := getAllMoves(state)
-	fmt.Println("time for getting moves", time.Since(start).Microseconds()/100)
-	start = time.Now()
 	states := moves.ToState(state)
-	fmt.Println("time for getting state", time.Since(start).Microseconds()/100)
+	if (t!=nil) { 
+		for i:=0; i<len(states); i++{
+			t.Log(moves[i].Output("White", "Black"))
+			states[0].Gb.TestPrint(t)
+		}
+	}
 	
-	start = time.Now()
 	var bestMoveIndex int = -1;
 	var bestMove int16;
 	if state.IsWhite {
@@ -114,9 +115,9 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 				// add logic to search transposition table.
 				// don't forget to make hash a part of state
 				// so that it can just mutate on game action.
-				eval, _ = searchTree(move, depth-1, alpha, beta)
+				eval, _ = searchTree(move, depth-1, alpha, beta, t)
 			} else {
-				eval, _ = searchTree(move, depth-1, alpha, beta)
+				eval, _ = searchTree(move, depth-1, alpha, beta, t)
 			}
 			
 			// fmt.Println("eval", eval);
@@ -144,7 +145,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 			// fmt.Println("move", moves[index].Output("White", "Black"))
 
 			var eval int16;
-			eval, _ = searchTree(move, depth-1, alpha, beta)
+			eval, _ = searchTree(move, depth-1, alpha, beta, t)
 
 			// fmt.Println("eval", eval)
 			if (eval < bestMove) {
@@ -157,12 +158,11 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 			if (alpha >= beta) {break;}
 		}
 	}
-	fmt.Println("time for getting processing", time.Since(start).Microseconds()/100)
 	return bestMove, moves[bestMoveIndex]
 }
 
-func bestMove(state boardmanager.State) boardmanager.RawMove{
+func BestMove(state boardmanager.State, t *testing.T) boardmanager.RawMove{
 	
-	_, move := searchTree(state, 1, math.MinInt16, math.MaxInt16)
+	_, move := searchTree(state, 1, math.MinInt16, math.MaxInt16, t)
 	return move//getAllMoves(state)[6]
 }

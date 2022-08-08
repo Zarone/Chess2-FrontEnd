@@ -62,9 +62,9 @@ func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 }
 
 func (moves PossibleMoves) ToState(baseState State) []State {
-	var states []State;
-	for _, element := range moves {
-		states = append(states, baseState.MakeMove(element))
+	var states []State = make([]State, len(moves));
+	for index, element := range moves {
+		states[index] = baseState.MakeMove(element)
 	}
 	return states;
 }

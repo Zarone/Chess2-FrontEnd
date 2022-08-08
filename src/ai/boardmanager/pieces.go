@@ -32,7 +32,7 @@ var (
 	NullPiece PieceType = PieceType{"undefined", test, 8, 0}
 )
 
-func nameToPiece(name string) PieceType {
+func NameToPiece(name string) PieceType {
 	switch name {
 	case Bear.Name:
 		return Bear

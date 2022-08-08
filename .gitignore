@@ -34,3 +34,5 @@ src/helper-js/StyleManager.js
 src/game/plugins/TestGameMode.js
 
 test/bin/bundle/*
+src/ai/cpu.prof
+src/ai/processor.test.exe

@@ -7,7 +7,7 @@ import (
 type Tile struct {
 	IsWhite bool;
 	ThisPieceType PieceType;
-	hasBanana bool;
+	HasBanana bool;
 }
 
 

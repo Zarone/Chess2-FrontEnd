@@ -4,7 +4,7 @@ package main
 // http://localhost:5500/game.html?friendRoom=false&timeLimit=100&computerLevel=5&computerType=ALGORITHMIC&gamemode=HUMAN_VS_AI
 
 import (
-	"chesstwoai/processor"
+	"chesstwoai/actcontainer"
 	"syscall/js"
 )
 
@@ -17,7 +17,7 @@ func main() {
 
 	c := make(chan struct{}, 0)
 	js.Global().Set("getVersion", js.FuncOf(getVersion))
-	js.Global().Set("actAlgorithmic", js.FuncOf(processor.ActAlgorithm))
-	js.Global().Set("actHeuristic", js.FuncOf(processor.ActHeuristic))
+	js.Global().Set("actAlgorithmic", js.FuncOf(actcontainer.ActAlgorithm))
+	js.Global().Set("actHeuristic", js.FuncOf(actcontainer.ActHeuristic))
 	<-c
 }

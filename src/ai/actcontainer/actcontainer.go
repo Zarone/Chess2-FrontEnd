@@ -1,7 +1,9 @@
-package processor
+package actcontainer 
 
 import (
 	"chesstwoai/boardmanager"
+	"chesstwoai/processor"
+	"chesstwoai/jsboardinterface"
 	"fmt"
 	"strings"
 	"syscall/js"
@@ -32,8 +34,8 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	move := bestMove(state);
-	thisHash := getZobristHash(state)
+	move := processor.BestMove(state, nil);
+	thisHash := processor.GetZobristHash(state)
 	fmt.Println("Zobrist map of state", thisHash)
 
 	output := move.Output(thisColor, enemyColor)
@@ -61,7 +63,7 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	rookActiveBlack := args[5].Bool()
 
 
-	state := boardmanager.State{Gb: boardmanager.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack, IsWhite: isWhite}
+	state := boardmanager.State{Gb: jsboardinterface.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack, IsWhite: isWhite}
 	fmt.Println("Initializing board")
 	state.Gb.Print()
 
