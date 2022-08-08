@@ -4,6 +4,7 @@ import (
 	"fmt"
 )
 
+
 type rawPartialMove struct {
 	fromPos int16;
 	toPos int16;
@@ -126,16 +127,18 @@ func (moves *PossibleMoves) add(
 	state State,
 	move moveType, 
 	conditions ConditionType,
-	) {
-		for i := 0; i < len(move); i++ {
-		(*moves) = append((*moves), move[i](currentPos, state, conditions)...)
+) {
+	
+	for i := 0; i < len(move); i++ {
+		thisMove := move[i](currentPos, state, conditions)
+		(*moves) = append((*moves), thisMove...)
 	}
 }
 
-func getRawMoveDefault(fromPos int16, toPos int16, state State) RawMove{
+func getRawMoveDefault(fromPos int16, toPos int16, state State) *RawMove{
 	moves := RawMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: TURN_DEFAULT}}
 	checkRoyalty(toPos, state, &moves)
-	return moves;
+	return &moves;
 }
 
 func intToPosString(pos int16) string {
@@ -168,20 +171,24 @@ func inBorders(row int16, col int16) bool {
 
 func coordsToFunc(coords [][2]int16, IsWhite bool) singleMove {
 	
+	// this is so that white fish and black fish can have to same
+	// coordinates but be correctly oriented.
 	var inverseModifier int16 = -1
 	if (!IsWhite) { inverseModifier = 1; }
 	
 	return func( pos int16, state State, conditions []func(conditionArgs) bool ) PossibleMoves {
+		
+		
 		var moves PossibleMoves;
-
+		
 		for i:=0;i<len(coords);i++{
 			
 			col := pos%8
 			row := pos/8
-
+			
 			newCol := col+coords[i][0]
 			newRow := row+inverseModifier*coords[i][1]
-
+			
 			if inBorders(newRow, newCol) {
 				toPos := newCol+newRow*8
 				conditionMet := true;
@@ -193,11 +200,11 @@ func coordsToFunc(coords [][2]int16, IsWhite bool) singleMove {
 				}
 				if (conditionMet){
 					move := getRawMoveDefault(pos, toPos, state)
-					moves = append(moves, move)
+					moves = append(moves, *move)
 				}
 			}
 		}
-
+		
 		return moves;
 	}
 }
@@ -229,13 +236,13 @@ func queen(pos int16, state State, conditions []func(conditionArgs) bool) Possib
 					if (!empty(thisConditionArgs)){
 						if notSameType(thisConditionArgs){
 							if (conditionsMet){
-								moves = append(moves, getRawMoveDefault(pos, newPos, state))
+								moves = append(moves, *getRawMoveDefault(pos, newPos, state))
 							}
 						}
 						break;
 					} else {
 						if conditionsMet {
-							moves = append(moves, getRawMoveDefault(pos, newPos, state))
+							moves = append(moves, *getRawMoveDefault(pos, newPos, state))
 						}
 					}
 
@@ -260,9 +267,9 @@ func allSlots(pos int16, state State, conditions []func(conditionArgs) bool) Pos
 			}
 		}
 		if conditionsMet {
-			moves = append(moves, getRawMoveDefault(pos, i, state))
+			moves = append(moves, *getRawMoveDefault(pos, i, state))
 		}
-	}
+	} 
 	return moves;
 }
 

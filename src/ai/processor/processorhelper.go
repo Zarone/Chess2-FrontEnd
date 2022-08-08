@@ -11,32 +11,35 @@ func wrapper (myFunc func(int16), index int16) func(){
 func getAllMoves(state boardmanager.State) boardmanager.PossibleMoves {
 	
 	var moves boardmanager.PossibleMoves;
-	deferred := []func(){}
+	deferred := [2]func(){nil, nil}
 	for i := int16(0); i < 64; i++ {
-		if state.Gb[i].IsWhite == state.IsWhite {
+		if state.Gb[i].IsWhite == state.IsWhite && state.Gb[i].ThisPieceType.Name != boardmanager.NullPiece.Name {
 
 			if state.Gb[i].ThisPieceType.Name == boardmanager.Rook.Name {
-				deferred = append(deferred, 
-					wrapper(
-						func(index int16) {
-							// fmt.Println("Running deferred function")
-							// fmt.Println("i", index)
-							moves = append(moves, 
-								state.Gb[index].ThisPieceType.GetMoves(index, state, boardmanager.ConditionType{boardmanager.RookFilterStrict(moves.CanReach(false))})...
-							)
-						}, i,
-					),
+				defIndex := 0;
+				if deferred[0] != nil {
+					defIndex = 1;
+				}
+
+				deferred[defIndex] = wrapper(
+					func(index int16) {
+						moves = append(moves, 
+							state.Gb[index].ThisPieceType.GetMoves(index, state, boardmanager.ConditionType{boardmanager.RookFilterStrict(moves.CanReach(false))})...
+						)
+					}, i,
 				)
+					
+					
 			} else {
 				moves = append(moves, state.Gb[i].ThisPieceType.GetMoves(i, state, boardmanager.ConditionType{})...)
 			}
-
+			
 		}
 	}
-	// moves.Print("Before deferred")
-	for i := 0; i < len(deferred); i++ {
+
+	for i := 0; i < 2; i++ {
 		deferred[i]()
 	}
-	// moves.Print("After deferred")
+	// moves.Print("\n")
 	return moves;
 }
