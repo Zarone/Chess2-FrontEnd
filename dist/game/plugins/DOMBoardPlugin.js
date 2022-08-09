@@ -39,7 +39,23 @@ export class DOMBoardPlugin extends PluginBase {
                 })
             },
             game.emit.bind(game, Events.request.ADMIT_DEFEAT, { message: LOSE_TEXT }),
-            this.styleSheet, this.styleName
+            this.styleSheet, this.styleName,
+            ()=>{
+                // debugger
+                console.log("made move callback!!!!", globalThis.outputPromise)
+                globalThis.outputPromise()
+                console.log("end outputPromise")
+                console.log(globalThis.output)
+
+                let aiRes = globalThis.output;
+                
+                console.log("[AI output]", aiRes)
+                
+                for (let i = 0; i < aiRes.length; i++){
+                    // debugger
+                    this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
+                }
+            }
         )
 
         this.on(Events.LAUNCH, this.launch.bind(this));

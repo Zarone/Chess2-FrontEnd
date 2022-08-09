@@ -42,6 +42,7 @@ export class ChessBoard {
 
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
+    madeMoveCallbackFunc = undefined;
 
     styleType = undefined; // of type CustomStyle
     styleSheetReference = undefined;
@@ -55,7 +56,7 @@ export class ChessBoard {
         return this.game.state.currentTurn;
     }
 
-    constructor(game, makeMoveCallback, gameOverCallback, styleSheetReference, styleType){
+    constructor(game, makeMoveCallback, gameOverCallback, styleSheetReference, styleType, madeMoveCallbackFunc){
         globalThis.gameboard = this;
         this.game = game;
 
@@ -64,6 +65,7 @@ export class ChessBoard {
         
         this.makeMoveCallbackFunc = makeMoveCallback;
         this.gameOverCallbackFunc = gameOverCallback;
+        this.madeMoveCallbackFunc = madeMoveCallbackFunc;
     }
 
     cursorMove(event){
@@ -382,6 +384,7 @@ export class ChessBoard {
         if (monkeyJumping) this.manageMonkeyJumping(tempPiece, event);
         if (monkeyJumpingNonRescue) this.manageMonkeyJumpingNonRescue(event);
         this.playChessSound();
+        this.madeMoveCallbackFunc();
     }
 
     filterImpossibleMoves(moves, currentPos){

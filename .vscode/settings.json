@@ -7,5 +7,6 @@
         "chesstwoai",
         "hrtime",
         "jsboardinterface"
-    ]
+    ],
+    "liveServer.settings.root": "./dist"
 }

@@ -32,6 +32,9 @@ src/game/net/MoveInfo.js
 src/helper-js/PowerClass.js
 src/helper-js/StyleManager.js
 src/game/plugins/TestGameMode.js
+dist/game/plugins/SpectatorPlugin.js
+dist/helper-js/EnemyComputerSettings.js
+dist/game/plugins/SpectatorPlugin.js.LICENSE.txt
 
 test/bin/bundle/*
 src/ai/cpu.prof

@@ -37,6 +37,7 @@
     "webpack-dev-server": "^4.9.3"
   },
   "dependencies": {
+    "esbuild-loader": "^2.19.0",
     "foam3": "github:kgrgreer/foam3#NP-7064/LastWorkingFoobar",
     "react-helmet": "^6.1.0",
     "source-map-loader": "^4.0.0",

@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const glob = require("glob");
+const { ESBuildMinifyPlugin } = require("esbuild-loader")
 
 module.exports = {
 
@@ -65,6 +66,12 @@ module.exports = {
     },
     hot: true,
   },
-  
+  optimization: {
+    minimizer: [
+        new ESBuildMinifyPlugin({
+            keepNames: true,
+        })
+    ],
+  },
 };
 

@@ -14,6 +14,7 @@ type AI = {
 } & {
     getVersion: () => string;
     output: [string, string, string][];
+    outputPromise: ()=>void;
 };
 
 
@@ -75,13 +76,15 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
             if (!EndGamePlugin.checkLoseCondition(game, true))
 
             console.log("[AI input]", game.get("boardLayout").data)
-            ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));
-            let aiRes = ai.output;
-            console.log("[AI output]", aiRes)
-            
-            for (let i = 0; i < aiRes.length; i++){
-                this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
-            }
+
+            // console.log(workerPath.default)
+            // let aiWorker = new Worker(workerPath.default)
+            // aiWorker.postMessage([turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack")])
+            // debugger
+
+            ai.outputPromise = (()=>{
+                ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));
+            })
 
         });
 
