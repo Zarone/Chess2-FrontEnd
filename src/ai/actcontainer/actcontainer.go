@@ -30,6 +30,7 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	var thisColor string = initData[1].(string)
 	var enemyColor string = initData[2].(string)
 	state := initData[3].(boardmanager.State)
+	state.Hash = processor.GetZobristHash(state)
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))

@@ -1,6 +1,7 @@
 package boardmanager
 
 import (
+	"chesstwoai/helper"
 	"fmt"
 )
 
@@ -61,7 +62,7 @@ func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 	return canReach
 }
 
-func (moves PossibleMoves) ToState(overwritingStates *(*[]State), baseState State) {
+func (moves PossibleMoves) ToState(zobristInfo *helper.ZobristInfo, overwritingStates *(*[]State), baseState State) {
 	
 	moveLen := len(moves)
 	var stateLen int;
@@ -78,7 +79,7 @@ func (moves PossibleMoves) ToState(overwritingStates *(*[]State), baseState Stat
 	}
 
 	for index, element := range moves {
-		(**overwritingStates)[index] = baseState.MakeMove(element)
+		(**overwritingStates)[index] = baseState.MakeMove(element, zobristInfo)
 	}
 
 	if stateLen > moveLen {

@@ -4,55 +4,7 @@ import (
 	"chesstwoai/boardmanager"
 	"fmt"
 	"math"
-	"math/rand"
 )
-
-
-var zobristTable [69][16]int64;
-var zobristTurnOffset int64;
-var hasInitializedTable = false;
-
-// 2 ^ 16
-const transpositionSize int = 65536
-
-func GetZobristHash(state boardmanager.State) int64 {
-	
-	if (!hasInitializedTable){
-		for i:=0; i<69; i++{
-			for j:=0; j<16; j++{
-				zobristTable[i][j] = rand.Int63();
-			}
-		}
-		zobristTurnOffset = rand.Int63();
-		hasInitializedTable = true;
-		fmt.Println("Initialized Zobrist Table")
-	}
-
-	var thisHash int64 = 0;
-	if (state.IsWhite) { thisHash = zobristTurnOffset; }
-
-	for i:=0; i<69; i++{
-		if state.Gb[i].ThisPieceType.Name != boardmanager.NullPiece.Name {
-			thisHash ^= zobristTable[i][state.Gb[i].ThisPieceType.ID + 8*uint8b(state.Gb[i].IsWhite)]
-		}
-	}
-
-	return thisHash
-
-}
-
-func getTranspositionKey(state boardmanager.State) int {
-	fmt.Println("REMINDER: make transposition map hold array of possible hash codes, so that collisions are reduced")
-	return int(GetZobristHash(state) % int64(transpositionSize))
-}
-
-func uint8b(b bool) uint8{
-	if b {
-		return 1
-	} else {
-		return 0
-	}
-}
 
 func maxInt16(a int16, b int16) int16 {
 	if ( a > b ){
@@ -70,7 +22,7 @@ func minInt16(a int16, b int16) int16 {
 	}
 }
 
-const MAX_DEPTH = 5;
+const MAX_DEPTH = 3;
 
 // this is a way of optimizing states, so that instead
 // of allocating new memory for each collection of 
@@ -87,8 +39,7 @@ func resetStatePtr() {
 // alpha is the best available move for white
 // beta is the best available move for black
 func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16, boardmanager.RawMove) {
-
-	// fmt.Println("depth", depth)
+	
 	
 	// check end game conditions
 	if (state.Gb[64].ThisPieceType.Name != boardmanager.NullPiece.Name && state.Gb[65].ThisPieceType.Name != boardmanager.NullPiece.Name){
@@ -108,10 +59,9 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 	// you only need one state per layer, since
 	// everything runs consecutively
-
 	states := getStatePtr(depth);
 	
-	moves.ToState(states, state)
+	moves.ToState(&zobristInfo, states, state)
 
 	// for i:=0;i<len((**states));i++{
 	// 	fmt.Println(moves[i].Output("White", "Black")...)
@@ -138,10 +88,22 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 			var eval int16;
 			if depth > 1 {
-				// add logic to search transposition table.
-				// don't forget to make hash a part of state
-				// so that it can just mutate on game action.
-				eval, _ = searchTree(move, depth-1, alpha, beta)
+				transpositionKey := getTranspositionKey(move)
+				moves[index].Output("White", "Black")
+				if (transpositionTable[transpositionKey] == -1){
+					eval, _ = searchTree(move, depth-1, alpha, beta)
+					fmt.Println("depth", depth)
+					// fmt.Printf("%v => %v\n", eval, transpositionKey)
+					// move.Print()
+					// move.Gb.Print()
+					transpositionTable[transpositionKey] = eval;
+				} else {
+					eval = transpositionTable[transpositionKey]
+					fmt.Println("depth", depth)
+					// fmt.Printf("Found %v: %v", transpositionKey, eval)
+					// move.Print()
+					// move.Gb.Print()
+				}
 			} else {
 				eval, _ = searchTree(move, depth-1, alpha, beta)
 			}
@@ -171,7 +133,26 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 			// fmt.Println("move", moves[index].Output("White", "Black"))
 
 			var eval int16;
-			eval, _ = searchTree(move, depth-1, alpha, beta)
+			if depth > 1 {
+				transpositionKey := getTranspositionKey(move)
+				moves[index].Output("White", "Black")
+				if (transpositionTable[transpositionKey] == -1){
+					eval, _ = searchTree(move, depth-1, alpha, beta)
+					fmt.Println("depth", depth)
+					// fmt.Printf("%v => %v\n", eval, transpositionKey)
+					// move.Print()
+					// move.Gb.Print()
+					transpositionTable[transpositionKey] = eval;
+				} else {
+					eval = transpositionTable[transpositionKey]
+					fmt.Println("depth", depth)
+					// fmt.Printf("Found %v: %v", transpositionKey, eval)
+					// move.Print()
+					// move.Gb.Print()
+				}
+			} else {
+				eval, _ = searchTree(move, depth-1, alpha, beta)
+			}
 
 			// fmt.Println("eval", eval)
 			if (eval < bestMoveEval) {
@@ -193,9 +174,9 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 func BestMove(state boardmanager.State) boardmanager.RawMove{
 
-	fmt.Println("Starting Board")
-	fmt.Println("isWhite", state.IsWhite, "rookIsBlack", state.RookBlackActive, "rookIsWhite", state.RookWhiteActive)
-	state.Gb.Print()
+	// fmt.Println("Starting Board")
+	// fmt.Println("isWhite", state.IsWhite, "rookIsBlack", state.RookBlackActive, "rookIsWhite", state.RookWhiteActive)
+	// state.Gb.Print()
 	
 	resetStatePtr()
 	_, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16)

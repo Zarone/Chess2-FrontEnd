@@ -10,6 +10,9 @@ type Tile struct {
 	HasBanana bool;
 }
 
+func (t Tile) equals(t2 Tile)bool{
+	return t.IsWhite == t2.IsWhite && t.ThisPieceType.ID == t2.ThisPieceType.ID
+}
 
 func (t Tile) info() string {
 
