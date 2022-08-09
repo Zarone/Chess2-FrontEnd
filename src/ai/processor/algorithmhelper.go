@@ -70,7 +70,7 @@ func minInt16(a int16, b int16) int16 {
 	}
 }
 
-const MAX_DEPTH = 4;
+const MAX_DEPTH = 2;
 
 // this is a way of optimizing states, so that instead
 // of allocating new memory for each collection of 
@@ -80,10 +80,15 @@ var statesInEachLayer [MAX_DEPTH]*[]boardmanager.State
 func getStatePtr(depth uint8) **[]boardmanager.State {
 	return &statesInEachLayer[depth-1];
 }
+func resetStatePtr() {
+	statesInEachLayer = [MAX_DEPTH]*[]boardmanager.State{};
+}
 
 // alpha is the best available move for white
 // beta is the best available move for black
 func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16, boardmanager.RawMove) {
+
+	
 	if depth == 0 { return staticEvaluation(state), nil; }
 
 	moves := getAllMoves(state)
@@ -171,6 +176,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 func BestMove(state boardmanager.State) boardmanager.RawMove{
 	
+	resetStatePtr()
 	_, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16)
 	return move//getAllMoves(state)[6]
 }

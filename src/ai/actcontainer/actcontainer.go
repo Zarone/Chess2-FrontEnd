@@ -35,8 +35,8 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
 	move := processor.BestMove(state);
-	thisHash := processor.GetZobristHash(state)
-	fmt.Println("Zobrist map of state", thisHash)
+	// thisHash := processor.GetZobristHash(state)
+	// fmt.Println("Zobrist map of state", thisHash)
 
 	output := move.Output(thisColor, enemyColor)
 	// output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }

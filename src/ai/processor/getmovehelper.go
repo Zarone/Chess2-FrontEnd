@@ -1,4 +1,4 @@
-package processor 
+package processor
 
 import (
 	"chesstwoai/boardmanager"
@@ -38,6 +38,9 @@ func getAllMoves(state boardmanager.State) boardmanager.PossibleMoves {
 	}
 
 	for i := 0; i < 2; i++ {
+		if deferred[i]==nil { 
+			break;
+		}
 		deferred[i]()
 	}
 	// moves.Print("\n")

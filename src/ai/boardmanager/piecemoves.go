@@ -83,7 +83,7 @@ func ElephantMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	moves.add(
 		pos, state,
 		moveType{coordsToFunc([][2]int16{{2, 2}, {-2, 2}, {-2, -2}, {2, -2}}, state.Gb[pos].IsWhite)},
-		ConditionType{empty},
+		ConditionType{empty, pieceInTheWay},
 	)
 	// fmt.Println("moves", moves)
 	return moves

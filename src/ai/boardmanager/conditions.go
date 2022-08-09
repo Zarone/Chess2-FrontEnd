@@ -27,3 +27,7 @@ func RookFilterStrict(destinations map[int16]bool) func(conditionArgs) bool {
 		return isAdjacentPiece(args.toPos, args.state) && destinations[args.toPos]
 	}
 }
+
+func pieceInTheWay(args conditionArgs) bool {
+	return args.state.Gb[(args.fromPos+args.toPos)/2].ThisPieceType.Name == NullPiece.Name
+}
