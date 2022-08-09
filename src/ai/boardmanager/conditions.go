@@ -22,10 +22,49 @@ func rookCondition(args conditionArgs) bool {
 	}
 }
 
-func RookFilterStrict(destinations map[int16]bool) func(conditionArgs) bool {
-	return func(args conditionArgs) bool {
-		return isAdjacentPiece(args.toPos, args.state) && destinations[args.toPos]
+func RookFilterStrict(args conditionArgs) bool {
+	hasTarget := nextToEnemyPiece(args.toPos, args.state)
+	if (!hasTarget) { return false; }
+	row, col := posToRowCol(args.toPos)
+	
+	// this just makes sure there's no fish to take the rook next turn
+	if args.state.Gb[args.fromPos].IsWhite {
+		
+		pos1 := rowColToPos(row-1, col-1)
+		
+		if inBorders(row-1, col-1) &&
+		args.state.Gb[pos1].ThisPieceType.Name == Fish.Name &&
+		!args.state.Gb[pos1].IsWhite {
+			return false;
+		}
+		
+		pos2 := rowColToPos(row-1, col+1)
+
+		if inBorders(row-1, col+1) &&
+		args.state.Gb[pos2].ThisPieceType.Name == Fish.Name &&
+		!args.state.Gb[pos2].IsWhite {
+			return false;
+		}
+	} else {
+
+		pos1 := rowColToPos(row+1, col-1)
+		
+		if inBorders(row+1, col-1) &&
+		args.state.Gb[pos1].ThisPieceType.Name == Fish.Name &&
+		args.state.Gb[pos1].IsWhite {
+			return false;
+		}
+		
+		pos2 := rowColToPos(row+1, col+1)
+
+		if inBorders(row+1, col+1) &&
+		args.state.Gb[pos2].ThisPieceType.Name == Fish.Name &&
+		args.state.Gb[pos2].IsWhite {
+			return false;
+		}
 	}
+
+	return true;
 }
 
 func pieceInTheWay(args conditionArgs) bool {

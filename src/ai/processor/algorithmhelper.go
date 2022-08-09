@@ -70,7 +70,7 @@ func minInt16(a int16, b int16) int16 {
 	}
 }
 
-const MAX_DEPTH = 2;
+const MAX_DEPTH = 5;
 
 // this is a way of optimizing states, so that instead
 // of allocating new memory for each collection of 
@@ -88,6 +88,8 @@ func resetStatePtr() {
 // beta is the best available move for black
 func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16, boardmanager.RawMove) {
 
+	// fmt.Println("depth", depth)
+	
 	// check end game conditions
 	if (state.Gb[64].ThisPieceType.Name != boardmanager.NullPiece.Name && state.Gb[65].ThisPieceType.Name != boardmanager.NullPiece.Name){
 		return math.MinInt16, nil

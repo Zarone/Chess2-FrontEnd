@@ -360,11 +360,18 @@ func getCorrespondingJail(pos int16, isWhite bool) int16 {
 	return -1;
 }
 
-func isAdjacentPiece(pos int16, state State) bool {
-	row, col := posToRowCol(pos)
-	if inBorders(row+1, col) && state.Gb[rowColToPos(row+1, col)].ThisPieceType.Name != NullPiece.Name { return true; }
-	if inBorders(row-1, col) && state.Gb[rowColToPos(row-1, col)].ThisPieceType.Name != NullPiece.Name { return true; }
-	if inBorders(row, col+1) && state.Gb[rowColToPos(row, col+1)].ThisPieceType.Name != NullPiece.Name { return true; }
-	if inBorders(row, col-1) && state.Gb[rowColToPos(row, col-1)].ThisPieceType.Name != NullPiece.Name { return true; }
+
+func differentType(pos1 int16, pos2 int16, state State) bool {
+	return state.Gb[pos1].ThisPieceType.Name != NullPiece.Name &&
+		state.Gb[pos2].ThisPieceType.Name != NullPiece.Name &&
+		state.Gb[pos1].IsWhite != state.Gb[pos2].IsWhite
+}
+
+func nextToEnemyPiece(pos int16, state State) bool {
+	row, col := posToRowCol(pos);
+	if (differentType(pos, rowColToPos(row+1, col), state)) {return true;}
+	if (differentType(pos, rowColToPos(row, col+1), state)) {return true;}
+	if (differentType(pos, rowColToPos(row-1, col), state)) {return true;}
+	if (differentType(pos, rowColToPos(row, col-1), state)) {return true;}
 	return false;
 }

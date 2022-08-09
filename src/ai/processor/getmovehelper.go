@@ -24,7 +24,7 @@ func getAllMoves(state boardmanager.State) boardmanager.PossibleMoves {
 				deferred[defIndex] = wrapper(
 					func(index int16) {
 						moves = append(moves, 
-							state.Gb[index].ThisPieceType.GetMoves(index, state, boardmanager.ConditionType{boardmanager.RookFilterStrict(moves.CanReach(false))})...
+							state.Gb[index].ThisPieceType.GetMoves(index, state, boardmanager.ConditionType{boardmanager.RookFilterStrict})...
 						)
 					}, i,
 				)
