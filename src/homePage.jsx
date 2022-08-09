@@ -7,6 +7,7 @@ import "../dist/helper-js/join";
 import { styleList } from "./helper-js/StyleManager";
 import { GameMode, GameModes } from "../src/helper-js/GameModes"
 import { goToGame } from "../dist/helper-js/utils";
+import { computerTypes } from "../src/helper-js/EnemyComputerSettings"
 
 export default function HomePage(props){
 
@@ -16,6 +17,8 @@ export default function HomePage(props){
     const [gameMode, setGameMode] = useState(GameModes.SINGLE_PLAYER.modeName);
     const [roomID, setRoomID] = useState();
     const [timeLimit, setTimeLimit] = useState(15)
+    const [AILevel, setAILevel] = useState(5)
+    const [AIType, setAIType] = useState(Object.keys(computerTypes)[0])
 
     useEffect(()=>{
         globalThis.cookie.style = customStyle.name
@@ -94,6 +97,25 @@ export default function HomePage(props){
                                                 </div>
                                                 : ""
                                             }
+                                            { GameModes[gameMode].modeName == GameModes.HUMAN_VS_AI.modeName ? 
+                                                <React.Fragment>
+                                                    <div>
+                                                        <label>AI Type</label>
+                                                        <select className="rounded" title="Game Mode" defaultValue={GameModes.SINGLE_PLAYER.modeName} onChange={(e)=>{setAIMode(e.target.value)}}>
+                                                            {
+                                                                Object.keys(computerTypes).map((el)=>{
+                                                                    return <option key={el} value={el}>{el}</option>
+                                                                })
+                                                            }
+                                                        </select>
+                                                    </div>
+                                                    <div>
+                                                        <label>AI Level</label>
+                                                        <input onChange={e=>setAILevel(e.target.value)} type="number" min="0" max="9" className="w-100 rounded border-0" />
+                                                    </div>
+                                                </React.Fragment>
+                                                : ""
+                                            }
                                             <div>
                                                 <label>Time (minutes)</label> 
                                                 <br/>
@@ -101,7 +123,7 @@ export default function HomePage(props){
                                             </div>
                                         </div>
                                         <button 
-                                            onClick={()=>{goToGame({modeName:gameMode, roomID, timeLimit})}} 
+                                            onClick={()=>{goToGame({modeName:gameMode, roomID, timeLimit, computerLevel: AILevel, computerType: AIType})}} 
                                             className="btn btn-primary btn-block w-100 mt-4"
                                             disabled={!GameModes[gameMode].singleplayer && roomID==""}
                                             >

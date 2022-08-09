@@ -6,11 +6,13 @@ const herokuSocketID = "ws://chess2-api.herokuapp.com"
 const localServerID = "http://127.0.0.1:8080"
 const localSocketID = "ws://127.0.0.1:8080"
 
-export function goToGame({modeName, roomID, timeLimit}){
+export function goToGame({modeName, roomID, timeLimit, computerLevel, computerType}){
     let url = "../game.html?friendRoom=true";
     if ( roomID ) url += `&roomID=${roomID}`;
     url += `&timeLimit=${timeLimit || 100}`;
     url += `&gamemode=${modeName || GameModes.SINGLE_PLAYER.modeName}`;
+    url += `&computerLevel=${computerLevel}`
+    url += `&computerType=${computerType}`
     window.location.href = url;
 }
 
