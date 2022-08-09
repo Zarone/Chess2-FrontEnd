@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-// The 8x8 board, plus 2 jail positions for each player, plus bear starting position = 69
+// The 8x8 board, plus 2 jail positions for white then black, plus bear starting position = 69
 type GameBoard [69]Tile
 
 type State struct {
@@ -14,9 +14,15 @@ type State struct {
 	IsWhite bool;
 }
 
+func (state State) Print() {
+	fmt.Println("Rook White: ", state.RookWhiteActive, ", Rook Black: ", state.RookBlackActive, ", White's Turn: ", state.IsWhite)
+}
+
 func (state State) MakeMove(move RawMove) State {
 	var newState State;
 	newState.IsWhite = !state.IsWhite;
+	newState.RookBlackActive = false;
+	newState.RookWhiteActive = false;
 	copy(newState.Gb[:], state.Gb[:])
 	lastElem := len(move)-1
 	secondToLastElem := lastElem-1
@@ -39,23 +45,85 @@ func (state State) MakeMove(move RawMove) State {
 		if (move[secondToLastElem].turnType == TURN_JUMPING && !containsRescue){
 			newState.Gb[move[lastElem].toPos] = state.Gb[move[0].fromPos];
 			newState.Gb[move[0].fromPos] = nullTile
+			
+			// handle piece captures
+			if (state.Gb[move[lastElem].toPos].ThisPieceType.Name != NullPiece.Name && state.Gb[move[lastElem].toPos].ThisPieceType.Name != Bear.Name){
+				if (state.Gb[move[lastElem].toPos].IsWhite){
+					newState.RookWhiteActive = true;
+				} else {
+					newState.RookBlackActive = true;
+				}
+			}
 		} else if (move[secondToLastElem].turnType == TURN_JAIL) {
 			newState.Gb[move[lastElem].toPos] = state.Gb[move[secondToLastElem].toPos]
 			newState.Gb[move[secondToLastElem].toPos] = state.Gb[move[0].fromPos] 
 			newState.Gb[move[0].fromPos] = nullTile
+
+			// handle piece captures
+			if state.Gb[move[lastElem].toPos].IsWhite {
+				newState.RookWhiteActive = true;
+			} else {
+				newState.RookBlackActive = true;
+			}
+
+			// handles possible fish promotion
+			if newState.Gb[move[lastElem].toPos].ThisPieceType.Name == Fish.Name {
+				if newState.Gb[move[lastElem].toPos].IsWhite {
+					if move[lastElem].toPos < 8 {
+						newState.Gb[move[lastElem].toPos] = Tile{IsWhite: true, ThisPieceType: FishQueen, HasBanana: false}
+					}
+				} else {
+					if move[lastElem].toPos > 55 {
+						newState.Gb[move[lastElem].toPos] = Tile{IsWhite: false, ThisPieceType: FishQueen, HasBanana: false}
+					}
+				}
+			}
+
 		} else if containsRescue {
+
+			// if the piece doesn't move back to it's original position, switch them
 			if (move[0].fromPos != move[lastElem].toPos){
 				newState.Gb[move[lastElem].toPos] = state.Gb[move[0].fromPos];
 				newState.Gb[move[0].fromPos] = nullTile
 			}
 			newState.Gb[move[rescueIndex].fromPos] = state.Gb[move[rescueIndex].toPos]
 			newState.Gb[move[rescueIndex].toPos] = nullTile
+
+			// handle piece captures
+			if (state.Gb[move[lastElem].toPos].ThisPieceType.Name != NullPiece.Name && state.Gb[move[lastElem].toPos].ThisPieceType.Name != Bear.Name){
+				if (state.Gb[move[lastElem].toPos].IsWhite){
+					newState.RookWhiteActive = true;
+				} else {
+					newState.RookBlackActive = true;
+				}
+			}
+			// handles possible fish promotion
+			if newState.Gb[move[lastElem].toPos].ThisPieceType.Name == Fish.Name {
+				if newState.Gb[move[lastElem].toPos].IsWhite {
+					if move[lastElem].toPos < 8 {
+						newState.Gb[move[lastElem].toPos] = Tile{IsWhite: true, ThisPieceType: FishQueen, HasBanana: false}
+					}
+				} else {
+					if move[lastElem].toPos > 55 {
+						newState.Gb[move[lastElem].toPos] = Tile{IsWhite: false, ThisPieceType: FishQueen, HasBanana: false}
+					}
+				}
+			}
 		} else {
 			panic("un-managed multi-move")
 		}
 	} else {
 		newState.Gb[move[lastElem].toPos] = state.Gb[move[lastElem].fromPos];
 		newState.Gb[move[lastElem].fromPos] = Tile{HasBanana: false, IsWhite: false, ThisPieceType: NullPiece};
+
+		// handle piece captures
+		if (state.Gb[move[lastElem].toPos].ThisPieceType.Name != NullPiece.Name && state.Gb[move[lastElem].toPos].ThisPieceType.Name != Bear.Name){
+			if (state.Gb[move[lastElem].toPos].IsWhite){
+				newState.RookWhiteActive = true;
+			} else {
+				newState.RookBlackActive = true;
+			}
+		}
 	}
 	// newState.Gb.Print()
 	return newState

@@ -64,8 +64,8 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 
 
 	state := boardmanager.State{Gb: jsboardinterface.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack, IsWhite: isWhite}
-	fmt.Println("Initializing board")
-	state.Gb.Print()
+	// fmt.Println("Initializing board")
+	// state.Gb.Print()
 
 	var thisColor string
 	var enemyColor string

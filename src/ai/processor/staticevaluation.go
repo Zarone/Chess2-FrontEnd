@@ -1,6 +1,8 @@
-package processor 
+package processor
 
-import "chesstwoai/boardmanager"
+import (
+	"chesstwoai/boardmanager"
+)
 
 var ELEPHANT_VALUE int = 100;
 var FISH_VALUE int = 100;
@@ -12,6 +14,7 @@ var ROOK_VALUE int = 300;
 var NULL_VALUE int = 0;
 
 func staticEvaluation(state boardmanager.State) int16{
+
 	val := int16(0)
 	for i:=0; i<64; i++{
 		multiplier := int16(1);

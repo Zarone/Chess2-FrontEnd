@@ -356,4 +356,14 @@ export class BoardLayouts {
         ["e2", "Fish", false],
         ["e1", 'King', true]
     ]
+
+    static END_GAME_TEST = [
+        ['d8', 'Queen', false],
+        ['e8', 'King', false],
+        ['d7', 'Fish', false],
+        ['e7', 'Fish', false],
+        ['d6', 'King', true],
+        ['x1', 'Queen', true],
+        ['z1', 'Bear', false]
+    ]
 }
