@@ -96,7 +96,11 @@ func KingMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 	moves.add(
 		pos, state,
-		moveType{coordsToFunc([][2]int16{}, state.Gb[pos].IsWhite)},
+		moveType{coordsToFunc([][2]int16{
+			{1, 1}, {0, 1}, {-1, 1},
+			{1, 0}, {0, 0}, {-1, 0},
+			{1, -1}, {0, -1}, {-1, -1},
+		}, state.Gb[pos].IsWhite)},
 		ConditionType{notSameType},
 	)
 
