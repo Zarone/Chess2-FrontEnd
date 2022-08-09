@@ -70,15 +70,15 @@ func minInt16(a int16, b int16) int16 {
 	}
 }
 
-const MAX_DEPTH = 2;
+const MAX_DEPTH = 4;
 
 // this is a way of optimizing states, so that instead
 // of allocating new memory for each collection of 
 // states, you just rewrite the old ones. This wouldn't
 // work if you were using multithreading.
 var statesInEachLayer [MAX_DEPTH]*[]boardmanager.State
-func getStatePtr(depth uint8) *[]boardmanager.State {
-	return statesInEachLayer[depth];
+func getStatePtr(depth uint8) **[]boardmanager.State {
+	return &statesInEachLayer[depth-1];
 }
 
 // alpha is the best available move for white
@@ -93,7 +93,12 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 	states := getStatePtr(depth);
 	
-	moves.ToState(&states, state)
+	moves.ToState(states, state)
+
+	// for i:=0;i<len((**states));i++{
+	// 	fmt.Println(moves[i].Output("White", "Black")...)
+	// 	(**states)[i].Gb.Print()
+	// }
 	
 	var bestMoveIndex int = -1;
 	var bestMove int16;
@@ -109,7 +114,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 		break
 		// 	return best move
 		bestMove = math.MinInt16
-		for index, move := range *states {
+		for index, move := range **states {
 
 			// fmt.Println("move", moves[index].Output("White", "Black"))
 
@@ -144,7 +149,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 		break
 		// 	return best move
 		bestMove = math.MaxInt16
-		for index, move := range *states {
+		for index, move := range **states {
 			// fmt.Println("move", moves[index].Output("White", "Black"))
 
 			var eval int16;
@@ -166,9 +171,6 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 func BestMove(state boardmanager.State) boardmanager.RawMove{
 	
-	// the reason the depth here is "MAX_DEPTH - 1" is because, for example,
-	// if you have a depth of 2, then you would have layer 0 (which would 
-	// computer static evaluations) and then your 2nd layer (layer 1)
-	_, move := searchTree(state, MAX_DEPTH-1, math.MinInt16, math.MaxInt16)
+	_, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16)
 	return move//getAllMoves(state)[6]
 }

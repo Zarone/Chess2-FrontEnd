@@ -64,13 +64,25 @@ func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 func (moves PossibleMoves) ToState(overwritingStates *(*[]State), baseState State) {
 	
 	moveLen := len(moves)
-	if ( *overwritingStates == nil || moveLen > len(**overwritingStates)){
+	var stateLen int;
+	if (*overwritingStates)==nil {
+		stateLen = 0; 
+	} else {
+		stateLen = len(**overwritingStates)
+	}
+
+	if ( moveLen > stateLen){
+		stateLen = moveLen;
 		tempStates := make([]State, moveLen)
 		*overwritingStates = &tempStates;
 	}
 
 	for index, element := range moves {
 		(**overwritingStates)[index] = baseState.MakeMove(element)
+	}
+
+	if stateLen > moveLen {
+		(**overwritingStates) = (**overwritingStates)[0:moveLen]
 	}
 
 	// var states []State = make([]State, len(moves));

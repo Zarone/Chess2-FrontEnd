@@ -2,7 +2,6 @@ package boardmanager
 
 import (
 	"fmt"
-	"testing"
 )
 
 // The 8x8 board, plus 2 jail positions for each player, plus bear starting position = 69
@@ -60,19 +59,6 @@ func (state State) MakeMove(move RawMove) State {
 	}
 	// newState.Gb.Print()
 	return newState
-}
-
-func (gb GameBoard) TestPrint(t *testing.T){
-	for i := 0; i < 8; i++ {
-		thisLine := fmt.Sprintf("%v ", 8-i)
-		for j := 0; j < 8; j++ {
-			thisLine+=fmt.Sprintf("%v", gb[i*8+j].info())
-		}
-		t.Log(thisLine)
-	}
-	t.Logf("Jail X: %v, %v\n", gb[64].info(), gb[65].info())
-	t.Logf("Jail Y: %v, %v\n", gb[66].info(), gb[67].info())
-	t.Logf("Z: %v\n", gb[68].info())
 }
 
 func (gb GameBoard) Print(){
