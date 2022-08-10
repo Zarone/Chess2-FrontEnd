@@ -17,12 +17,16 @@ var hasInitializedTable = false;
 const transpositionSize int = 65536
 var transpositionTable [transpositionSize]int16;
 
+func resetTranspositionTable(){
+	for i:=0; i < transpositionSize; i++{
+		transpositionTable[i] = -1;
+	}
+}
+
 func GetZobristHash(state boardmanager.State) int64 {
 	
 	if (!hasInitializedTable){
-		for i:=0; i < transpositionSize; i++{
-			transpositionTable[i] = -1;
-		}
+		resetTranspositionTable()
 		for i:=0; i<69; i++{
 			for j:=0; j<16; j++{
 				zobristInfo.Table[i][j] = rand.Int63();

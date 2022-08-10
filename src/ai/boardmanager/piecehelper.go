@@ -6,7 +6,7 @@ import (
 )
 
 
-type rawPartialMove struct {
+type RawPartialMove struct {
 	fromPos int16;
 	toPos int16;
 	sameColor bool;
@@ -18,7 +18,7 @@ var TURN_RESCUE string = " Rescue"
 var TURN_JUMPING string = " Jumping"
 var TURN_JAIL string = " Jail"
 
-type RawMove []rawPartialMove
+type RawMove []RawPartialMove
 
 func (move RawMove) Output(playerColor string, enemyColor string) []interface{} {
 	var output []interface{}
@@ -62,28 +62,30 @@ func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 	return canReach
 }
 
-func (moves PossibleMoves) ToState(zobristInfo *helper.ZobristInfo, overwritingStates *(*[]State), baseState State) {
+func (move RawMove) ToState(zobristInfo *helper.ZobristInfo, overwritingStates *(*[]State), baseState State, index int) {
 	
-	moveLen := len(moves)
+	// moveLen := len(moves)
 	var stateLen int;
 	if (*overwritingStates)==nil {
-		stateLen = 0; 
+		tempStates := make([]State, 0);
+		*overwritingStates = &tempStates;
+		stateLen = 0;
+		
 	} else {
 		stateLen = len(**overwritingStates)
 	}
 
-	if ( moveLen > stateLen){
-		stateLen = moveLen;
-		tempStates := make([]State, moveLen)
-		*overwritingStates = &tempStates;
+	for index >= stateLen {
+		**overwritingStates = append(**overwritingStates, State{})
+		stateLen++;
 	}
 
-	for index, element := range moves {
-		(**overwritingStates)[index] = baseState.MakeMove(element, zobristInfo)
-	}
+	// for index, element := range moves {
+	(**overwritingStates)[index] = baseState.MakeMove(move, zobristInfo)
+	// }
 
-	if stateLen > moveLen {
-		(**overwritingStates) = (**overwritingStates)[0:moveLen]
+	if stateLen > index+1 {
+		(**overwritingStates) = (**overwritingStates)[0:index+1:stateLen]
 	}
 
 	// var states []State = make([]State, len(moves));
@@ -165,7 +167,7 @@ func (moves *PossibleMoves) add(
 	}
 }
 
-func getRawMoveDefault(fromPos int16, toPos int16, state State) *RawMove{
+func GetRawMoveDefault(fromPos int16, toPos int16, state State) *RawMove{
 	moves := RawMove{{fromPos: fromPos, toPos: toPos, sameColor: false, turnType: TURN_DEFAULT}}
 	checkRoyalty(toPos, state, &moves)
 	return &moves;
@@ -229,7 +231,7 @@ func coordsToFunc(coords [][2]int16, IsWhite bool) singleMove {
 					}
 				}
 				if (conditionMet){
-					move := getRawMoveDefault(pos, toPos, state)
+					move := GetRawMoveDefault(pos, toPos, state)
 					moves = append(moves, *move)
 				}
 			}
@@ -266,13 +268,13 @@ func queen(pos int16, state State, conditions []func(conditionArgs) bool) Possib
 					if (!empty(thisConditionArgs)){
 						if notSameType(thisConditionArgs){
 							if (conditionsMet){
-								moves = append(moves, *getRawMoveDefault(pos, newPos, state))
+								moves = append(moves, *GetRawMoveDefault(pos, newPos, state))
 							}
 						}
 						break;
 					} else {
 						if conditionsMet {
-							moves = append(moves, *getRawMoveDefault(pos, newPos, state))
+							moves = append(moves, *GetRawMoveDefault(pos, newPos, state))
 						}
 					}
 
@@ -302,7 +304,7 @@ func allSlots(pos int16, state State, conditions []func(conditionArgs) bool) Pos
 			}
 		}
 		if conditionsMet {
-			moves = append(moves, *getRawMoveDefault(pos, i, state))
+			moves = append(moves, *GetRawMoveDefault(pos, i, state))
 		}
 	} 
 	return moves;
@@ -335,7 +337,7 @@ func checkRoyalty(pos int16, state State, move *RawMove) {
 		(*move)[lastElement].turnType = TURN_JAIL
 
 		// 69 corresponds to "TEMP"
-		*move = append(*move, rawPartialMove{fromPos: 69, toPos: target, sameColor: false, turnType: TURN_DEFAULT})
+		*move = append(*move, RawPartialMove{fromPos: 69, toPos: target, sameColor: false, turnType: TURN_DEFAULT})
 
 	}
 }
@@ -362,17 +364,29 @@ func getCorrespondingJail(pos int16, isWhite bool) int16 {
 }
 
 
-func differentType(pos1 int16, pos2 int16, state State) bool {
-	return state.Gb[pos1].ThisPieceType.Name != NullPiece.Name &&
-		state.Gb[pos2].ThisPieceType.Name != NullPiece.Name &&
-		state.Gb[pos1].IsWhite != state.Gb[pos2].IsWhite
-}
+// func differentType(pos1 int16, pos2 int16, state State) bool {
+// 	return state.Gb[pos1].ThisPieceType.Name != NullPiece.Name &&
+// 		state.Gb[pos2].ThisPieceType.Name != NullPiece.Name &&
+// 		state.Gb[pos1].IsWhite != state.Gb[pos2].IsWhite
+// }
 
 func nextToEnemyPiece(pos int16, state State) bool {
 	row, col := posToRowCol(pos);
-	if (differentType(pos, rowColToPos(row+1, col), state)) {return true;}
-	if (differentType(pos, rowColToPos(row, col+1), state)) {return true;}
-	if (differentType(pos, rowColToPos(row-1, col), state)) {return true;}
-	if (differentType(pos, rowColToPos(row, col-1), state)) {return true;}
+	// if (differentType(pos, rowColToPos(row+1, col), state)) {return true;}
+	// if (differentType(pos, rowColToPos(row, col+1), state)) {return true;}
+	// if (differentType(pos, rowColToPos(row-1, col), state)) {return true;}
+	// if (differentType(pos, rowColToPos(row, col-1), state)) {return true;}
+	newPos := rowColToPos(row+1, col)
+	if (inBorders(row+1, col) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+
+	newPos = rowColToPos(row-1, col)
+	if (inBorders(row-1, col) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+
+	newPos = rowColToPos(row, col+1)
+	if (inBorders(row, col+1) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+
+	newPos = rowColToPos(row, col-1)
+	if (inBorders(row, col-1) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+
 	return false;
 }

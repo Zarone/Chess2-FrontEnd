@@ -5,10 +5,10 @@ func BearMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 	if pos == 68 {
 		moves = append(moves,
-			*getRawMoveDefault(pos, 27, state),
-			*getRawMoveDefault(pos, 28, state),
-			*getRawMoveDefault(pos, 35, state),
-			*getRawMoveDefault(pos, 36, state),
+			*GetRawMoveDefault(pos, 27, state),
+			*GetRawMoveDefault(pos, 28, state),
+			*GetRawMoveDefault(pos, 35, state),
+			*GetRawMoveDefault(pos, 36, state),
 		)
 	} else {
 		moves.add(
@@ -150,10 +150,10 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 
 					var newMove RawMove
 					for k := 1; k < len(visitingNode); k++ {
-						newMove = append(newMove, rawPartialMove{fromPos: visitingNode[k-1], toPos: visitingNode[k], sameColor: true, turnType: TURN_JUMPING})
+						newMove = append(newMove, RawPartialMove{fromPos: visitingNode[k-1], toPos: visitingNode[k], sameColor: true, turnType: TURN_JUMPING})
 					}
 
-					newMove = append(newMove, rawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: newPos, sameColor: false, turnType: TURN_DEFAULT})
+					newMove = append(newMove, RawPartialMove{fromPos: visitingNode[len(visitingNode)-1], toPos: newPos, sameColor: false, turnType: TURN_DEFAULT})
 
 					checkRoyalty(newPos, state, &newMove)
 
@@ -187,13 +187,13 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 				// fmt.Println("value", value, "thisPos", thisPos)
 				var newMove RawMove
 				for i := 0; i < thisIndex; i++ {
-					newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
+					newMove = append(newMove, RawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
 				}
-				newMove = append(newMove, rawPartialMove{fromPos: value[thisIndex], toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE})
+				newMove = append(newMove, RawPartialMove{fromPos: value[thisIndex], toPos: nextToJail, sameColor: true, turnType: TURN_RESCUE})
 
-				newMove = append(newMove, rawPartialMove{fromPos: 69, toPos: value[thisIndex+1], sameColor: true, turnType: TURN_JUMPING})
+				newMove = append(newMove, RawPartialMove{fromPos: 69, toPos: value[thisIndex+1], sameColor: true, turnType: TURN_JUMPING})
 				for i := thisIndex + 1; i < (valueLen - 1); i++ {
-					newMove = append(newMove, rawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
+					newMove = append(newMove, RawPartialMove{fromPos: value[i], toPos: value[i+1], sameColor: true, turnType: TURN_JUMPING})
 				}
 				newMove[len(newMove)-1].sameColor = false
 				newMove[len(newMove)-1].turnType = TURN_DEFAULT
