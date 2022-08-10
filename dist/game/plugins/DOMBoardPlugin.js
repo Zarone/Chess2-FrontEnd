@@ -41,11 +41,7 @@ export class DOMBoardPlugin extends PluginBase {
             game.emit.bind(game, Events.request.ADMIT_DEFEAT, { message: LOSE_TEXT }),
             this.styleSheet, this.styleName,
             ()=>{
-                // debugger
-                console.log("made move callback!!!!", globalThis.outputPromise)
                 globalThis.outputPromise()
-                console.log("end outputPromise")
-                console.log(globalThis.output)
 
                 let aiRes = globalThis.output;
                 

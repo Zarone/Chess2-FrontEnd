@@ -38,7 +38,7 @@ func resetStatePtr() {
 
 // alpha is the best available move for white
 // beta is the best available move for black
-func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) (int16, boardmanager.RawMove) {
+func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, debug bool) (int16, boardmanager.RawMove) {
 	
 	
 	// check end game conditions
@@ -48,6 +48,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		return math.MaxInt16, nil
 	}
 	if depth == 0 { return staticEvaluation(state), nil; }
+	if (debug) { fmt.Printf("\nstart depth %v\n", depth) }
 
 	moves := getAllMoves(state)
 
@@ -64,7 +65,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 	moves.ToState(&zobristInfo, states, state)
 
 	// for i:=0;i<len((**states));i++{
-	// 	fmt.Println(moves[i].Output("White", "Black")...)
+		// 	fmt.Println(moves[i].Output("White", "Black")...)
 	// 	(**states)[i].Gb.Print()
 	// }
 	
@@ -83,30 +84,37 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 	return best move
 		bestMoveEval = math.MinInt16
 		for index, move := range **states {
-
-			// fmt.Println("move", moves[index].Output("White", "Black"))
-
+			
+			if debug { fmt.Println("check out move", moves[index].Output("White", "Black")) }
+			// move.Gb.Print()
+			
 			var eval int16;
 			if depth > 1 {
 				transpositionKey := getTranspositionKey(move)
-				moves[index].Output("White", "Black")
+				// fmt.Println(moves[index].Output("White", "Black"))
 				if (transpositionTable[transpositionKey] == -1){
-					eval, _ = searchTree(move, depth-1, alpha, beta)
-					fmt.Println("depth", depth)
-					// fmt.Printf("%v => %v\n", eval, transpositionKey)
+					eval, _ = searchTree(move, depth-1, alpha, beta, debug)
+					if (debug) { fmt.Println("\nEvaluated depth", depth-1) }
+					if (debug) { fmt.Printf("%v => %v\n", eval, transpositionKey) }
 					// move.Print()
 					// move.Gb.Print()
 					transpositionTable[transpositionKey] = eval;
 				} else {
 					eval = transpositionTable[transpositionKey]
-					fmt.Println("depth", depth)
-					// fmt.Printf("Found %v: %v", transpositionKey, eval)
+					if (debug) { fmt.Println("\nEvaluated depth", depth-1) }
+					if (debug) { fmt.Printf("Found %v: %v\n", transpositionKey, eval) }
 					// move.Print()
 					// move.Gb.Print()
 				}
 			} else {
-				eval, _ = searchTree(move, depth-1, alpha, beta)
+				eval, _ = searchTree(move, depth-1, alpha, beta, debug)
+				// fmt.Println("Evaluated depth", depth-1)
+				if debug { fmt.Println("(no transposition) eval", eval) }
+				// fmt.Println(moves[index])
+				// move.Print()
+				// move.Gb.Print()
 			}
+			if debug { fmt.Println("checked out move", moves[index].Output("White", "Black")) }
 			
 			// fmt.Println("eval", eval);
 			if (eval > bestMoveEval){
@@ -115,7 +123,10 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 			}
 
 			alpha = maxInt16(alpha, bestMoveEval)
-			if (alpha >= beta) {break;}
+			if (alpha >= beta) {
+				if debug { fmt.Printf("Pruning: %v >= %v\n", alpha, beta) }
+				break;
+			}
 		}
 	} else {
 		// for each move
@@ -130,29 +141,36 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 		// 	return best move
 		bestMoveEval = math.MaxInt16
 		for index, move := range **states {
-			// fmt.Println("move", moves[index].Output("White", "Black"))
-
+			if debug { fmt.Println("check out move", moves[index].Output("White", "Black")) }
+			// move.Gb.Print()
+			
 			var eval int16;
 			if depth > 1 {
 				transpositionKey := getTranspositionKey(move)
-				moves[index].Output("White", "Black")
+				// fmt.Println(moves[index].Output("White", "Black"))
 				if (transpositionTable[transpositionKey] == -1){
-					eval, _ = searchTree(move, depth-1, alpha, beta)
-					fmt.Println("depth", depth)
-					// fmt.Printf("%v => %v\n", eval, transpositionKey)
+					eval, _ = searchTree(move, depth-1, alpha, beta, debug)
+					if debug { fmt.Println("\nEvaluated depth", depth-1) }
+					if debug { fmt.Printf("%v => %v\n", eval, transpositionKey) }
 					// move.Print()
 					// move.Gb.Print()
 					transpositionTable[transpositionKey] = eval;
 				} else {
 					eval = transpositionTable[transpositionKey]
-					fmt.Println("depth", depth)
-					// fmt.Printf("Found %v: %v", transpositionKey, eval)
+					if debug { fmt.Println("\nEvaluated depth", depth-1) }
+					if debug { fmt.Printf("Found %v: %v\n", transpositionKey, eval) }
 					// move.Print()
 					// move.Gb.Print()
 				}
 			} else {
-				eval, _ = searchTree(move, depth-1, alpha, beta)
+				eval, _ = searchTree(move, depth-1, alpha, beta, debug)
+				// fmt.Println("Evaluated depth", depth-1)
+				if debug { fmt.Println("(no transposition) eval", eval) }
+				// fmt.Println(moves[index])
+				// move.Print()
+				// move.Gb.Print()
 			}
+			if debug { fmt.Println("checked out move", moves[index].Output("White", "Black")) }
 
 			// fmt.Println("eval", eval)
 			if (eval < bestMoveEval) {
@@ -162,7 +180,11 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 			
 			beta = minInt16(beta, bestMoveEval)
-			if (alpha >= beta) {break;}
+			if (alpha >= beta) {
+				
+				if debug { fmt.Printf("Pruning: %v >= %v\n", alpha, beta) }
+				break;
+			}
 		}
 	}
 
@@ -174,11 +196,11 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16) 
 
 func BestMove(state boardmanager.State) boardmanager.RawMove{
 
-	// fmt.Println("Starting Board")
-	// fmt.Println("isWhite", state.IsWhite, "rookIsBlack", state.RookBlackActive, "rookIsWhite", state.RookWhiteActive)
-	// state.Gb.Print()
+	fmt.Println("Starting Board")
+	fmt.Println("isWhite", state.IsWhite, "rookIsBlack", state.RookBlackActive, "rookIsWhite", state.RookWhiteActive)
+	state.Gb.Print()
 	
 	resetStatePtr()
-	_, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16)
+	_, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, false)
 	return move//getAllMoves(state)[6]
 }
