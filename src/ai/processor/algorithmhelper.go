@@ -1,9 +1,14 @@
 package processor
 
 import (
+	"bytes"
 	"chesstwoai/boardmanager"
 	"fmt"
+	"log"
 	"math"
+
+	"github.com/goccy/go-graphviz"
+	"github.com/goccy/go-graphviz/cgraph"
 )
 
 func maxInt16(a int16, b int16) int16 {
@@ -22,7 +27,7 @@ func minInt16(a int16, b int16) int16 {
 	}
 }
 
-const MAX_DEPTH = 4;
+const MAX_DEPTH = 2;
 
 // this is a way of optimizing states, so that instead
 // of allocating new memory for each collection of 
@@ -36,10 +41,17 @@ func resetStatePtr() {
 	statesInEachLayer = [MAX_DEPTH]*[]boardmanager.State{};
 }
 
+type debugNode struct {
+	children []debugNode;
+	value int16;
+	name string;
+	isWhite bool;
+}
+
+
 // alpha is the best available move for white
 // beta is the best available move for black
-func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, debug bool) (int16, *boardmanager.RawMove) {
-	
+func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, debugThreshold uint8, parent *debugNode) (int16, *boardmanager.RawMove) {
 	
 	// check end game conditions
 	if (state.Gb[64].ThisPieceType.Name != boardmanager.NullPiece.Name && state.Gb[65].ThisPieceType.Name != boardmanager.NullPiece.Name){
@@ -48,26 +60,10 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 		return math.MaxInt16, nil
 	}
 	if depth == 0 { return staticEvaluation(state), nil; }
-	if (debug) { fmt.Printf("\nstart depth %v\n", depth) }
-
-	// moves := getAllMoves(state)
-
-	// if len(moves) == 0 {
-	// 	fmt.Println("NO AVAILABLE MOVES")
-	// 	state.Print()
-	// 	state.Gb.Print()	
-	// }
 
 	// you only need one state per layer, since
 	// everything runs consecutively
 	states := getStatePtr(depth);
-	
-	// moves.ToState(&zobristInfo, states, state)
-
-	// for i:=0;i<len((**states));i++{
-		// 	fmt.Println(moves[i].Output("White", "Black")...)
-	// 	(**states)[i].Gb.Print()
-	// }
 	
 	var index int = 0;
 	
@@ -75,140 +71,80 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 	var bestMoveEval int16;
 
 	nextMove, rawMove, incomplete := state.GetAllMovesGenerator(), (*boardmanager.RawMove)(nil), true
-	if state.IsWhite {
-		// for each move
-		// 	best move = math.Inf(-1)
-		// 	evaluate it
-		// 	set alpha to this evaluation if it's higher
-		// 	// after these evaluations, black will have to option to ignore this.
-		// 	// if white has an available move here that's better than what black 
-		// 	// would have elsewhere, this path isn't worth considering for black.
-		// 	if alpha >= beta
-		// 		break
-		// 	return best move
-		bestMoveEval = math.MinInt16
-		for incomplete { 
-			rawMove, incomplete = nextMove();
-			if (!incomplete) { break; }
-		// for rawMove := range state.GetAllMovesGenerator(){
+	if state.IsWhite { bestMoveEval = math.MinInt16 } else { bestMoveEval = math.MaxInt16 }
+	for incomplete { 
+		rawMove, incomplete = nextMove();
+		if (!incomplete) { break; }
 
-			// fmt.Println("received", *rawMove)
-			rawMove.ToState(&zobristInfo, states, state, index)
-			
-			if debug { fmt.Println("check out move", rawMove.Output("White", "Black")) }
-			// move.Gb.Print()
-			
-			var eval int16;
-			if depth > 1 {
-				transpositionKey := getTranspositionKey((**states)[index])
-				// fmt.Println(moves[index].Output("White", "Black"))
-				if (transpositionTable[transpositionKey] == -1){
-					eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debug)
-					if (debug) { fmt.Println("\nEvaluated depth", depth-1) }
-					if (debug) { fmt.Printf("%v => %v\n", eval, transpositionKey) }
-					// move.Print()
-					// move.Gb.Print()
-					transpositionTable[transpositionKey] = eval;
-				} else {
-					eval = transpositionTable[transpositionKey]
-					if (debug) { fmt.Println("\nEvaluated depth", depth-1) }
-					if (debug) { fmt.Printf("Found %v: %v\n", transpositionKey, eval) }
-					// move.Print()
-					// move.Gb.Print()
-				}
+		rawMove.ToState(&zobristInfo, states, state, index)
+		
+		newDebugNode := debugNode{children: []debugNode{}, name: fmt.Sprint(rawMove.Output("","")), isWhite: state.IsWhite};
+
+		var eval int16;
+		if depth > 1 {
+			transpositionKey := getTranspositionKey((**states)[index])
+			if (transpositionTable[transpositionKey] == -1){
+				eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debugThreshold, &newDebugNode)
+				transpositionTable[transpositionKey] = eval;
 			} else {
-				eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debug)
-				// fmt.Println("Evaluated depth", depth-1)
-				if debug { fmt.Println("(no transposition) eval", eval) }
-				// fmt.Println(moves[index])
-				// move.Print()
-				// move.Gb.Print()
+				eval = transpositionTable[transpositionKey]
 			}
-			if debug { fmt.Println("checked out move", rawMove.Output("White", "Black")) }
+		} else {
+			eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debugThreshold, &newDebugNode)
+		}
+
+		newDebugNode.value = eval;
+		parent.children = append(parent.children, newDebugNode)
 			
-			// fmt.Println("eval", eval);
+		if state.IsWhite {
 			if (eval > bestMoveEval){
 				bestMoveEval = eval;
 				bestMovePtr = rawMove;
 			}
-
 			alpha = maxInt16(alpha, bestMoveEval)
 			if (alpha >= beta) {
-				if debug { fmt.Printf("Pruning: %v >= %v\n", alpha, beta) }
 				break;
 			}
-			index++;
-		}
-	} else {
-		// for each move
-		// 	best move = math.Inf(1)
-		// 	evaluate it
-		// 	set beta to this evaluation if it's lower
-		// 	// after these evaluations, white will have the option to ignore this.
-		// 	// if black has an available move here that's better than what white
-		// 	// would have elsewhere, this path isn't worth considering for white.
-		// 	if alpha >= beta
-		// 		break
-		// 	return best move
-		bestMoveEval = math.MaxInt16
-		for incomplete {
-
-			rawMove, incomplete = nextMove();
-			if (!incomplete) { break; }
-			// fmt.Println("received", *rawMove)
-			rawMove.ToState(&zobristInfo, states, state, index)
-
-			if debug { fmt.Println("check out move", rawMove.Output("White", "Black")) }
-			
-			var eval int16;
-			if depth > 1 {
-				transpositionKey := getTranspositionKey((**states)[index])
-				// fmt.Println(moves[index].Output("White", "Black"))
-				if (transpositionTable[transpositionKey] == -1){
-					eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debug)
-					if debug { fmt.Println("\nEvaluated depth", depth-1) }
-					if debug { fmt.Printf("%v => %v\n", eval, transpositionKey) }
-					// move.Print()
-					// move.Gb.Print()
-					transpositionTable[transpositionKey] = eval;
-				} else {
-					eval = transpositionTable[transpositionKey]
-					if debug { fmt.Println("\nEvaluated depth", depth-1) }
-					if debug { fmt.Printf("Found %v: %v\n", transpositionKey, eval) }
-					// move.Print()
-					// move.Gb.Print()
-				}
-			} else {
-				eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debug)
-				// fmt.Println("Evaluated depth", depth-1)
-				if debug { fmt.Println("(no transposition) eval", eval) }
-				// fmt.Println(moves[index])
-				// move.Print()
-				// move.Gb.Print()
-			}
-			if debug { fmt.Println("checked out move", rawMove.Output("White", "Black")) }
-
-			// fmt.Println("eval", eval)
+		} else {
 			if (eval < bestMoveEval) {
 				bestMoveEval = eval;
 				bestMovePtr = rawMove;
 			}
-
 			
 			beta = minInt16(beta, bestMoveEval)
 			if (alpha >= beta) {
-				
-				if debug { fmt.Printf("Pruning: %v >= %v\n", alpha, beta) }
 				break;
 			}
-			index++;
 		}
+
+		index++;
 	}
 
-	// var bestMove boardmanager.RawMove = nil;
-	// if (bestMoveIndex != -1) { bestMove = moves[bestMoveIndex] }
-
 	return bestMoveEval, bestMovePtr 
+}
+
+func recursiveGraph(parentNode *debugNode, parentGraphNode *cgraph.Node, graph *cgraph.Graph, cumulativeName string){
+	if len(parentNode.children) == 0 {return;}
+	for _, child := range parentNode.children {
+		newName := cumulativeName+"    "+child.name
+		node, err := graph.CreateNode(newName)
+		if err != nil {
+			log.Fatal(err)
+		}
+		color := "White"
+		if !child.isWhite {color="Black"}
+		node.SetXLabel(fmt.Sprintf("%v [%v]", child.value, color))
+		node.SetMargin(0.5)
+		// nodeOffsetX := (indexInParent)/(len(parentNode.children))*100 - 50
+		// nodeOffsetY := 1000;
+		// node.SetPos(float64(parentX+nodeOffsetX), float64(parentY+nodeOffsetY))
+		graph.CreateEdge("", parentGraphNode, node)
+		// e.SetMinLen(5)
+		// e.SetLabelAngle(90)
+		// e.SetLabelDistance(5)
+		// node.SetGradientAngle(-90)
+		recursiveGraph(&child, node, graph, newName)
+	}
 }
 
 func BestMove(state boardmanager.State) boardmanager.RawMove{
@@ -220,12 +156,62 @@ func BestMove(state boardmanager.State) boardmanager.RawMove{
 	resetStatePtr()
 	resetTranspositionTable()
 
-	_, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, false)
+
+	rootDebugNode := debugNode{name: "ROOT", value: 0, children: []debugNode{}}
+
+	eval, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, 0, &rootDebugNode)
+	rootDebugNode.value = eval;
+
+
+	g := graphviz.New()
+	graph, err := g.Graph()
+	graph.SetGradientAngle(-90)
+
+	
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := graph.Close(); err != nil {
+			log.Fatal(err)
+		}
+		g.Close()
+	}()
+
+	
+
+	n, err := graph.CreateNode("ROOT")
+	n.SetXLabel(fmt.Sprint(eval))
+	if err != nil {
+		log.Fatal(err)
+	}
+	// m, err := graph.CreateNode("m")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// e, err := graph.CreateEdge("e", n, m)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+	// e.SetLabel("e")
+
+	recursiveGraph(&rootDebugNode, n, graph, "")
+	n.SetMargin(0.5)
+	n.SetPos(0, 0)
+	
+	var buf bytes.Buffer
+	if err := g.Render(graph, "dot", &buf); err != nil {
+		log.Fatal(err)
+	}
+
+	// fmt.Println(buf.String())
+	g.RenderFilename(graph, graphviz.SVG, "../debugGraph.svg")
+
+
 
 	if (move == nil){
 		return nil;
 	} else {
 		return *move;
 	}
-	//getAllMoves(state)[6]
 }
