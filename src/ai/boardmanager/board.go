@@ -20,10 +20,14 @@ type State struct {
 // this does the same thing as setting Gb directly, except this also mutates the hash
 func (state *State) UpdateBoard(table *[69][16]int64, pos int16, newPiece Tile){
 	if state.Gb[pos].equals(newPiece) { return }
+	if (state.Gb[pos].ThisPieceType.ID + 8*helper.Uint8b(state.Gb[pos].IsWhite)>15) {
+		fmt.Println(state.Gb[pos])
+	}
 	if newPiece.ThisPieceType.Name == NullPiece.Name {
 		// undo the piece that's already there
 		// (a number XOR itself equals 0)
 
+		
 
 		state.Hash = state.Hash ^ (*table)[pos][state.Gb[pos].ThisPieceType.ID + 8*helper.Uint8b(state.Gb[pos].IsWhite)]
 	} else {

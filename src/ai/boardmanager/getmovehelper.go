@@ -1,61 +1,96 @@
 package boardmanager
 
-import (
-	// "chesstwoai/boardmanager"
-	// "fmt"
-)
 
-func wrapper (myFunc func(int16), index int16) func(){
-	return func(){myFunc(index)};
+// "chesstwoai/boardmanager"
+// "fmt"
+
+func wrapper ( myFunc func(int16) (*RawMove, bool), index int16 ) func() (*RawMove, bool) {
+	return func() (*RawMove, bool) {
+		return myFunc(index)
+	}
 }
 
-func (state State) GetAllMovesGenerator() <- chan *RawMove{
-	ch := make(chan *RawMove);
-	go func (){
+func (state State) GetAllMovesGenerator() func() (*RawMove, bool) {
+	
+	// these both just store the state
+	// since this function is pretty
+	// much a generator
+	var globalIndex = 0;
+	var globalSubIndex = 0;
+	var goingThroughDeferred = false;
+	var moves PossibleMoves;
+	return func () (*RawMove, bool) {
 
-		var moves PossibleMoves;
-		deferred := [2]func(){nil, nil}
-		for i := int16(0); i < 64; i++ {
-			if state.Gb[i].IsWhite == state.IsWhite && state.Gb[i].ThisPieceType.Name != NullPiece.Name {
+		// var globalIndex = 0;
+		// var globalSubIndex = 0;
+		// var goingThroughDeferred = false;
+		
+		deferred := [2]func()(*RawMove, bool){nil, nil}
 
-				if state.Gb[i].ThisPieceType.Name == Rook.Name {
-					defIndex := 0;
-					if deferred[0] != nil {
-						defIndex = 1;
+		if (!goingThroughDeferred){
+			
+			for ; globalIndex < 64; globalIndex++ {
+				if state.Gb[globalIndex].IsWhite == state.IsWhite && state.Gb[globalIndex].ThisPieceType.Name != NullPiece.Name {
+	
+					if state.Gb[globalIndex].ThisPieceType.Name == Rook.Name {
+						defIndex := 0;
+						if deferred[0] != nil {
+							defIndex = 1;
+						}
+	
+						deferred[defIndex] = wrapper(
+							func(index int16) (*RawMove, bool) {
+								if (moves==nil) { moves = state.Gb[index].ThisPieceType.GetMoves(index, state, ConditionType{RookFilterStrict}) }
+								for globalSubIndex < len(moves) {
+									// fmt.Println("rook sending", move)
+									newMove := moves[globalSubIndex];
+									globalSubIndex++;
+									return &newMove, true;
+								}
+								globalSubIndex = 0;
+								moves = nil;
+								return nil, false;
+							}, int16(globalIndex),
+						)
+							
+							
+					} else {
+						if (moves == nil) { moves = state.Gb[globalIndex].ThisPieceType.GetMoves(int16(globalIndex), state, ConditionType{}) }
+						for globalSubIndex < len(moves) {
+							// fmt.Println("sending", move)
+							newMove := moves[globalSubIndex];
+							globalSubIndex++;
+							return &newMove, true;
+						}
+						globalSubIndex = 0;
+						moves = nil;
 					}
-
-					deferred[defIndex] = wrapper(
-						func(index int16) {
-							moves = state.Gb[index].ThisPieceType.GetMoves(index, state, ConditionType{RookFilterStrict})
-							for _, move := range moves {
-								// fmt.Println("rook sending", move)
-								ch <- &move;
-							}	
-						}, i,
-					)
-						
-						
-				} else {
-					moves = state.Gb[i].ThisPieceType.GetMoves(i, state, ConditionType{})
-					for _, move := range moves {
-						// fmt.Println("sending", move)
-						newMove := move;
-						ch <- &newMove;
-					}
+					
 				}
-				
 			}
-		}
+	
+			goingThroughDeferred = true;
+			globalIndex = 0;
+			globalSubIndex = 0;
 
-		for i := 0; i < 2; i++ {
-			if deferred[i]==nil { 
-				break;
+		} else {
+
+			for ; globalIndex < 2; globalIndex++ {
+				if deferred[globalIndex]==nil { 
+					break;
+				}
+				move, isDone := deferred[globalIndex]()
+				if (isDone) { 
+					return move, true; 
+				} else { 
+					return nil, false 
+				}
 			}
-			deferred[i]()
 		}
-		close(ch)
-	} ();
-	return ch;
+		return nil, false
+
+
+	};
 }
 
 // func getAllMoves(state boardmanager.State) boardmanager.PossibleMoves {

@@ -74,6 +74,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 	var bestMovePtr *boardmanager.RawMove = nil;
 	var bestMoveEval int16;
 
+	nextMove, rawMove, incomplete := state.GetAllMovesGenerator(), (*boardmanager.RawMove)(nil), true
 	if state.IsWhite {
 		// for each move
 		// 	best move = math.Inf(-1)
@@ -86,7 +87,10 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 		// 		break
 		// 	return best move
 		bestMoveEval = math.MinInt16
-		for rawMove := range state.GetAllMovesGenerator(){
+		for incomplete { 
+			rawMove, incomplete = nextMove();
+			if (!incomplete) { break; }
+		// for rawMove := range state.GetAllMovesGenerator(){
 
 			// fmt.Println("received", *rawMove)
 			rawMove.ToState(&zobristInfo, states, state, index)
@@ -147,7 +151,10 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 		// 		break
 		// 	return best move
 		bestMoveEval = math.MaxInt16
-		for rawMove := range state.GetAllMovesGenerator() {
+		for incomplete {
+
+			rawMove, incomplete = nextMove();
+			if (!incomplete) { break; }
 			// fmt.Println("received", *rawMove)
 			rawMove.ToState(&zobristInfo, states, state, index)
 
