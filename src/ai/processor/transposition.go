@@ -13,8 +13,8 @@ var zobristInfo helper.ZobristInfo;
 // var zobristTurnOffset int64;
 var hasInitializedTable = false;
 
-// 2 ^ 16
-const transpositionSize int = 65536
+// 2 ^ 20 + 1
+const transpositionSize int = 1048577
 var transpositionTable [transpositionSize]int16;
 
 func resetTranspositionTable(){
@@ -53,5 +53,6 @@ func GetZobristHash(state boardmanager.State) int64 {
 }
 
 func getTranspositionKey(state boardmanager.State) int {
-	return int(GetZobristHash(state) % int64(transpositionSize))
+	zobristHash := GetZobristHash(state)
+	return int(zobristHash % int64(transpositionSize))
 }

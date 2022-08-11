@@ -1,14 +1,9 @@
 package processor
 
 import (
-	"bytes"
 	"chesstwoai/boardmanager"
 	"fmt"
-	"log"
 	"math"
-
-	"github.com/goccy/go-graphviz"
-	"github.com/goccy/go-graphviz/cgraph"
 )
 
 func maxInt16(a int16, b int16) int16 {
@@ -26,8 +21,8 @@ func minInt16(a int16, b int16) int16 {
 		return b;
 	}
 }
+const MAX_DEPTH = 3;
 
-const MAX_DEPTH = 2;
 
 // this is a way of optimizing states, so that instead
 // of allocating new memory for each collection of 
@@ -42,10 +37,11 @@ func resetStatePtr() {
 }
 
 type debugNode struct {
-	children []debugNode;
 	value int16;
 	name string;
 	isWhite bool;
+	children []debugNode;
+	parent *debugNode;
 }
 
 
@@ -78,7 +74,7 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 
 		rawMove.ToState(&zobristInfo, states, state, index)
 		
-		newDebugNode := debugNode{children: []debugNode{}, name: fmt.Sprint(rawMove.Output("","")), isWhite: state.IsWhite};
+		newDebugNode := debugNode{parent: parent, children: []debugNode{}, name: fmt.Sprint(rawMove.Output("","")), isWhite: state.IsWhite};
 
 		var eval int16;
 		if depth > 1 {
@@ -86,8 +82,9 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 			if (transpositionTable[transpositionKey] == -1){
 				eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debugThreshold, &newDebugNode)
 				transpositionTable[transpositionKey] = eval;
-			} else {
+			} else {				
 				eval = transpositionTable[transpositionKey]
+				newDebugNode.children = append(newDebugNode.children, debugNode{name: fmt.Sprintf("TRANSPOSITION TABLE: KEY %v", transpositionKey)})
 			}
 		} else {
 			eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debugThreshold, &newDebugNode)
@@ -123,30 +120,6 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 	return bestMoveEval, bestMovePtr 
 }
 
-func recursiveGraph(parentNode *debugNode, parentGraphNode *cgraph.Node, graph *cgraph.Graph, cumulativeName string){
-	if len(parentNode.children) == 0 {return;}
-	for _, child := range parentNode.children {
-		newName := cumulativeName+"    "+child.name
-		node, err := graph.CreateNode(newName)
-		if err != nil {
-			log.Fatal(err)
-		}
-		color := "White"
-		if !child.isWhite {color="Black"}
-		node.SetXLabel(fmt.Sprintf("%v [%v]", child.value, color))
-		node.SetMargin(0.5)
-		// nodeOffsetX := (indexInParent)/(len(parentNode.children))*100 - 50
-		// nodeOffsetY := 1000;
-		// node.SetPos(float64(parentX+nodeOffsetX), float64(parentY+nodeOffsetY))
-		graph.CreateEdge("", parentGraphNode, node)
-		// e.SetMinLen(5)
-		// e.SetLabelAngle(90)
-		// e.SetLabelDistance(5)
-		// node.SetGradientAngle(-90)
-		recursiveGraph(&child, node, graph, newName)
-	}
-}
-
 func BestMove(state boardmanager.State) boardmanager.RawMove{
 
 	fmt.Println("Starting Board")
@@ -156,59 +129,10 @@ func BestMove(state boardmanager.State) boardmanager.RawMove{
 	resetStatePtr()
 	resetTranspositionTable()
 
-
 	rootDebugNode := debugNode{name: "ROOT", value: 0, children: []debugNode{}}
-
 	eval, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, 0, &rootDebugNode)
 	rootDebugNode.value = eval;
-
-
-	g := graphviz.New()
-	graph, err := g.Graph()
-	graph.SetGradientAngle(-90)
-
 	
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer func() {
-		if err := graph.Close(); err != nil {
-			log.Fatal(err)
-		}
-		g.Close()
-	}()
-
-	
-
-	n, err := graph.CreateNode("ROOT")
-	n.SetXLabel(fmt.Sprint(eval))
-	if err != nil {
-		log.Fatal(err)
-	}
-	// m, err := graph.CreateNode("m")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// e, err := graph.CreateEdge("e", n, m)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// e.SetLabel("e")
-
-	recursiveGraph(&rootDebugNode, n, graph, "")
-	n.SetMargin(0.5)
-	n.SetPos(0, 0)
-	
-	var buf bytes.Buffer
-	if err := g.Render(graph, "dot", &buf); err != nil {
-		log.Fatal(err)
-	}
-
-	// fmt.Println(buf.String())
-	g.RenderFilename(graph, graphviz.SVG, "../debugGraph.svg")
-
-
-
 	if (move == nil){
 		return nil;
 	} else {
