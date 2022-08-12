@@ -17,7 +17,7 @@ export default function HomePage(props){
     const [gameMode, setGameMode] = useState(GameModes.SINGLE_PLAYER.modeName);
     const [roomID, setRoomID] = useState();
     const [timeLimit, setTimeLimit] = useState(15)
-    const [AILevel, setAILevel] = useState(5)
+    const [AILevel, setAILevel] = useState(2)
     const [AIType, setAIType] = useState(Object.keys(computerTypes)[0])
 
     useEffect(()=>{
@@ -111,7 +111,7 @@ export default function HomePage(props){
                                                     </div>
                                                     <div>
                                                         <label>AI Level</label>
-                                                        <input onChange={e=>setAILevel(e.target.value)} type="number" min="0" max="9" className="w-100 rounded border-0" />
+                                                        <input onChange={e=>setAILevel(e.target.value)} type="number" placeholder="2" min="1" max="3" className="w-100 rounded border-0" />
                                                     </div>
                                                 </React.Fragment>
                                                 : ""

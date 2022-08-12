@@ -10,6 +10,6 @@ func TestBestMove(t *testing.T){
 
 	defaultState.Hash = GetZobristHash(defaultState);
 	for i:=0; i<1; i++ {
-		fmt.Println(BestMove(testState1));
+		fmt.Println(BestMove(testState1, 3));
 	}
 }

@@ -31,11 +31,12 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	var enemyColor string = initData[2].(string)
 	state := initData[3].(boardmanager.State)
 	state.Hash = processor.GetZobristHash(state)
+	var level uint8 = uint8(initData[4].(int));
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	move := processor.BestMove(state);
+	move := processor.BestMove(state, level);
 	// thisHash := processor.GetZobristHash(state)
 	// fmt.Println("Zobrist map of state", thisHash)
 
@@ -62,6 +63,7 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	var isWhite bool = args[3].Bool()
 	rookActiveWhite := args[4].Bool()
 	rookActiveBlack := args[5].Bool()
+	level := args[6].Int();
 
 
 	state := boardmanager.State{Gb: jsboardinterface.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack, IsWhite: isWhite}
@@ -80,5 +82,5 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	if strings.HasPrefix(turn, enemyColor) {
 		plugin.Get("errorFromAI").Invoke(js.ValueOf("AI cannot move because it's white's turn"))
 	} 
-	return []any{plugin, thisColor, enemyColor, state}
+	return []any{plugin, thisColor, enemyColor, state, level}
 }

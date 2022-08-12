@@ -21,19 +21,20 @@ func minInt16(a int16, b int16) int16 {
 		return b;
 	}
 }
-const MAX_DEPTH = 3;
+
+// const MAX_DEPTH = 3;
 
 
 // this is a way of optimizing states, so that instead
 // of allocating new memory for each collection of 
 // states, you just rewrite the old ones. This wouldn't
 // work if you were using multithreading.
-var statesInEachLayer [MAX_DEPTH]*[]boardmanager.State
+var statesInEachLayer []*[]boardmanager.State
 func getStatePtr(depth uint8) **[]boardmanager.State {
 	return &statesInEachLayer[depth-1];
 }
-func resetStatePtr() {
-	statesInEachLayer = [MAX_DEPTH]*[]boardmanager.State{};
+func resetStatePtr(level uint8) {
+	statesInEachLayer = make([]*[]boardmanager.State, level);
 }
 
 type debugNode struct {
@@ -125,17 +126,17 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 	return bestMoveEval, bestMovePtr 
 }
 
-func BestMove(state boardmanager.State) boardmanager.RawMove{
+func BestMove(state boardmanager.State, level uint8) boardmanager.RawMove{
 
 	fmt.Println("Starting Board")
 	fmt.Println("isWhite", state.IsWhite, "rookIsBlack", state.RookBlackActive, "rookIsWhite", state.RookWhiteActive)
 	state.Gb.Print()
 	
-	resetStatePtr()
+	resetStatePtr(level)
 	resetTranspositionTable()
 
 	rootDebugNode := debugNode{name: "ROOT", value: 0, children: []debugNode{}}
-	eval, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, 0, &rootDebugNode)
+	eval, move := searchTree(state, level, math.MinInt16, math.MaxInt16, 0, &rootDebugNode)
 	rootDebugNode.value = eval;
 	
 	if (move == nil){

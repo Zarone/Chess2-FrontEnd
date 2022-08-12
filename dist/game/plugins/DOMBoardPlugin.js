@@ -45,6 +45,7 @@ export class DOMBoardPlugin extends PluginBase {
             ()=>{
 
                 if (!Turn.adapt(game.get("currentTurn")).is(NORMAL)) return;
+                if (!globalThis.outputPromise) return;
 
                 globalThis.outputPromise()
 

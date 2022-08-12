@@ -10,7 +10,7 @@ import { JUMPING, NORMAL } from "../../../dist/helper-js/TurnUtil.js";
 import { EndGamePlugin } from "../../../dist/game/plugins/EndGamePlugin.js";
 
 type AI = {
-    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean, rookActiveWhite: boolean, rookActiveBlack: boolean) => void;
+    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean, rookActiveWhite: boolean, rookActiveBlack: boolean, level: number) => void;
 } & {
     getVersion: () => string;
     output: [string, string, string][];
@@ -79,7 +79,13 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
             console.log("[AI input]", game.get("boardLayout").data)
 
             ai.outputPromise = (()=>{
-                ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));
+                ai[this.computerSettings.act](
+                    turn, this, 
+                    game.get("boardLayout").data, 
+                    !game.get('isWhite'), 
+                    game.get("rookActiveWhite"), game.get("rookActiveBlack"), 
+                    this.computerSettings.level
+                );
             })
 
         });
