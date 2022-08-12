@@ -25,7 +25,7 @@ import { SinglePlayerPlugin } from "./game/plugins/SinglePlayerPlugin.js";
 import { GameMode, GameModes } from "../src/helper-js/GameModes"
 import { EnemyComputerSettings } from "../src/helper-js/EnemyComputerSettings";
 import { Turn } from "./game/model/Turn.js";
-import { NORMAL } from "./helper-js/TurnUtil.js";
+import { NORMAL, WHITE } from "./helper-js/TurnUtil.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -100,8 +100,22 @@ export const onLoad = async (styleSheet, styleName) => {
         chessBoard.dragEnd(event)
 
         setTimeout(()=>{
-            if (!Turn.adapt(game.get("currentTurn")).is(NORMAL)) return;
-            if (!globalThis.outputPromise) return;
+            let thisTurn = Turn.adapt(game.get("currentTurn"))
+            if (!thisTurn.is(NORMAL)) {
+                console.log("NOT NEW TURN")
+                return;
+            }
+
+            console.log(game.get("currentTurn"), game.get("isWhite"))
+
+            if ((game.get("currentTurn") == "White") == game.get("isWhite")) {
+                console.log("NOT AI's TURN")
+                return;
+            }
+            if (!globalThis.outputPromise) {
+                console.log("NO AI TURN PREPARED")
+                return;
+            }
     
             globalThis.outputPromise()
     
@@ -112,7 +126,7 @@ export const onLoad = async (styleSheet, styleName) => {
             for (let i = 0; i < aiRes.length; i++){
                 game.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
             }
-    }, 10)
+        }, 0)
     })
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
