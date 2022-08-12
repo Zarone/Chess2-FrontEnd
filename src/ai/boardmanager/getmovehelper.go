@@ -19,14 +19,16 @@ func (state State) GetAllMovesGenerator() func() (*RawMove, bool) {
 	var globalSubIndex = 0;
 	var goingThroughDeferred = false;
 	var moves PossibleMoves;
+	var newMove RawMove;
+	deferred := [2]func()(*RawMove, bool){nil, nil}
+
+
 	return func () (*RawMove, bool) {
 
 		// var globalIndex = 0;
 		// var globalSubIndex = 0;
 		// var goingThroughDeferred = false;
 		
-		deferred := [2]func()(*RawMove, bool){nil, nil}
-
 		if (!goingThroughDeferred){
 			
 			for ; globalIndex < 64; globalIndex++ {
@@ -42,8 +44,7 @@ func (state State) GetAllMovesGenerator() func() (*RawMove, bool) {
 							func(index int16) (*RawMove, bool) {
 								if (moves==nil) { moves = state.Gb[index].ThisPieceType.GetMoves(index, state, ConditionType{RookFilterStrict}) }
 								for globalSubIndex < len(moves) {
-									// fmt.Println("rook sending", move)
-									newMove := moves[globalSubIndex];
+									newMove = moves[globalSubIndex];
 									globalSubIndex++;
 									return &newMove, true;
 								}
@@ -57,8 +58,10 @@ func (state State) GetAllMovesGenerator() func() (*RawMove, bool) {
 					} else {
 						if (moves == nil) { moves = state.Gb[globalIndex].ThisPieceType.GetMoves(int16(globalIndex), state, ConditionType{}) }
 						for globalSubIndex < len(moves) {
-							// fmt.Println("sending", move)
-							newMove := moves[globalSubIndex];
+							// So what I could do here in the future is check if a piece would be taken on this route.
+							// If that's not the case, send it to a backlog which would be returned later. This would
+							// hopefully increase pruning since the most extreme moves would be evaluated first.
+							newMove = moves[globalSubIndex];
 							globalSubIndex++;
 							return &newMove, true;
 						}

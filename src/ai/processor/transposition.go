@@ -13,8 +13,8 @@ var zobristInfo helper.ZobristInfo;
 // var zobristTurnOffset int64;
 var hasInitializedTable = false;
 
-// 2 ^ 20 + 1
-const transpositionSize int = 1048577
+// 2 ^ 21 + 1
+const transpositionSize int = 2097153
 var transpositionTable [transpositionSize]int16;
 
 func resetTranspositionTable(){

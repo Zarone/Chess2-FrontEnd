@@ -67,7 +67,7 @@ func (move RawMove) ToState(zobristInfo *helper.ZobristInfo, overwritingStates *
 	// moveLen := len(moves)
 	var stateLen int;
 	if (*overwritingStates)==nil {
-		tempStates := make([]State, 0);
+		tempStates := make([]State, 0, 20);
 		*overwritingStates = &tempStates;
 		stateLen = 0;
 		
@@ -75,14 +75,12 @@ func (move RawMove) ToState(zobristInfo *helper.ZobristInfo, overwritingStates *
 		stateLen = len(**overwritingStates)
 	}
 
-	for index >= stateLen {
-		**overwritingStates = append(**overwritingStates, State{})
+	if index >= stateLen {
+		**overwritingStates = append(**overwritingStates, baseState.MakeMove(move, zobristInfo))
 		stateLen++;
+	} else {
+		(**overwritingStates)[index] = baseState.MakeMove(move, zobristInfo)
 	}
-
-	// for index, element := range moves {
-	(**overwritingStates)[index] = baseState.MakeMove(move, zobristInfo)
-	// }
 
 	if stateLen > index+1 {
 		(**overwritingStates) = (**overwritingStates)[0:index+1:stateLen]
@@ -210,28 +208,37 @@ func coordsToFunc(coords [][2]int16, IsWhite bool) singleMove {
 	
 	return func( pos int16, state State, conditions []func(conditionArgs) bool ) PossibleMoves {
 		
+		var moves PossibleMoves = make(PossibleMoves, 0, 3);
 		
-		var moves PossibleMoves;
+		coordsLen := len(coords)
+
+		var row, col, newRow, newCol int16;
+
+		conditionsLen := len(conditions)
+		conditionMet := true;
+		var move *RawMove;
+
+		var toPos int16;
 		
-		for i:=0;i<len(coords);i++{
+		for i:=0;i<coordsLen;i++{
 			
-			col := pos%8
-			row := pos/8
+			col = pos%8
+			row = pos/8
 			
-			newCol := col+coords[i][0]
-			newRow := row+inverseModifier*coords[i][1]
+			newCol = col+coords[i][0]
+			newRow = row+inverseModifier*coords[i][1]
 			
 			if inBorders(newRow, newCol) {
-				toPos := newCol+newRow*8
-				conditionMet := true;
-				for j:=0;j<len(conditions);j++{
+				toPos = newCol+newRow*8
+				conditionMet = true;
+				for j:=0;j<conditionsLen;j++{
 					if (!conditions[j](conditionArgs{fromPos: pos, toPos: toPos, state: state})) {
 						conditionMet = false;
 						break;
 					}
 				}
 				if (conditionMet){
-					move := GetRawMoveDefault(pos, toPos, state)
+					move = GetRawMoveDefault(pos, toPos, state)
 					moves = append(moves, *move)
 				}
 			}

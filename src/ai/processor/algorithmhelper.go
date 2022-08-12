@@ -21,7 +21,7 @@ func minInt16(a int16, b int16) int16 {
 		return b;
 	}
 }
-const MAX_DEPTH = 3;
+const MAX_DEPTH = 6;
 
 
 // this is a way of optimizing states, so that instead
@@ -47,7 +47,7 @@ type debugNode struct {
 
 // alpha is the best available move for white
 // beta is the best available move for black
-func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, debugThreshold uint8, parent *debugNode) (int16, *boardmanager.RawMove) {
+func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, debugThreshold int8, parent *debugNode) (int16, *boardmanager.RawMove) {
 	
 	// check end game conditions
 	if (state.Gb[64].ThisPieceType.Name != boardmanager.NullPiece.Name && state.Gb[65].ThisPieceType.Name != boardmanager.NullPiece.Name){
@@ -68,13 +68,14 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 
 	nextMove, rawMove, incomplete := state.GetAllMovesGenerator(), (*boardmanager.RawMove)(nil), true
 	if state.IsWhite { bestMoveEval = math.MinInt16 } else { bestMoveEval = math.MaxInt16 }
+	var newDebugNode debugNode;
 	for incomplete { 
 		rawMove, incomplete = nextMove();
 		if (!incomplete) { break; }
 
 		rawMove.ToState(&zobristInfo, states, state, index)
 		
-		newDebugNode := debugNode{parent: parent, children: []debugNode{}, name: fmt.Sprint(rawMove.Output("","")), isWhite: state.IsWhite};
+		if (debugThreshold > -1) { newDebugNode = debugNode{parent: parent, children: []debugNode{}, name: fmt.Sprint(rawMove.Output("","")), isWhite: state.IsWhite}; }
 
 		var eval int16;
 		if depth > 1 {
@@ -84,14 +85,16 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 				transpositionTable[transpositionKey] = eval;
 			} else {				
 				eval = transpositionTable[transpositionKey]
-				newDebugNode.children = append(newDebugNode.children, debugNode{name: fmt.Sprintf("TRANSPOSITION TABLE: KEY %v", transpositionKey)})
+				if (debugThreshold > -1) { newDebugNode.children = append(newDebugNode.children, debugNode{name: fmt.Sprintf("TRANSPOSITION TABLE: KEY %v", transpositionKey)}) }
 			}
 		} else {
 			eval, _ = searchTree((**states)[index], depth-1, alpha, beta, debugThreshold, &newDebugNode)
 		}
 
-		newDebugNode.value = eval;
-		parent.children = append(parent.children, newDebugNode)
+		if debugThreshold > -1 {
+			newDebugNode.value = eval;
+			parent.children = append(parent.children, newDebugNode)
+		}
 			
 		if state.IsWhite {
 			if (eval > bestMoveEval){
@@ -130,7 +133,7 @@ func BestMove(state boardmanager.State) boardmanager.RawMove{
 	resetTranspositionTable()
 
 	rootDebugNode := debugNode{name: "ROOT", value: 0, children: []debugNode{}}
-	eval, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, 0, &rootDebugNode)
+	eval, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, -1, &rootDebugNode)
 	rootDebugNode.value = eval;
 	
 	if (move == nil){
