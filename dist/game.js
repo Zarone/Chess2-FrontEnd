@@ -24,6 +24,8 @@ import { PieceHooksPlugin } from "./game/plugins/PieceHooksPlugin.js";
 import { SinglePlayerPlugin } from "./game/plugins/SinglePlayerPlugin.js";
 import { GameMode, GameModes } from "../src/helper-js/GameModes"
 import { EnemyComputerSettings } from "../src/helper-js/EnemyComputerSettings";
+import { Turn } from "./game/model/Turn.js";
+import { NORMAL } from "./helper-js/TurnUtil.js";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -94,7 +96,24 @@ export const onLoad = async (styleSheet, styleName) => {
         }
     }
 
-    document.addEventListener("mouseup", event => chessBoard.dragEnd(event))
+    document.addEventListener("mouseup", event => {
+        chessBoard.dragEnd(event)
+
+        setTimeout(()=>{
+            if (!Turn.adapt(game.get("currentTurn")).is(NORMAL)) return;
+            if (!globalThis.outputPromise) return;
+    
+            globalThis.outputPromise()
+    
+            let aiRes = globalThis.output;
+            
+            console.log("[AI output]", aiRes)
+            
+            for (let i = 0; i < aiRes.length; i++){
+                game.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
+            }
+    }, 10)
+    })
     document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
 
     launcher.launch();

@@ -44,19 +44,6 @@ export class DOMBoardPlugin extends PluginBase {
             this.styleSheet, this.styleName,
             ()=>{
 
-                if (!Turn.adapt(game.get("currentTurn")).is(NORMAL)) return;
-                if (!globalThis.outputPromise) return;
-
-                globalThis.outputPromise()
-
-                let aiRes = globalThis.output;
-                
-                console.log("[AI output]", aiRes)
-                
-                for (let i = 0; i < aiRes.length; i++){
-                    // debugger
-                    this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
-                }
             }
         )
 
