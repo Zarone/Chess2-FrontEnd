@@ -1,15 +1,5 @@
 package boardmanager
 
-
-// "chesstwoai/boardmanager"
-// "fmt"
-
-func wrapper ( myFunc func(int16) (*RawMove, bool), index int16 ) func() (*RawMove, bool) {
-	return func() (*RawMove, bool) {
-		return myFunc(index)
-	}
-}
-
 func (state State) GetAllMovesGenerator() func() (*RawMove, bool) {
 	
 	// these both just store the state
@@ -17,120 +7,85 @@ func (state State) GetAllMovesGenerator() func() (*RawMove, bool) {
 	// much a generator
 	var globalIndex = 0;
 	var globalSubIndex = 0;
-	var goingThroughDeferred = false;
 	var moves PossibleMoves;
 	var newMove RawMove;
-	deferred := [2]func()(*RawMove, bool){nil, nil}
 
+	// so buffer stores less extreme moves that aren't
+	// sent back to the caller of this function immediately.
+	// this system is for pruning, so that more extreme moves
+	// are looked at first.
+	var buffer [1][]*RawMove;
 
 	return func () (*RawMove, bool) {
 
-		// var globalIndex = 0;
-		// var globalSubIndex = 0;
-		// var goingThroughDeferred = false;
-		
-		if (!goingThroughDeferred){
-			
-			for ; globalIndex < 64; globalIndex++ {
-				if state.Gb[globalIndex].IsWhite == state.IsWhite && state.Gb[globalIndex].ThisPieceType.Name != NullPiece.Name {
-	
-					if state.Gb[globalIndex].ThisPieceType.Name == Rook.Name {
-						defIndex := 0;
-						if deferred[0] != nil {
-							defIndex = 1;
+		for ; globalIndex < 64; globalIndex++ {
+			if state.Gb[globalIndex].IsWhite == state.IsWhite && state.Gb[globalIndex].ThisPieceType.Name != NullPiece.Name {
+				
+				if (moves == nil) { moves = state.Gb[globalIndex].ThisPieceType.GetMoves(int16(globalIndex), state, ConditionType{}) }
+				for globalSubIndex < len(moves) {
+					// So what I could do here in the future is check if a piece would be taken on this route.
+					// If that's not the case, send it to a backlog which would be returned later. This would
+					// hopefully increase pruning since the most extreme moves would be evaluated first.
+					
+					newMove = moves[globalSubIndex];
+					globalSubIndex++;
+					
+					lastElem := len(newMove)-1
+					secondToLastElem := lastElem-1
+					
+					capturedPiece := false;
+					
+					containsRescue := false;
+					if len(newMove) > 1 {
+						for _, partialMove := range newMove {
+							if partialMove.turnType == TURN_RESCUE{
+								containsRescue = true;
+								break;
+							}
 						}
-	
-						deferred[defIndex] = wrapper(
-							func(index int16) (*RawMove, bool) {
-								if (moves==nil) { moves = state.Gb[index].ThisPieceType.GetMoves(index, state, ConditionType{RookFilterStrict}) }
-								for globalSubIndex < len(moves) {
-									newMove = moves[globalSubIndex];
-									globalSubIndex++;
-									return &newMove, true;
-								}
-								globalSubIndex = 0;
-								moves = nil;
-								return nil, false;
-							}, int16(globalIndex),
-						)
-							
-							
+						if (newMove[secondToLastElem].turnType == TURN_JUMPING && !containsRescue){
+							// handle piece captures
+							if (state.Gb[newMove[lastElem].toPos].ThisPieceType.Name != NullPiece.Name){ capturedPiece = true;	}
+						} else if (newMove[secondToLastElem].turnType == TURN_JAIL) {
+							// handle piece captures
+							capturedPiece = true
+						} else if containsRescue {
+							// handle piece captures
+							if (state.Gb[newMove[lastElem].toPos].ThisPieceType.Name != NullPiece.Name ){ capturedPiece = true; }
+						}
 					} else {
-						if (moves == nil) { moves = state.Gb[globalIndex].ThisPieceType.GetMoves(int16(globalIndex), state, ConditionType{}) }
-						for globalSubIndex < len(moves) {
-							// So what I could do here in the future is check if a piece would be taken on this route.
-							// If that's not the case, send it to a backlog which would be returned later. This would
-							// hopefully increase pruning since the most extreme moves would be evaluated first.
-							newMove = moves[globalSubIndex];
-							globalSubIndex++;
-							return &newMove, true;
-						}
-						globalSubIndex = 0;
-						moves = nil;
+						// handle piece captures
+						if (state.Gb[newMove[lastElem].toPos].ThisPieceType.Name != NullPiece.Name){ capturedPiece = true; }
+					}
+
+					if capturedPiece {
+						return &newMove, true;
+					} else {
+						bufferAddition := newMove;
+						buffer[0] = append(buffer[0], &bufferAddition)
 					}
 					
 				}
-			}
-	
-			goingThroughDeferred = true;
-			globalIndex = 0;
-			globalSubIndex = 0;
-
-		} else {
-
-			for ; globalIndex < 2; globalIndex++ {
-				if deferred[globalIndex]==nil { 
-					break;
-				}
-				move, isDone := deferred[globalIndex]()
-				if (isDone) { 
-					return move, true; 
-				} else { 
-					return nil, false 
-				}
+				globalSubIndex = 0;
+				moves = nil;
+				
 			}
 		}
+		
+		
+		primaryBufferLen := len(buffer[0])
+		if primaryBufferLen > 0 {
+			
+			firstElement := buffer[0][0]
+			buffer[0] = buffer[0][1:primaryBufferLen]
+			return firstElement, true;
+			
+		}
+		globalSubIndex = 0;
+		globalIndex = 0;
+
 		return nil, false
 
 
 	};
 }
-
-// func getAllMoves(state boardmanager.State) boardmanager.PossibleMoves {
-	
-// 	var moves boardmanager.PossibleMoves;
-// 	deferred := [2]func(){nil, nil}
-// 	for i := int16(0); i < 64; i++ {
-// 		if state.Gb[i].IsWhite == state.IsWhite && state.Gb[i].ThisPieceType.Name != boardmanager.NullPiece.Name {
-
-// 			if state.Gb[i].ThisPieceType.Name == boardmanager.Rook.Name {
-// 				defIndex := 0;
-// 				if deferred[0] != nil {
-// 					defIndex = 1;
-// 				}
-
-// 				deferred[defIndex] = wrapper(
-// 					func(index int16) {
-// 						moves = append(moves, 
-// 							state.Gb[index].ThisPieceType.GetMoves(index, state, boardmanager.ConditionType{boardmanager.RookFilterStrict})...
-// 						)
-// 					}, i,
-// 				)
-					
-					
-// 			} else {
-// 				moves = append(moves, state.Gb[i].ThisPieceType.GetMoves(i, state, boardmanager.ConditionType{})...)
-// 			}
-			
-// 		}
-// 	}
-
-// 	for i := 0; i < 2; i++ {
-// 		if deferred[i]==nil { 
-// 			break;
-// 		}
-// 		deferred[i]()
-// 	}
-// 	// moves.Print("\n")
-// 	return moves;
-// }

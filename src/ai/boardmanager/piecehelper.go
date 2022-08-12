@@ -384,16 +384,21 @@ func nextToEnemyPiece(pos int16, state State) bool {
 	// if (differentType(pos, rowColToPos(row-1, col), state)) {return true;}
 	// if (differentType(pos, rowColToPos(row, col-1), state)) {return true;}
 	newPos := rowColToPos(row+1, col)
-	if (inBorders(row+1, col) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+	
+	// var1 := inBorders(row+1, col)
+	// var2 := state.Gb[newPos].ThisPieceType.ID == NullPiece.ID
+	// var3 := state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite
+	// fmt.Println(var1, var2, var3)
+	if ( inBorders(row+1, col) && state.Gb[newPos].ThisPieceType.ID != NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
 
 	newPos = rowColToPos(row-1, col)
-	if (inBorders(row-1, col) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+	if (inBorders(row-1, col) && state.Gb[newPos].ThisPieceType.ID != NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
 
 	newPos = rowColToPos(row, col+1)
-	if (inBorders(row, col+1) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+	if (inBorders(row, col+1) && state.Gb[newPos].ThisPieceType.ID != NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
 
 	newPos = rowColToPos(row, col-1)
-	if (inBorders(row, col-1) && state.Gb[newPos].ThisPieceType.ID == NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
+	if (inBorders(row, col-1) && state.Gb[newPos].ThisPieceType.ID != NullPiece.ID && state.Gb[newPos].IsWhite != state.Gb[pos].IsWhite){return true}
 
 	return false;
 }

@@ -21,7 +21,7 @@ func minInt16(a int16, b int16) int16 {
 		return b;
 	}
 }
-const MAX_DEPTH = 6;
+const MAX_DEPTH = 3;
 
 
 // this is a way of optimizing states, so that instead
@@ -99,7 +99,8 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 		if state.IsWhite {
 			if (eval > bestMoveEval){
 				bestMoveEval = eval;
-				bestMovePtr = rawMove;
+				newBestMove := *rawMove;
+				bestMovePtr = &newBestMove;
 			}
 			alpha = maxInt16(alpha, bestMoveEval)
 			if (alpha >= beta) {
@@ -108,7 +109,8 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 		} else {
 			if (eval < bestMoveEval) {
 				bestMoveEval = eval;
-				bestMovePtr = rawMove;
+				newBestMove := *rawMove;
+				bestMovePtr = &newBestMove;
 			}
 			
 			beta = minInt16(beta, bestMoveEval)
@@ -133,7 +135,7 @@ func BestMove(state boardmanager.State) boardmanager.RawMove{
 	resetTranspositionTable()
 
 	rootDebugNode := debugNode{name: "ROOT", value: 0, children: []debugNode{}}
-	eval, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, -1, &rootDebugNode)
+	eval, move := searchTree(state, MAX_DEPTH, math.MinInt16, math.MaxInt16, 0, &rootDebugNode)
 	rootDebugNode.value = eval;
 	
 	if (move == nil){

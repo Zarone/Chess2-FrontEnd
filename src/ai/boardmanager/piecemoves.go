@@ -63,7 +63,7 @@ func RookMove(pos int16, state State, filterConditions ConditionType) PossibleMo
 	moves.add(
 		pos, state,
 		moveType{allSlots},
-		append(ConditionType{empty}, filterConditions...),
+		ConditionType{empty, RookFilterStrict},
 	)
 
 	moves.add(
