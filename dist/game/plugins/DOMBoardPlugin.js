@@ -17,6 +17,8 @@ import { Events } from "../Events"
 import { MoveInfo } from "../../../src/game/net/MoveInfo";
 
 import { Position } from "../../helper-js/board"
+import { Turn } from "../model/Turn";
+import { NORMAL } from "../../helper-js/TurnUtil";
 
 export class DOMBoardPlugin extends PluginBase {
     constructor ({ styleSheet, styleName }) {
@@ -41,6 +43,9 @@ export class DOMBoardPlugin extends PluginBase {
             game.emit.bind(game, Events.request.ADMIT_DEFEAT, { message: LOSE_TEXT }),
             this.styleSheet, this.styleName,
             ()=>{
+
+                if (!Turn.adapt(game.get("currentTurn")).is(NORMAL)) return;
+
                 globalThis.outputPromise()
 
                 let aiRes = globalThis.output;

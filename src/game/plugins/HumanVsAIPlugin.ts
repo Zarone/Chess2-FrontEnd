@@ -73,14 +73,10 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
         this.on(Events.request.COMMIT_MOVE, () => {
             const turn = game.get('currentTurn');
             if (!Turn.adapt(turn).is(NORMAL)) return;
+            console.log("EVALUATING MOVE")
             if (!EndGamePlugin.checkLoseCondition(game, true))
 
             console.log("[AI input]", game.get("boardLayout").data)
-
-            // console.log(workerPath.default)
-            // let aiWorker = new Worker(workerPath.default)
-            // aiWorker.postMessage([turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack")])
-            // debugger
 
             ai.outputPromise = (()=>{
                 ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));

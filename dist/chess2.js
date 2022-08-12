@@ -274,6 +274,7 @@ export class ChessBoard {
                 this.resetTiles();
                 this.playChessSound();
                 delete this.boardLayout["MONKEY_START"];
+                this.madeMoveCallbackFunc();
             } else {
                 abortMove("moving to same tile as you're already on");
             }
