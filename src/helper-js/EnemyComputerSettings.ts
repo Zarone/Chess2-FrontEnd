@@ -7,7 +7,7 @@ export type computerType = ("actHeuristic" | "actAlgorithmic")
 
 export const computerTypes: {[key: string]: computerType} = {
     "ALGORITHMIC": "actAlgorithmic",
-    "HEURISTIC": "actHeuristic",
+    // "HEURISTIC": "actHeuristic",
 }
 
 function validateType(type: string): string{
