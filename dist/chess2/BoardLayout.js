@@ -366,4 +366,17 @@ export class BoardLayouts {
         ['x1', 'Queen', true],
         ['z1', 'Bear', false]
     ]
+
+    static CHECKMATE = [
+        ['a1', 'Queen', true],
+        ['a2', 'Queen', true],
+        ['a3', 'Queen', true],
+        ['a4', 'Queen', true],
+        ['a5', 'Queen', true],
+        ['a6', 'Queen', true],
+        ['a7', 'Queen', true],
+        ['a8', 'Queen', true],
+        ['d4', 'King', false],
+        ['y1', 'Queen', false]
+    ]
 }

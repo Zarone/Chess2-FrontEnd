@@ -52,9 +52,9 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 	
 	// check end game conditions
 	if (state.Gb[64].ThisPieceType.Name != boardmanager.NullPiece.Name && state.Gb[65].ThisPieceType.Name != boardmanager.NullPiece.Name){
-		return math.MinInt16, nil
+		return math.MinInt16+1, nil
 	} else if (state.Gb[66].ThisPieceType.Name != boardmanager.NullPiece.Name && state.Gb[67].ThisPieceType.Name != boardmanager.NullPiece.Name){
-		return math.MaxInt16, nil
+		return math.MaxInt16-1, nil
 	}
 	if depth == 0 { return staticEvaluation(state), nil; }
 

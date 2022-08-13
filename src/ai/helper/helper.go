@@ -9,6 +9,14 @@ func Uint8b(b bool) uint8{
 		return 0
 	}
 }
+
+func Int16b(b bool) int16 {
+	if b {
+		return 1;
+	} else {
+		return 0
+	}
+}
 	
 type ZobristInfo struct {
 	Table [69][16]int64;

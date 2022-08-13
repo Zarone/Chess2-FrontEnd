@@ -187,7 +187,7 @@ func intToPosString(pos int16) string {
 	return fmt.Sprintf("%v%v", string(rune(ASCII_OFFSET+col)), 8-row)
 }
 
-func posToRowCol (pos int16) (int16, int16) {
+func PosToRowCol (pos int16) (int16, int16) {
 	return pos/8, pos%8
 }
 
@@ -251,7 +251,7 @@ func coordsToFunc(coords [][2]int16, IsWhite bool) singleMove {
 func queen(pos int16, state State, conditions []func(conditionArgs) bool) PossibleMoves {
 	moves := PossibleMoves{}
 	
-	row, col := posToRowCol(pos);
+	row, col := PosToRowCol(pos);
 	
 	for r:=int16(-1);r<2;r+=1 {
 		for c:=int16(-1);c<2;c+=1 {
@@ -378,7 +378,7 @@ func getCorrespondingJail(pos int16, isWhite bool) int16 {
 // }
 
 func nextToEnemyPiece(pos int16, state State) bool {
-	row, col := posToRowCol(pos);
+	row, col := PosToRowCol(pos);
 	// if (differentType(pos, rowColToPos(row+1, col), state)) {return true;}
 	// if (differentType(pos, rowColToPos(row, col+1), state)) {return true;}
 	// if (differentType(pos, rowColToPos(row-1, col), state)) {return true;}

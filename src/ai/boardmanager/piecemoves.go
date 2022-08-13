@@ -120,17 +120,16 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	for len(toVisit) > 0 {
 		visitingNode := toVisit[len(toVisit)-1]
 		visiting := visitingNode[len(visitingNode)-1]
-		alreadyAdded[visiting] = true
 
 		toVisit = toVisit[:len(toVisit)-1]
+		
+		row, col := PosToRowCol(visiting)
 
 		for i := int16(-1); i < 2; i++ {
 			for j := int16(-1); j < 2; j++ {
 				if i == 0 && j == 0 {
 					continue
 				}
-
-				row, col := posToRowCol(visiting)
 
 				newRow := row + 2*i
 				newCol := col + 2*j
@@ -145,9 +144,10 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 				withinBorders := inBorders(newRow, newCol)
 				somethingToJumpOff := withinBorders && state.Gb[rowColToPos(intermediateRow, intermediateCol)].ThisPieceType.Name != NullPiece.Name
 				targetDifferentColor := withinBorders && notSameType(thisConditionArgs)
-
-				if !alreadyVisited && withinBorders && somethingToJumpOff && targetDifferentColor {
-
+				
+				if (!alreadyVisited||getCorrespondingJail(newPos, state.Gb[newPos].IsWhite)!=-1) && withinBorders && somethingToJumpOff && targetDifferentColor {
+					
+					alreadyAdded[newPos]=true;
 					var newMove RawMove
 					for k := 1; k < len(visitingNode); k++ {
 						newMove = append(newMove, RawPartialMove{fromPos: visitingNode[k-1], toPos: visitingNode[k], sameColor: true, turnType: TURN_JUMPING})

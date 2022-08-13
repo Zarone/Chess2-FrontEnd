@@ -25,7 +25,7 @@ func rookCondition(args conditionArgs) bool {
 func RookFilterStrict(args conditionArgs) bool {
 	hasTarget := nextToEnemyPiece(args.toPos, args.state)
 	if (!hasTarget) { return false; }
-	row, col := posToRowCol(args.toPos)
+	row, col := PosToRowCol(args.toPos)
 	
 	// this just makes sure there's no fish to take the rook next turn
 	if args.state.Gb[args.fromPos].IsWhite {
