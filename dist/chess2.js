@@ -42,6 +42,7 @@ export class ChessBoard {
 
     makeMoveCallbackFunc = undefined;
     gameOverCallbackFunc = undefined;
+    madeMoveCallbackFunc = undefined;
 
     styleType = undefined; // of type CustomStyle
     styleSheetReference = undefined;
@@ -55,7 +56,7 @@ export class ChessBoard {
         return this.game.state.currentTurn;
     }
 
-    constructor(game, makeMoveCallback, gameOverCallback, styleSheetReference, styleType){
+    constructor(game, makeMoveCallback, gameOverCallback, styleSheetReference, styleType, madeMoveCallbackFunc){
         globalThis.gameboard = this;
         this.game = game;
 
@@ -64,6 +65,7 @@ export class ChessBoard {
         
         this.makeMoveCallbackFunc = makeMoveCallback;
         this.gameOverCallbackFunc = gameOverCallback;
+        this.madeMoveCallbackFunc = madeMoveCallbackFunc;
     }
 
     cursorMove(event){
@@ -272,6 +274,7 @@ export class ChessBoard {
                 this.resetTiles();
                 this.playChessSound();
                 delete this.boardLayout["MONKEY_START"];
+                this.madeMoveCallbackFunc();
             } else {
                 abortMove("moving to same tile as you're already on");
             }
@@ -286,7 +289,7 @@ export class ChessBoard {
         let tookKingOrQueen = false;
         let monkeyJumping = false;
         let tempPiece = undefined;
-
+        
         if ( this.boardLayout[fromPos].constructor.name == Monkey.name ) {
             let {vertical: verticalFrom, horizontal: horizontalFrom} = getVerticalAndHorizontal(fromPos)
             let {vertical: verticalTo, horizontal: horizontalTo} = getVerticalAndHorizontal(toPos)
@@ -300,18 +303,17 @@ export class ChessBoard {
                 tempMonkeyLastMoveStorage = new Monkey( this.boardLayout["MONKEY_START"].position, this.boardLayout["MONKEY_START"].isWhite )
                 delete this.boardLayout["MONKEY_START"]
             }
-            
 
             if (
                 ! oldToPos &&
-                (Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo) > 1) &&
+                (fromPos == "TEMP" || Math.abs(verticalFrom - verticalTo) > 1 || Math.abs(horizontalFrom - horizontalTo) > 1) &&
                 this.findJumpingMoves(this.boardLayout[toPos]).length > 0
             ) {
                 monkeyJumpingNonRescue = true;
             }
             this.boardLayout[toPos] = oldToPos;
             this.boardLayout[fromPos] = oldFromPos;
-                
+
             if (tempMonkeyLastMoveStorage) this.boardLayout["MONKEY_START"] = tempMonkeyLastMoveStorage
         }
         this.draggingJumpingMoney = false;
@@ -340,7 +342,15 @@ export class ChessBoard {
                 this.boardLayout["MONKEY_START"] = new Monkey (fromPos, this.boardLayout[fromPos].isWhite);
             }
 
+            // this temporarily stores what is currently in TEMP
+            let temporaryTEMP;
+
+            if (fromPos == "TEMP") temporaryTEMP = this.boardLayout["TEMP"];
+
             this.boardLayout.move(fromPos, toPos);
+
+            if (fromPos == "TEMP") this.boardLayout["TEMP"] = temporaryTEMP;
+
             // this.boardLayout[toPos] = this.boardLayout[fromPos]
             // delete this.boardLayout[fromPos]
             // this.boardLayout[toPos].position = toPos;
@@ -375,6 +385,7 @@ export class ChessBoard {
         if (monkeyJumping) this.manageMonkeyJumping(tempPiece, event);
         if (monkeyJumpingNonRescue) this.manageMonkeyJumpingNonRescue(event);
         this.playChessSound();
+        this.madeMoveCallbackFunc();
     }
 
     filterImpossibleMoves(moves, currentPos){

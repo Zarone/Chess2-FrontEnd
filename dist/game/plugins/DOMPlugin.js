@@ -58,8 +58,8 @@ export class DOMPlugin extends PluginBase {
             this.on(k, this.displayTimer.bind(this));
         })
 
-        this.on(Events.request.ADMIT_DEFEAT, (_, { message }) => {
-            this.emit(Events.request.GAME_OVER_MODAL, message);
+        this.on(Events.request.ADMIT_DEFEAT, (_, arg) => {
+            this.emit(Events.request.GAME_OVER_MODAL, arg?.message);
         });
 
         this.on(Events.LAUNCH, this.launch.bind(this));

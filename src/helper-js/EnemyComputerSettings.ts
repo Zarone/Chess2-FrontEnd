@@ -5,9 +5,9 @@ enum ComputerType {
 
 export type computerType = ("actHeuristic" | "actAlgorithmic")
 
-const computerTypes: {[key: string]: computerType} = {
+export const computerTypes: {[key: string]: computerType} = {
+    "ALGORITHMIC": "actAlgorithmic",
     "HEURISTIC": "actHeuristic",
-    "ALGORITHMIC": "actAlgorithmic"
 }
 
 function validateType(type: string): string{

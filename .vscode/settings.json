@@ -1,0 +1,13 @@
+{
+    "go.toolsEnvVars": {
+        "GOOS": "js",
+        "GOARCH": "wasm",
+    },
+    "cSpell.words": [
+        "chesstwoai",
+        "goccy",
+        "hrtime",
+        "jsboardinterface"
+    ],
+    "liveServer.settings.root": "./dist"
+}

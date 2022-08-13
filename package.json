@@ -5,7 +5,8 @@
   "main": "chess2.js",
   "scripts": {
     "go": "node tools/build.js",
-    "goTest": "cd src/ai && go build -o ./test.wasm",
+    "goTest": "cd src/ai && go test ./processor/ -test.v",
+    "goBench": "cd src/ai && go test ./processor/ -cpuprofile cpu.prof -bench . && go tool pprof cpu.prof",
     "dev": "node tools/build.js && webpack serve --config ./webpack.config.js --mode development --port 5500",
     "build": "node tools/build.js && webpack build --config ./webpack.config.js --mode production",
     "test": "webpack build --config ./webpack.config.test.js --mode development && node --nolazy --experimental-modules test/bin/bundle/test.js",
@@ -36,6 +37,7 @@
     "webpack-dev-server": "^4.9.3"
   },
   "dependencies": {
+    "esbuild-loader": "^2.19.0",
     "foam3": "github:kgrgreer/foam3#NP-7064/LastWorkingFoobar",
     "react-helmet": "^6.1.0",
     "source-map-loader": "^4.0.0",

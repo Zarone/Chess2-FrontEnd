@@ -1,7 +1,9 @@
-package processor
+package actcontainer 
 
 import (
 	"chesstwoai/boardmanager"
+	"chesstwoai/processor"
+	"chesstwoai/jsboardinterface"
 	"fmt"
 	"strings"
 	"syscall/js"
@@ -28,38 +30,18 @@ func ActAlgorithm(this js.Value, args []js.Value) any {
 	var thisColor string = initData[1].(string)
 	var enemyColor string = initData[2].(string)
 	state := initData[3].(boardmanager.State)
+	state.Hash = processor.GetZobristHash(state)
+	var level uint8 = uint8(initData[4].(int));
 
 	// AI complains that it's not programmed yet
 	plugin.Get("complain").Invoke(js.ValueOf("I don't know how to play yet"))
 
-	// STEPS FOR GETTING PIECES
-	// 	1. For the simple pieces (bear, elephant, fish, queen, king), just get all possible moves.
-	//	   Make sure to add movement to jail if they capture royalty.
-	//  2. For each monkey, use create node map to search for each space they can move to
-	//  3. For each monkey, check if they can do any rescue
-	//  4. For each rook, find spaces that are either
-	//		a ) Not able to be taken the next turn.
-	//     	b ) Defended, as in if the rook dies then another piece can take revenge.
-	//	   and also it must be next to a piece of either color
+	move := processor.BestMove(state, level);
+	// thisHash := processor.GetZobristHash(state)
+	// fmt.Println("Zobrist map of state", thisHash)
 
-
-	// // based on presets for DEFAULT board layout
-	// fmt.Println("Fish")
-	// state.Gb[8].ThisPieceType.GetMoves(8, state).Print()
-	// fmt.Println("Bear")
-	// state.Gb[68].ThisPieceType.GetMoves(68, state).Print()
-
-	// // based on presets for QUEEN_TEST board layout
-	// fmt.Println("Queen")
-	// state.Gb[9].ThisPieceType.GetMoves(9, state).Print()
-
-	// based on presets for ROOK_PARTY board layout
-	fmt.Println("Rook", state.Gb[54].ThisPieceType.Name)
-	state.Gb[54].ThisPieceType.GetMoves(54, state).Print()
-
-	// plugin.Get("complain").Invoke(js.ValueOf( board[68].ThisPieceType.GetMoves(68, board)[0].Output(thisColor, enemyColor) ))
-
-	output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
+	output := move.Output(thisColor, enemyColor)
+	// output := []interface{}{ []interface{}{"h5", "y2", fmt.Sprintf("%v Rescue", thisColor)}, []interface{}{"TEMP", "f5", enemyColor} }
 	actTail(output)
 	return nil
 }
@@ -71,7 +53,7 @@ func actTail(output []interface{}) {
 func actHead(this js.Value, args []js.Value) ([]any) {
 
 	fmt.Println("Initial Args", args)
-	
+
 	if len(args) < 2 {
 		panic("nope")
 	}
@@ -81,11 +63,12 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	var isWhite bool = args[3].Bool()
 	rookActiveWhite := args[4].Bool()
 	rookActiveBlack := args[5].Bool()
+	level := args[6].Int();
 
 
-	state := boardmanager.State{Gb: boardmanager.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack}
-	fmt.Println("Initializing board")
-	state.Gb.Print()
+	state := boardmanager.State{Gb: jsboardinterface.BoardRawToArrayBoard(boardRaw), RookWhiteActive: rookActiveWhite, RookBlackActive: rookActiveBlack, IsWhite: isWhite}
+	// fmt.Println("Initializing board")
+	// state.Gb.Print()
 
 	var thisColor string
 	var enemyColor string
@@ -99,5 +82,5 @@ func actHead(this js.Value, args []js.Value) ([]any) {
 	if strings.HasPrefix(turn, enemyColor) {
 		plugin.Get("errorFromAI").Invoke(js.ValueOf("AI cannot move because it's white's turn"))
 	} 
-	return []any{plugin, thisColor, enemyColor, state}
+	return []any{plugin, thisColor, enemyColor, state, level}
 }

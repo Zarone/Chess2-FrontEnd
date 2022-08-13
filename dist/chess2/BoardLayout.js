@@ -172,7 +172,7 @@ export class BoardLayout extends PowerClass {
         const samePlayer = currentTurn.player == newTurn.player;
 
         const monkeyJumpingStart =
-            currentTurn.is(NORMAL) && newTurn.is(JUMPING) && samePlayer;
+            currentTurn.is(Either(NORMAL, RESCUE)) && newTurn.is(JUMPING) && samePlayer;
         
         const monkeyJumpingContinue =
             currentTurn.is(JUMPING) && newTurn.is(JUMPING) && samePlayer;
@@ -304,10 +304,13 @@ export class BoardLayouts {
     ]
     
     static MONKEY_SAVE_TEST_BLACK = [
-        ["h5", 'Monkey', false],
+        ["f5", 'Monkey', false],
         ["y2", 'King', false],
         ["g5", 'Fish', false],
         ["z1", 'Bear'],
+        ["c2", "Fish", false],
+        ["h4", "Fish", false],
+        ["h2", "Fish", false],
     ]
 
     static MONKEY_SAVE_TEST = [
@@ -336,5 +339,44 @@ export class BoardLayouts {
     static QUEEN_TEST = [
         ["b7", 'Queen', false],
         ["g2", 'Queen', true]
+    ]
+
+    static KING_TEST = [
+        ["b8", 'King', false],
+        ["g1", 'King', true]
+    ]
+
+    static MONKEY_TEST = [
+        ["e5", 'Monkey', false],
+        ["f5", 'Monkey', false],
+        ["d5", 'Monkey', false],
+        ["e4", 'Monkey', false],
+        ["a1", 'Fish', true],
+        ['g5', 'Fish', true],
+        ["e2", "Fish", false],
+        ["e1", 'King', true]
+    ]
+
+    static END_GAME_TEST = [
+        ['d8', 'Queen', false],
+        ['e8', 'King', false],
+        ['d7', 'Fish', false],
+        ['e7', 'Fish', false],
+        ['d6', 'King', true],
+        ['x1', 'Queen', true],
+        ['z1', 'Bear', false]
+    ]
+
+    static CHECKMATE = [
+        ['a1', 'Queen', true],
+        ['a2', 'Queen', true],
+        ['a3', 'Queen', true],
+        ['a4', 'Queen', true],
+        ['a5', 'Queen', true],
+        ['a6', 'Queen', true],
+        ['a7', 'Queen', true],
+        ['a8', 'Queen', true],
+        ['d4', 'King', false],
+        ['y1', 'Queen', false]
     ]
 }

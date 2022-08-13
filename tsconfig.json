@@ -9,5 +9,6 @@
         "allowJs": true,
         "moduleResolution": "node",
         "plugins": [{ "name": "typescript-plugin-css-modules" }]
-    }
+    },
+    "exclude": ["node_modules"]
 }

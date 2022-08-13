@@ -5,12 +5,16 @@ import { getQuerystring } from "../../../dist/helper-js/utils";
 import { GameMode } from "../../helper-js/GameModes.js";
 import { computerType, EnemyComputerConstructorArgs, EnemyComputerSettings } from "../../helper-js/EnemyComputerSettings"
 import { Position } from "../../../dist/helper-js/board.js";
+import { Turn } from "../../../dist/game/model/Turn.js";
+import { JUMPING, NORMAL } from "../../../dist/helper-js/TurnUtil.js";
+import { EndGamePlugin } from "../../../dist/game/plugins/EndGamePlugin.js";
 
 type AI = {
-    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean, rookActiveWhite: boolean, rookActiveBlack: boolean) => void;
+    [key in computerType]: (turn: string, plugin: HumanVsAIPlugin, board: any, isWhite: boolean, rookActiveWhite: boolean, rookActiveBlack: boolean, level: number) => void;
 } & {
     getVersion: () => string;
     output: [string, string, string][];
+    outputPromise: ()=>void;
 };
 
 
@@ -68,15 +72,21 @@ export class HumanVsAIPlugin extends GameModeBasePlugin {
 
         this.on(Events.request.COMMIT_MOVE, () => {
             const turn = game.get('currentTurn');
+            if (!Turn.adapt(turn).is(NORMAL)) return;
+            console.log("EVALUATING MOVE")
+            if (!EndGamePlugin.checkLoseCondition(game, true))
 
             console.log("[AI input]", game.get("boardLayout").data)
-            ai[this.computerSettings.act](turn, this, game.get("boardLayout").data, !game.get('isWhite'), game.get("rookActiveWhite"), game.get("rookActiveBlack"));
-            let aiRes = ai.output;
-            console.log("[AI output]", aiRes)
-            
-            for (let i = 0; i < aiRes.length; i++){
-                this.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
-            }
+
+            ai.outputPromise = (()=>{
+                ai[this.computerSettings.act](
+                    turn, this, 
+                    game.get("boardLayout").data, 
+                    !game.get('isWhite'), 
+                    game.get("rookActiveWhite"), game.get("rookActiveBlack"), 
+                    this.computerSettings.level
+                );
+            })
 
         });
 

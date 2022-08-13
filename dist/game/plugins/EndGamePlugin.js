@@ -28,16 +28,16 @@ export class EndGamePlugin extends PluginBase {
 
             if ( !game.plugins[GameModeBasePlugin.identifier] ) throw new Error("[EndGamePlugin]: No Game Mode Set")
 
-            if ( game.plugins[GameModeBasePlugin.identifier].gameMode.singleplayer && this.checkLoseCondition(game, true) ) {
+            if ( game.plugins[GameModeBasePlugin.identifier].gameMode.singleplayer && EndGamePlugin.checkLoseCondition(game, true) ) {
                 this.emit(Events.request.ADMIT_DEFEAT, { message: NEUTRAL_GAME_OVER });
-            } else if ( this.checkLoseCondition(game) ) {
+            } else if ( EndGamePlugin.checkLoseCondition(game) ) {
                 this.emit(Events.request.ADMIT_DEFEAT, { message: LOSE_TEXT });
             }
 
         });
     }
 
-    checkLoseCondition (game, bothPlayers) {
+    static checkLoseCondition (game, bothPlayers) {
         const boardLayout = game.get('boardLayout');
         if (bothPlayers) return ( (boardLayout['x1'] && boardLayout['x2']) || (boardLayout['y1'] && boardLayout['y2']) )
         const c = game.get('isWhite') ? 'x' : 'y';
