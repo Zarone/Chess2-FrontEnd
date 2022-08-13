@@ -8,7 +8,8 @@ function rawJoin(time){
 }
 
 function rawSinglePlayer(time){
-    window.location.href="../game.html?friendRoom=false&timeLimit="+time.toString();
+    // window.location.href="../game.html?friendRoom=false&timeLimit="+time.toString();
+    window.location.href = "../game.html?friendRoom=true&timeLimit=100&gamemode=HUMAN_VS_AI&computerLevel=2&computerType=ALGORITHMIC"
 }
 
 window.onload = async () => {
