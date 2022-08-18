@@ -26,6 +26,8 @@ import { GameMode, GameModes } from "../src/helper-js/GameModes"
 import { EnemyComputerSettings } from "../src/helper-js/EnemyComputerSettings";
 import { Turn } from "./game/model/Turn.js";
 import { NORMAL, WHITE } from "./helper-js/TurnUtil.js";
+import { SpectatorPlugin } from "../src/game/plugins/SpectatorPlugin";
+import { GameModeBasePlugin } from "../src/game/plugins/GameModeBasePlugin";
 
 export const onLoad = async (styleSheet, styleName) => {
 
@@ -96,39 +98,42 @@ export const onLoad = async (styleSheet, styleName) => {
         }
     }
 
-    document.addEventListener("mouseup", event => {
-        chessBoard.dragEnd(event)
+    if (!(game.plugins[GameModeBasePlugin.identifier].constructor.name == SpectatorPlugin.prototype.constructor.name)){
 
-        setTimeout(()=>{
-            let thisTurn = Turn.adapt(game.get("currentTurn"))
-            if (!thisTurn.is(NORMAL)) {
-                console.log("NOT NEW TURN")
-                return;
-            }
-
-            console.log(game.get("currentTurn"), game.get("isWhite"))
-
-            if ((game.get("currentTurn") == "White") == game.get("isWhite")) {
-                console.log("NOT AI's TURN")
-                return;
-            }
-            if (!globalThis.outputPromise) {
-                console.log("NO AI TURN PREPARED")
-                return;
-            }
+        document.addEventListener("mouseup", event => {
+            chessBoard.dragEnd(event)
     
-            globalThis.outputPromise()
+            setTimeout(()=>{
+                let thisTurn = Turn.adapt(game.get("currentTurn"))
+                if (!thisTurn.is(NORMAL)) {
+                    console.log("NOT NEW TURN")
+                    return;
+                }
     
-            let aiRes = globalThis.output;
-            
-            console.log("[AI output]", aiRes)
-            
-            for (let i = 0; i < aiRes.length; i++){
-                game.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
-            }
-        }, 0)
-    })
-    document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
+                console.log(game.get("currentTurn"), game.get("isWhite"))
+    
+                if ((game.get("currentTurn") == "White") == game.get("isWhite")) {
+                    console.log("NOT AI's TURN")
+                    return;
+                }
+                if (!globalThis.outputPromise) {
+                    console.log("NO AI TURN PREPARED")
+                    return;
+                }
+        
+                globalThis.outputPromise()
+        
+                let aiRes = globalThis.output;
+                
+                console.log("[AI output]", aiRes)
+                
+                for (let i = 0; i < aiRes.length; i++){
+                    game.emit(Events.request.TRY_MAKE_MOVE, {fromPos: new Position(aiRes[i][0]), toPos: new Position(aiRes[i][1]), newTurn: aiRes[i][2]})
+                }
+            }, 0)
+        })
+        document.addEventListener("mousemove", event=>chessBoard.cursorMove(event))
+    }
 
     launcher.launch();
     return { chessBoard, reversedPointer, gameMode };
