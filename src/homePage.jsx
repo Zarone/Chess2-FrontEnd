@@ -38,6 +38,9 @@ export default function HomePage(props){
     <Header />
     <section>
         <div className="container-fluid text-white pt-5">
+            <div className="container custom-bg-primary rounded">
+                <p className="h1 text-center"><a href="https://www.youtube.com/watch?v=mcivL8u176Y">Rules Here</a></p>
+            </div>
             <div className="container my-5 custom-bg-primary pb-5 rounded">
                 <div className="row mb-4">
                     <div className="col-lg-6 pt-5 mt-5">
