@@ -1,6 +1,7 @@
 import { Module } from "webpack"
 import oatStyle from "../../dist/styles/style_originalOat.module.css"
 import pixelStyle from "../../dist/styles/style_pixelArt.module.css"
+import highResStyle from "../../dist/styles/style_highRes.module.css"
 
 class KeyValueWrapper {
    
@@ -58,7 +59,7 @@ class CustomStyle {
 export const styleList = {
     oat: new CustomStyle("oat", oatStyle, "backgroundColor", "red"),
     pixel: new CustomStyle("pixel", pixelStyle, ["backgroundImage", "backgroundPosition", "backgroundRepeat", "backgroundAttachment", "backgroundColor"], [`url("./assets/pixel/To Move.png")`, "center center", "no-repeat", "scroll", "rgba(255, 0, 154, 0.3)"]),// center center no-repeat scroll rgba(255, 0, 153, 0.3)`),
-    highRes: new CustomStyle("highRes", oatStyle, "backgroundColor", "red"),
+    highRes: new CustomStyle("highRes", highResStyle, "backgroundColor", "rgb(212, 108, 81)"),
 }
 
 export function getCustomStyle(style: CustomStyle): Module { return style.module } ;
