@@ -24,7 +24,12 @@ class KeyValueWrapper {
 
     checkAgainst(obj: HTMLElement){
         for (let i = 0; i < this.key.length; i++){
-            if ((<any>obj.style)[this.key[i]] != this.value[i]) {
+            // only check background color here because other attributes
+            // can be inconsistent across browsers
+            if (
+                this.key[i] == "backgroundColor" && 
+                (<any>obj.style)[this.key[i]] != this.value[i]
+            ) {
                 return false;
             }
         }
