@@ -6,9 +6,10 @@ import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
 import "../dist/helper-js/join";
 import { styleList } from "./helper-js/StyleManager";
 import { GameMode, GameModes } from "../src/helper-js/GameModes"
-import { goToGame } from "../dist/helper-js/utils";
+import { goToGame, serverID } from "../dist/helper-js/utils";
 import { computerTypes } from "../src/helper-js/EnemyComputerSettings"
 import styles from "../dist/styles/home.module.css"
+import { Servers, ServerUtil } from "./helper-js/Servers";
 
 export default function HomePage(props){
 
@@ -16,6 +17,7 @@ export default function HomePage(props){
     const [soundOn, setSoundToggle] = useState(initAndGetSound())
 
     const [gameMode, setGameMode] = useState(GameModes.SINGLE_PLAYER.modeName);
+    const [server, setServer] = useState(ServerUtil.getDefault());
     const [roomID, setRoomID] = useState();
     const [timeLimit, setTimeLimit] = useState(15)
     const [AILevel, setAILevel] = useState(1)
@@ -31,10 +33,21 @@ export default function HomePage(props){
         console.log(globalThis.cookie.sound)
     }, [soundOn])
 
+    useEffect(() => {
+        window.server = server;
+        (async () => {
+            let roomsCount_Dom = document.getElementById("rooms-count")
+            let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
+            let roomsCountJson = await roomsCountRaw.json();
+            roomsCount_Dom.innerText = "Rooms: " + roomsCountJson.roomCount;
+        })();
+    }, [server])
+
     const noticeMe = {
-        'background-color': 'rgb(159 36 199)',
-        'font-size': '1.2rem',
-        padding: '0.5rem'
+        'backgroundColor': 'rgb(159 36 199)',
+        'fontSize': '1.2rem',
+        'padding': '0.5rem',
+        'marginBottom': '1rem',
     };
 
     return <React.Fragment>
@@ -63,6 +76,18 @@ export default function HomePage(props){
                     <div className="col-lg-6 pt-5">
                         <div className="container custom-bg-tertiary rounded pt-3 pb-3">
                             <div><p className="h2 text-center" id="rooms-count">Loading room count...</p></div>
+        
+                            <div style={noticeMe}>
+                                Choose a different server if rooms are full<br />
+                                <select className={`rounded ${styles.customGameOption}`} title="Select Server" defaultValue={Object.keys(Servers)[0]} onChange={(e)=>{setServer(e.target.value)}}>
+                                    {
+                                        Object.keys(Servers).map((el)=>{
+                                            if ( Servers[el].visible && ! Servers[el].visible() ) return "";
+                                            return Servers[el].hidden ? "" : <option key={el} value={el}>{Servers[el].label}</option>
+                                        })
+                                    }
+                                </select>
+                            </div>
                             
                             <h2>Quick Play</h2>
 
