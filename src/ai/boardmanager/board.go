@@ -14,9 +14,12 @@ type State struct {
 	RookBlackActive bool;
 	IsWhite bool;
 	Hash int64;
+	Evaluation int16;
 }
 
-
+var RowToBonus [8]int16 = [8]int16{0, 10, 50, 100, 150, 200, 250, 300};
+var colorMultiplier int16 = 0;
+var fishyRow int16 = 0;
 // this does the same thing as setting Gb directly, except this also mutates the hash
 func (state *State) UpdateBoard(table *[69][16]int64, pos int16, newPiece Tile){
 	if state.Gb[pos].equals(newPiece) { return }
@@ -27,11 +30,49 @@ func (state *State) UpdateBoard(table *[69][16]int64, pos int16, newPiece Tile){
 		// undo the piece that's already there
 		// (a number XOR itself equals 0)
 
-		
-
 		state.Hash = state.Hash ^ (*table)[pos][state.Gb[pos].ThisPieceType.ID + 8*helper.Uint8b(state.Gb[pos].IsWhite)]
+
+		colorMultiplier = int16(1);
+		if (state.Gb[pos].IsWhite) { colorMultiplier = -1 }
+		state.Evaluation += state.Gb[pos].ThisPieceType.StaticValue*colorMultiplier;
+		if (state.Gb[pos].ThisPieceType.ID == Fish.ID){
+			fishyRow = pos/8;
+			if (state.Gb[pos].IsWhite){
+				colorMultiplier = -1;
+				fishyRow = 7 - fishyRow;
+			}
+			state.Evaluation += colorMultiplier*RowToBonus[fishyRow];
+		}
+
 	} else {
 		state.Hash = state.Hash ^ (*table)[pos][newPiece.ThisPieceType.ID + 8*helper.Uint8b(newPiece.IsWhite)]
+		
+		if !isJail(pos){
+			colorMultiplier = int16(1);
+			if (state.Gb[pos].IsWhite) { colorMultiplier = -1 }
+			state.Evaluation += state.Gb[pos].ThisPieceType.StaticValue*colorMultiplier;
+			if (state.Gb[pos].ThisPieceType.ID == Fish.ID){
+				fishyRow = pos/8;
+				if (state.Gb[pos].IsWhite){
+					colorMultiplier = -1;
+					fishyRow = 7 - fishyRow;
+				}
+				state.Evaluation += colorMultiplier*RowToBonus[fishyRow];
+			}
+	
+			colorMultiplier = int16(-1);
+			if (newPiece.IsWhite) { colorMultiplier = 1 }
+			state.Evaluation += newPiece.ThisPieceType.StaticValue*colorMultiplier;
+			if (newPiece.ThisPieceType.ID == Fish.ID){
+				fishyRow = pos/8;
+				if (newPiece.IsWhite){
+					colorMultiplier = 1;
+					fishyRow = 7 - fishyRow;
+				}
+				state.Evaluation += colorMultiplier*RowToBonus[fishyRow];
+			}
+		}
+
 	}
 	state.Gb[pos] = newPiece;
 }
@@ -43,6 +84,7 @@ func (state State) Print() {
 func (state State) MakeMove(move RawMove, zobristInfo *helper.ZobristInfo) State {
 	var newState State;
 	newState.IsWhite = !state.IsWhite;
+	newState.Evaluation = state.Evaluation;
 	
 	newState.RookBlackActive = false;
 	if state.RookBlackActive { newState.Hash ^= zobristInfo.RookBlackOffset }

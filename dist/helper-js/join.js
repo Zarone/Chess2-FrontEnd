@@ -4,7 +4,8 @@ import {Cookie} from "./cookieManager.js"
 import { GameMode, GameModes } from "../../src/helper-js/GameModes"
 
 function rawJoin(time){
-    window.location.href=`../game.html?gamemode=${GameModes.PLAYER_VS_PLAYER.modeName}&friendRoom=false&timeLimit=${time.toString()}`;
+    window.location.href=`../game.html?gamemode=${GameModes.PLAYER_VS_PLAYER.modeName}&friendRoom=false&timeLimit=${time.toString()}`
+        + `&server=${window.server}`;
 }
 
 function rawSinglePlayer(time){

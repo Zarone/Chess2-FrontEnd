@@ -479,7 +479,7 @@ export class ChessBoard {
         this.styleType.canMove.unsetAt(document.getElementById("x1"));
         this.styleType.canMove.unsetAt(document.getElementById("y1"));
         this.styleType.canMove.unsetAt(document.getElementById("x2"));
-        this.styleType.canMove.unsetAt(document.getElementById("y1"));
+        this.styleType.canMove.unsetAt(document.getElementById("y2"));
         this.styleType.canMove.unsetAt(document.getElementById("z1"));
 
     }

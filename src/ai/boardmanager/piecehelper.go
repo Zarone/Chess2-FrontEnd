@@ -64,7 +64,6 @@ func (moves PossibleMoves) CanReach(includeSecondary bool) map[int16]bool{
 
 func (move RawMove) ToState(zobristInfo *helper.ZobristInfo, overwritingStates *(*[]State), baseState State, index int) {
 	
-	// moveLen := len(moves)
 	var stateLen int;
 	if (*overwritingStates)==nil {
 		tempStates := make([]State, 0, 20);
@@ -85,18 +84,6 @@ func (move RawMove) ToState(zobristInfo *helper.ZobristInfo, overwritingStates *
 	if stateLen > index+1 {
 		(**overwritingStates) = (**overwritingStates)[0:index+1:stateLen]
 	}
-
-	// var states []State = make([]State, len(moves));
-	// for index, element := range moves {
-	// 	states[index] = baseState.MakeMove(element)
-	// }
-	// return states;
-
-	// var states []State;
-	// for _, element := range moves {
-	// 	states = append(states, baseState.MakeMove(element))
-	// }
-	// return states
 }
 
 func (moves PossibleMoves) Print(heading string){
@@ -347,6 +334,10 @@ func checkRoyalty(pos int16, state State, move *RawMove) {
 		*move = append(*move, RawPartialMove{fromPos: 69, toPos: target, sameColor: false, turnType: TURN_DEFAULT})
 
 	}
+}
+
+func isJail(pos int16) bool {
+	return pos > 63 && pos != 68
 }
 
 func getCorrespondingJail(pos int16, isWhite bool) int16 {

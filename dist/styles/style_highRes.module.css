@@ -1,0 +1,59 @@
+:root{
+    --padding: 0px;
+}
+
+.chess-box, .chess-jail-box {
+    cursor: default;
+    height: min(
+        calc(var(--tile-size-fixed) - var(--padding)), 
+        calc(var(--tile-size-dynamic) - var(--padding))
+    );
+    width: min(
+        calc(var(--tile-size-fixed) - var(--padding)), 
+        calc(var(--tile-size-dynamic) - var(--padding))
+    );
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* background-image: radial-gradient(circle, rgba(0, 0, 0, 0) 20%, rgba(0, 0, 0, 0.2) 80%); */
+}
+
+.white-box {
+    background-color: #eeeed2;
+}
+
+.black-box {
+    background-color: #769656;
+}
+
+.chess-jail-box{
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(255, 255, 255, 0.0) 0 calc(min(
+            var(--tile-size-fixed),
+            var(--tile-size-dynamic)
+        )/6),
+        rgba(174, 176, 179, 0.5) calc(min(
+            var(--tile-size-fixed),
+            var(--tile-size-dynamic)
+        )/6) calc(min(
+            var(--tile-size-fixed),
+            var(--tile-size-dynamic)
+        )/3)
+    ), radial-gradient(circle, rgba(0, 0, 0, 0) 25%, rgba(0, 0, 0, 0.1) 80%);
+}
+
+.timer-container{
+    width: 50%; 
+    margin: 1rem auto; 
+    border-radius: 5px;
+}
+
+.timer-top{
+    text-align: end;
+}
+
+.timer-bottom{
+    text-align: start;
+}

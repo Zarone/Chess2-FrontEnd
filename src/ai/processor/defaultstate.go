@@ -90,9 +90,9 @@ var defaultState boardmanager.State = boardmanager.State{
 
 var testState1 boardmanager.State = boardmanager.State{
 	Gb: boardmanager.GameBoard{
+        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.Rook, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.Fish, HasBanana: false},
-        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.Queen, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.King, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.Fish, HasBanana: false},
@@ -119,7 +119,7 @@ var testState1 boardmanager.State = boardmanager.State{
 			  
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
-        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.Rook, HasBanana: false},
+        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
@@ -128,9 +128,9 @@ var testState1 boardmanager.State = boardmanager.State{
         
 		boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
+        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
-        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
-        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
+        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
 		boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
@@ -138,7 +138,7 @@ var testState1 boardmanager.State = boardmanager.State{
 		boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
-        boardmanager.Tile{IsWhite: true, ThisPieceType: boardmanager.Fish, HasBanana: false},
+        boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
         boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.NullPiece, HasBanana: false},
