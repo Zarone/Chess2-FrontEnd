@@ -1,6 +1,10 @@
 import { GameModes } from "../../src/helper-js/GameModes"
 import { Position } from "./board.js"
 
+// backup server
+// const herokuServerID = "https://chess2-server2.herokuapp.com"
+// const herokuSocketID = "ws://chess2-server2.herokuapp.com"
+
 const herokuServerID = "https://chess2-api.herokuapp.com"
 const herokuSocketID = "ws://chess2-api.herokuapp.com"
 const localServerID = "http://127.0.0.1:8080"

@@ -19,6 +19,11 @@ export default function FAQPage(props){
                 <p>
                     If there are any bug, suggestions, or are just eager for discussion, then you can check out the <a href="https://discord.gg/4werTjmA">Discord</a>.
                 </p>
+                <p className="display-3">What of this website can you re-use, and how?</p>
+                <p>
+                    The general license for the code base is the MIT LICENSE.txt file in the root directory of the github repository. Certain assets 
+                    may have an alternate license, as is the case with images for the High Res custom theme provided by SteamDemon296 under the <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+                </p>
             </div>
         </div>
     </section>
