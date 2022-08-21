@@ -15,8 +15,10 @@ var ROOK_VALUE int = 300;
 var NULL_VALUE int = 0;
 
 var multiplier = int16(1)
-// var row int16;
-// var fishyMultiplier int16;
+
+var row int16;
+var rowToBonus [8]int16 = [8]int16{0, 50, 100, 150, 200, 250, 300, 400};
+
 func staticEvaluation(state boardmanager.State) int16{
 
 	val := int16(0)
@@ -24,18 +26,16 @@ func staticEvaluation(state boardmanager.State) int16{
 	for i:=int16(0); i<64; i++{
 		if (!state.Gb[i].IsWhite) { multiplier = -1; } else {multiplier = 1}
 
-	// 	if (state.Gb[i].ThisPieceType.ID == boardmanager.Fish.ID){
-	// 		fishyMultiplier = 1;
-	// 		row, _ = boardmanager.PosToRowCol(i);
-	// 		if (state.Gb[i].IsWhite){
-	// 			row = 7-row;
-	// 		}
-	// 	} else {
-	// 		fishyMultiplier = 0;
-	// 	}
+		if (state.Gb[i].ThisPieceType.ID == boardmanager.Fish.ID){
+			row = i / 8;
+			if (state.Gb[i].IsWhite){
+				row = 7-row;
+			}
+			val += (state.Gb[i].ThisPieceType.StaticValue + rowToBonus[row]) * multiplier
+		} else {
+			val += state.Gb[i].ThisPieceType.StaticValue * multiplier
+		}
 
-	//	val += (state.Gb[i].ThisPieceType.StaticValue + fishyMultiplier * (row<<6)) * multiplier
-		val += state.Gb[i].ThisPieceType.StaticValue * multiplier
 	}
 	return val;
 }
