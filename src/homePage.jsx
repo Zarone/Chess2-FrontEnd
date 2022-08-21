@@ -49,7 +49,7 @@ export default function HomePage(props){
                         </div>
                         <p className="h3">Chess 2 by <a className="text-decoration-none" href="https://www.youtube.com/c/OatsJenkins">Oats Jenkins</a></p>
                         <p className="h3">Website by Zach Alfano</p>
-                        <p className="h3">Chess 2 <a href="https://discord.gg/vMvvt533">Discord</a> by sup lloooll</p>
+                        <p className="h3">Chess 2 <a href="https://discord.gg/aGFThSgGsj">Discord</a> by sup lloooll</p>
                     </div>
                     <div className="col-lg-6 pt-5">
                         <div className="container custom-bg-tertiary rounded pt-3 pb-3">
