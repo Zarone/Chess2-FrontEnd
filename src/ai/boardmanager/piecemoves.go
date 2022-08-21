@@ -118,7 +118,9 @@ func MonkeyMove(pos int16, state State, _ ConditionType) PossibleMoves {
 	allPaths := [][]int16{{pos}}
 
 	for len(toVisit) > 0 {
-		visitingNode := toVisit[len(toVisit)-1]
+		lastElem := &toVisit[len(toVisit)-1];
+		visitingNode := make([]int16, len(*lastElem))
+		copy(visitingNode, *lastElem)
 		visiting := visitingNode[len(visitingNode)-1]
 
 		toVisit = toVisit[:len(toVisit)-1]

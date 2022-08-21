@@ -56,7 +56,9 @@ func searchTree(state boardmanager.State, depth uint8, alpha int16, beta int16, 
 	} else if (state.Gb[66].ThisPieceType.Name != boardmanager.NullPiece.Name && state.Gb[67].ThisPieceType.Name != boardmanager.NullPiece.Name){
 		return math.MaxInt16-1, nil
 	}
-	if depth == 0 { return staticEvaluation(state), nil; }
+	if depth == 0 {
+		return state.Evaluation, nil; 
+	}
 
 	// you only need one state per layer, since
 	// everything runs consecutively
@@ -130,13 +132,14 @@ func BestMove(state boardmanager.State, level uint8) boardmanager.RawMove{
 
 	fmt.Println("Starting Board")
 	fmt.Println("isWhite", state.IsWhite, "rookIsBlack", state.RookBlackActive, "rookIsWhite", state.RookWhiteActive)
-	state.Gb.Print()
+	state.Gb.Print();
+	state.Evaluation = boardmanager.StaticEvaluation(state)
 	
 	resetStatePtr(level)
 	resetTranspositionTable()
 
 	rootDebugNode := debugNode{name: "ROOT", value: 0, children: []debugNode{}}
-	eval, move := searchTree(state, level, math.MinInt16, math.MaxInt16, 0, &rootDebugNode)
+	eval, move := searchTree(state, level, math.MinInt16, math.MaxInt16, -1, &rootDebugNode)
 	rootDebugNode.value = eval;
 	
 	if (move == nil){

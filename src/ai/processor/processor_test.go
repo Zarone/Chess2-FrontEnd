@@ -8,8 +8,8 @@ import (
 
 func TestBestMove(t *testing.T){
 
-	defaultState.Hash = GetZobristHash(defaultState);
+	defaultState.Hash = GetZobristHash(testState1);
 	for i:=0; i<1; i++ {
-		fmt.Println(BestMove(defaultState, 6));
+		fmt.Println(BestMove(testState1, 6));
 	}
 }

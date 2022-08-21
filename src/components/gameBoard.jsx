@@ -77,11 +77,11 @@ export default function GameBoard(props) {
                     "" 
             }
         </div>
-        <div className="container">
+        <div className="container" style={{maxWidth: "95%"}}>
             <div className="container mt-3 mb-3 rounded">
                 <p id="turn" className="display-6 rounded text-center">Turn: </p>
             </div>
-            <div className="container">
+            <div className="container" style={{maxWidth: "95%", padding: 0}}>
                 <div className={`container custom-bg-tertiary ${customStyle["timer-container"]}`}>
                     <p className={`h3 text-weight-normal text-white ${customStyle["timer-top"]}`} id="timer-top">---</p>
                 </div>            
