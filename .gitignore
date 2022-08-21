@@ -39,3 +39,4 @@ dist/game/plugins/SpectatorPlugin.js.LICENSE.txt
 test/bin/bundle/*
 src/ai/cpu.prof
 src/ai/processor.test.exe
+src/ai/mem.prof
