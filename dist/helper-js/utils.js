@@ -1,4 +1,5 @@
 import { GameModes } from "../../src/helper-js/GameModes"
+import { Servers } from "../../src/helper-js/Servers"
 import { Position } from "./board.js"
 
 // backup server
@@ -17,6 +18,7 @@ export function goToGame({modeName, roomID, timeLimit, computerLevel, computerTy
     url += `&gamemode=${modeName || GameModes.SINGLE_PLAYER.modeName}`;
     url += `&computerLevel=${computerLevel}`
     url += `&computerType=${computerType}`
+    url += `&server=${window.server}`
     window.location.href = url;
 }
 
@@ -36,6 +38,9 @@ export function disconnectText(secondRemaining){
 }
 
 export function serverID(){
+    if ( window.server ) {
+        return Servers[window.server].http;
+    }
     if (window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost"){
         return localServerID
     }
@@ -43,6 +48,13 @@ export function serverID(){
 }
 
 export function socketID(){
+    const queryString = getQuerystring();
+    if ( queryString.server ) window.server = queryString.server;
+
+    if ( window.server ) {
+        return Servers[window.server].ws;
+    }
+
     if (window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost"){
         return localSocketID
     }
