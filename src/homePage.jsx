@@ -44,10 +44,10 @@ export default function HomePage(props){
     }, [server])
 
     const noticeMe = {
-        'background-color': 'rgb(159 36 199)',
-        'font-size': '1.2rem',
-        padding: '0.5rem',
-        'margin-bottom': '1rem',
+        'backgroundColor': 'rgb(159 36 199)',
+        'fontSize': '1.2rem',
+        'padding': '0.5rem',
+        'marginBottom': '1rem',
     };
 
     return <React.Fragment>
@@ -83,7 +83,7 @@ export default function HomePage(props){
                                     {
                                         Object.keys(Servers).map((el)=>{
                                             if ( Servers[el].visible && ! Servers[el].visible() ) return "";
-                                            return Servers[el].hidden ? "" : <option value={el}>{Servers[el].label}</option>
+                                            return Servers[el].hidden ? "" : <option key={el} value={el}>{Servers[el].label}</option>
                                         })
                                     }
                                 </select>
