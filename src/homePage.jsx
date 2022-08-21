@@ -17,7 +17,7 @@ export default function HomePage(props){
     const [soundOn, setSoundToggle] = useState(initAndGetSound())
 
     const [gameMode, setGameMode] = useState(GameModes.SINGLE_PLAYER.modeName);
-    const [server, setServer] = useState(ServerUtil.getDefault());
+    const [server, setServer] = useState(undefined);
     const [roomID, setRoomID] = useState();
     const [timeLimit, setTimeLimit] = useState(15)
     const [AILevel, setAILevel] = useState(1)
@@ -27,14 +27,14 @@ export default function HomePage(props){
         globalThis.cookie.style = customStyle.name
         console.log(globalThis.cookie.style)
     }, [customStyle])
-
+    
     useEffect(()=>{
         globalThis.cookie.sound = soundOn
         console.log(globalThis.cookie.sound)
     }, [soundOn])
-
+    
     useEffect(() => {
-        window.server = server;
+        window.server = server || "heroku-1";
         (async () => {
             let roomsCount_Dom = document.getElementById("rooms-count")
             let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
@@ -42,6 +42,12 @@ export default function HomePage(props){
             roomsCount_Dom.innerText = "Rooms: " + roomsCountJson.roomCount;
         })();
     }, [server])
+    
+    useEffect(()=>{
+        (async ()=>{
+            setServer(await ServerUtil.getDefault())
+        })()
+    }, [])
 
     const noticeMe = {
         'backgroundColor': 'rgb(159 36 199)',
@@ -79,7 +85,7 @@ export default function HomePage(props){
         
                             <div style={noticeMe}>
                                 Choose a different server if rooms are full<br />
-                                <select className={`rounded ${styles.customGameOption}`} title="Select Server" defaultValue={Object.keys(Servers)[0]} onChange={(e)=>{setServer(e.target.value)}}>
+                                <select className={`rounded ${styles.customGameOption}`} title="Select Server" value={server} onChange={(e)=>{setServer(e.target.value)}}>
                                     {
                                         Object.keys(Servers).map((el)=>{
                                             if ( Servers[el].visible && ! Servers[el].visible() ) return "";

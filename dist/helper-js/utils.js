@@ -22,6 +22,18 @@ export function goToGame({modeName, roomID, timeLimit, computerLevel, computerTy
     window.location.href = url;
 }
 
+export async function getRoomCount(serverAddress){
+
+    return fetch(serverAddress+"/getRoomCount")
+        .then((raw)=>{
+            return raw.json();
+        })
+        .then((json)=>{
+            return +json.roomCount.split("/")[0];
+        })
+    
+}
+
 export const canMoveColor = "red"
 export const prevMoveColor = "green"
 
