@@ -30,6 +30,11 @@ export default function HomePage(props){
         console.log(globalThis.cookie.sound)
     }, [soundOn])
 
+    const noticeMe = {
+        'background-color': 'rgb(159 36 199)',
+        'font-size': '1.2rem',
+        padding: '0.5rem'
+    };
 
     return <React.Fragment>
     <script src="../dist/foam-bin.js"></script>
@@ -45,7 +50,10 @@ export default function HomePage(props){
                         </div>
                         <p className="h3">Chess 2 by <a className="text-decoration-none" href="https://www.youtube.com/c/OatsJenkins">Oats Jenkins</a></p>
                         <p className="h3">Website by Zach Alfano</p>
-                        <p className="h3">Chess 2 <a href="https://discord.gg/vMvvt533">Discord</a> by sup lloooll</p>
+                        <p className="h3">Chess 2 <a href="https://discord.gg/aGFThSgGsj">Discord</a> by sup lloooll</p>
+                        <p style={noticeMe}>
+                            ^ Discord link was broken, but we fixed it
+                        </p>
                     </div>
                     <div className="col-lg-5 pt-5">
                         <div className="container custom-bg-tertiary rounded pt-3 pb-3">
