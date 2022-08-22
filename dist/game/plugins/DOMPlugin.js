@@ -59,6 +59,7 @@ export class DOMPlugin extends PluginBase {
         })
 
         this.on(Events.request.ADMIT_DEFEAT, (_, arg) => {
+            console.log("ADMIT DEFEAT")
             this.emit(Events.request.GAME_OVER_MODAL, arg?.message);
         });
 
@@ -136,6 +137,7 @@ export class DOMPlugin extends PluginBase {
     }
 
     toTimerString_ (val) {
+        if (Number.isNaN(val)) return "∞"
         const seconds = val % 60;
         return Math.floor(val/60).toString() +
             (seconds < 10 ? ':0' : ':') +

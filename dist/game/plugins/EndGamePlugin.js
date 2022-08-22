@@ -31,6 +31,7 @@ export class EndGamePlugin extends PluginBase {
             if ( game.plugins[GameModeBasePlugin.identifier].gameMode.singleplayer && EndGamePlugin.checkLoseCondition(game, true) ) {
                 this.emit(Events.request.ADMIT_DEFEAT, { message: NEUTRAL_GAME_OVER });
             } else if ( EndGamePlugin.checkLoseCondition(game) ) {
+                console.log("LOSS CONDITIONS MET")
                 this.emit(Events.request.ADMIT_DEFEAT, { message: LOSE_TEXT });
             }
 

@@ -40,6 +40,7 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
 
         let disconnectTimer = DISCONNECT_TIMER_START;
         socket.on("disconnect", () => {
+            console.log("NETWORK DISCONNECTED")
             disconnectTimer = DISCONNECT_TIMER_START
             this.emit(Events.request.GAME_OVER_MODAL, disconnectText(disconnectTimer));
 

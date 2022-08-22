@@ -1,5 +1,5 @@
 import { Events } from "../../../dist/game/Events";
-import { socketID } from "../../../dist/helper-js/utils";
+import { getQuerystring, socketID } from "../../../dist/helper-js/utils";
 import { GameMode } from "../../helper-js/GameModes";
 import { Game } from "../Game";
 import { MoveInfo } from "../net/MoveInfo";
@@ -63,6 +63,7 @@ export class SpectatorPlugin extends GameModeBasePlugin {
             console.log('establishReconnection')
             
             console.log("RECONNECT DATA: ", args)
+            debugger
 
             this.emit(Events.request.CLEAR_MODALS);
 
@@ -71,14 +72,15 @@ export class SpectatorPlugin extends GameModeBasePlugin {
 
             this.emit(Events.request.SET_BOARD_LAYOUT, args);
 
-            const { finalTimeLimit, currentTurn } = game.state;
+            const { currentTurn } = game.state;
+            let finalTimeLimit = getQuerystring().timeLimit * 60;
             
             game.set('whiteTimer', finalTimeLimit - args.timeWhite);
             game.set('blackTimer', finalTimeLimit - args.timeBlack);
 
             if (finalTimeLimit <= 60*60){
-                if ( currentTurn.startsWith('Black') ) game.blackTimer -= args.timeSinceLastMove;
-                if ( currentTurn.startsWith('White') ) game.whiteTimer -= args.timeSinceLastMove;
+                if ( currentTurn.startsWith('Black') ) game.set('blackTimer', game.get('blackTimer') - args.timeSinceLastMove);
+                if ( currentTurn.startsWith('White') ) game.set('whiteTimer', game.get('whiteTimer') - args.timeSinceLastMove);
             } 
 
         })

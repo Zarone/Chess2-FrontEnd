@@ -47,7 +47,8 @@ export class TimerPlugin extends PluginBase {
                 finalTimeLimit,
             } = game.state;
 
-            if ( currentTurn != 'Not Started' && finalTimeLimit > 60*60 ) {
+
+            if ( currentTurn != 'Not Started' && (finalTimeLimit||0) > 60*60 ) {
                 this.terminate();
                 return;
             }
@@ -66,6 +67,9 @@ export class TimerPlugin extends PluginBase {
 
             const timeLeft = game.get(this.timerProp_(turnPlayer));
             if ( timeLeft < 0 ) {
+
+                console.log("RAN OUT OF TIME")
+
                 this.emit(Events.request.ADMIT_DEFEAT);
 
                 // TODO: this should listen to the admitDefeat event
