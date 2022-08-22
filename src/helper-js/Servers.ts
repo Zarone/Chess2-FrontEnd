@@ -18,13 +18,13 @@ export const Servers = {
     'heroku-1': {
         http: 'https://chess2-api.herokuapp.com',
         ws: 'ws://chess2-api.herokuapp.com',
-        label: 'Original (max 50)',
+        label: 'Server 1 (max 50)',
         limit: 50
     },
     'heroku-2': {
         http: 'https://chess2-server2.herokuapp.com',
         ws: 'ws://chess2-server2.herokuapp.com',
-        label: 'Backup Server (max 75)'
+        label: 'Server 2 (max 75)'
     },
     'dedicated-1': {
         http: 'http://198.84.240.109:8081',
