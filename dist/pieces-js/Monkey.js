@@ -91,6 +91,18 @@ export class Monkey extends Piece {
             )
         }
 
+        if (this.isWhite){
+            if (this.position == "a4") { output.push({pos: "x1", conditions: [canMonkeyPrisonJump]}) }
+            if (this.position == "a5") { output.push({pos: "x2", conditions: [canMonkeyPrisonJump]}) }
+            // if (vertical % 2 == 0 && horizontal % 2 == 1) output.push({pos: "x1", conditions: [canMonkeyPrisonJump]})
+            // if (vertical % 2 == 1 && horizontal % 2 == 1) output.push({pos: "x2", conditions: [canMonkeyPrisonJump]})
+        } else {
+            if (this.position == "h4") { output.push({pos: "y1", conditions: [canMonkeyPrisonJump]}) }
+            if (this.position == "h5") { output.push({pos: "y2", conditions: [canMonkeyPrisonJump]}) }
+            // if (vertical % 2 == 0 && horizontal % 2 == 0) output.push({pos: "y1", conditions: [canMonkeyPrisonJump]})
+            // if (vertical % 2 == 1 && horizontal % 2 == 0) output.push({pos: "y2", conditions: [canMonkeyPrisonJump]})
+        }
+        
         if ((vertical + 1) < 9){
             output.push(
                 {
@@ -156,18 +168,6 @@ export class Monkey extends Piece {
                     conditions: [noPiece]
                 }
             )
-        }
-
-        if (this.isWhite){
-            if (this.position == "a4") { output.push({pos: "x1", conditions: [canMonkeyPrisonJump]}) }
-            if (this.position == "a5") { output.push({pos: "x2", conditions: [canMonkeyPrisonJump]}) }
-            // if (vertical % 2 == 0 && horizontal % 2 == 1) output.push({pos: "x1", conditions: [canMonkeyPrisonJump]})
-            // if (vertical % 2 == 1 && horizontal % 2 == 1) output.push({pos: "x2", conditions: [canMonkeyPrisonJump]})
-        } else {
-            if (this.position == "h4") { output.push({pos: "y1", conditions: [canMonkeyPrisonJump]}) }
-            if (this.position == "h5") { output.push({pos: "y2", conditions: [canMonkeyPrisonJump]}) }
-            // if (vertical % 2 == 0 && horizontal % 2 == 0) output.push({pos: "y1", conditions: [canMonkeyPrisonJump]})
-            // if (vertical % 2 == 1 && horizontal % 2 == 0) output.push({pos: "y2", conditions: [canMonkeyPrisonJump]})
         }
 
 

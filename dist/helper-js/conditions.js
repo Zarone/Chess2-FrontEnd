@@ -255,8 +255,18 @@ export function rookActive({board, rookActiveWhite, rookActiveBlack, from}){
     return (board[from].isWhite && rookActiveWhite) || (!board[from].isWhite && rookActiveBlack)
 }
 
-export function canMonkeyPrisonJump({board, from, to}) {
-    return (board[from] && board[from].constructor.name == Monkey.name && board[to] && board[to].hasBanana)
+export function canMonkeyPrisonJump({board, from, to, otherMoveCount}) {
+
+    return (
+        board[from] && board[from].constructor.name == Monkey.name && 
+        board[to] && board[to].hasBanana &&
+        
+        // this is here so that the monkey can only 
+        // jump if it has something to jump off of.
+        // otherMoveCount works like this because
+        // of the order moves are evaluated.
+        otherMoveCount > 0 
+        )
 }
 
 export function sameMonkeyTurn({board, from, thisTurn}){

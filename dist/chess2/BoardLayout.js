@@ -110,6 +110,7 @@ export class BoardLayout extends PowerClass {
     }
 
     filterImpossibleMoves (game, moves, currentPos) {
+        let totalMoves = 0;
         return moves.filter((elem, index)=>{
             for (let i = 0; i < elem.conditions.length; i++){
                 if (
@@ -120,13 +121,15 @@ export class BoardLayout extends PowerClass {
                             to: elem.pos,
                             rookActiveWhite: game.get('rookActiveWhite'),
                             rookActiveBlack: game.get('rookActiveBlack'),
-                            thisTurn: game.get('currentTurn')
+                            thisTurn: game.get('currentTurn'),
+                            otherMoveCount: totalMoves
                         }
                     ) 
                 ) {
                     return false
                 }
             }
+            ++totalMoves;
             return true
 
         })
