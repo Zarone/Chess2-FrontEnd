@@ -29,8 +29,7 @@ export const Servers = {
     'dedicated-1': {
         http: 'http://198.84.240.109:8081',
         ws: 'ws://198.84.240.109:8081',
-        label: 'Ontario (max 500)',
-        hidden: true
+        label: 'Ontario (max 1000)'
     }
 };
 
