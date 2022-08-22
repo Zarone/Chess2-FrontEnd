@@ -195,8 +195,8 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
             game.set('blackTimer', finalTimeLimit - args.timeBlack);
 
             if (finalTimeLimit <= 60*60){
-                if ( currentTurn.startsWith('Black') ) game.blackTimer -= args.timeSinceLastMove;
-                if ( currentTurn.startsWith('White') ) game.whiteTimer -= args.timeSinceLastMove;
+                if ( currentTurn.startsWith('Black') ) game.set('blackTimer', game.get('blackTimer') - args.timeSinceLastMove);
+                if ( currentTurn.startsWith('White') ) game.set('whiteTimer', game.get('whiteTimer') - args.timeSinceLastMove);
             } 
 
         })

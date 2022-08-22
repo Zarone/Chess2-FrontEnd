@@ -3,14 +3,14 @@ import { serverID, getRoomCount } from "../../dist/helper-js/utils";
 export const Servers = {
     'localhost': {
         visible: () =>
-            false,//window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
+            window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
         label: 'Development (:8080)',
         http: 'http://127.0.0.1:8080',
         ws: 'ws://127.0.0.1:8080'
     },
     'localhost-2': {
         visible: () =>
-            false,//window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
+            window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
         label: 'Development (:8081)',
         http: 'http://127.0.0.1:8081',
         ws: 'ws://127.0.0.1:8081'
