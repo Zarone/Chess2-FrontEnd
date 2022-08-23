@@ -1,7 +1,7 @@
 package processor
 
 import (
-	"chesstwoai/boardmanager"
+	"chesstwoai/algorithmic/boardmanager"
 	"fmt"
 	"math"
 )

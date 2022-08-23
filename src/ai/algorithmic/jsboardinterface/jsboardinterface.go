@@ -1,7 +1,7 @@
 package jsboardinterface
 
 import (
-	"chesstwoai/boardmanager"
+	"chesstwoai/algorithmic/boardmanager"
 	"fmt"
 	"syscall/js"
 )

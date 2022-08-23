@@ -1,6 +1,6 @@
 package processor
 
-import "chesstwoai/boardmanager"
+import "chesstwoai/algorithmic/boardmanager"
 
 var defaultState boardmanager.State = boardmanager.State{
 	Gb: boardmanager.GameBoard{ boardmanager.Tile{IsWhite: false, ThisPieceType: boardmanager.Rook, HasBanana: false},

@@ -1,7 +1,7 @@
 package boardmanager
 
 import (
-	"chesstwoai/helper"
+	"chesstwoai/algorithmic/helper"
 	"fmt"
 )
 

@@ -1,9 +1,9 @@
 package actcontainer 
 
 import (
-	"chesstwoai/boardmanager"
-	"chesstwoai/processor"
-	"chesstwoai/jsboardinterface"
+	"chesstwoai/algorithmic/boardmanager"
+	"chesstwoai/algorithmic/processor"
+	"chesstwoai/algorithmic/jsboardinterface"
 	"fmt"
 	"strings"
 	"syscall/js"
