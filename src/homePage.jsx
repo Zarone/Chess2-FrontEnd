@@ -20,7 +20,7 @@ export default function HomePage(props){
     const [server, setServer] = useState(undefined);
     const [roomID, setRoomID] = useState();
     const [timeLimit, setTimeLimit] = useState(15)
-    const [AILevel, setAILevel] = useState(1)
+    const [AILevel, setAILevel] = useState(2)
     const [AIType, setAIType] = useState(Object.keys(computerTypes)[0])
 
     useEffect(()=>{
@@ -98,10 +98,26 @@ export default function HomePage(props){
                             <h2>Quick Play</h2>
 
                             <div className="d-grid">
-                                <button type="button" id="raw-singleplayer" className="btn btn-primary btn-block">Play (singleplayer)</button>
+                                <button type="button" 
+                                    id="raw-singleplayer" 
+                                    className="btn btn-primary btn-block"
+                                    onClick={()=>{goToGame({modeName:GameModes.HUMAN_VS_AI.modeName, roomID, timeLimit: 100, computerLevel: AILevel, computerType: AIType})}} 
+                                >
+                                        Play (singleplayer)
+                                </button>
                                 <p>
-                                    Press this button if you just want to jump into a singleplayer game!
+                                    Press this button if you just want to jump into a singleplayer game against an AI player!
                                 </p>
+                                <div style={{margin: "0 auto 70px auto", width: "80%", textAlign: "center"}}>
+                                    <p className="h4">Change difficulty</p>
+                                    <select className={`w-100 rounded ${styles.customGameOption}`} defaultValue="2" onChange={e=>setAILevel(+e.target.value)}>
+                                        <option value="1">Easy</option>
+                                        <option value="2">Medium</option>
+                                        <option value="3">Hard</option>
+                                        <option value="4">Very Hard</option>
+                                    </select>
+                                </div>
+
                             </div>
                             <div className="d-grid">
                                 <button type="button" id="raw-join-timed" className="btn btn-primary btn-block">Play (timed 15 minutes)</button>
@@ -160,7 +176,7 @@ export default function HomePage(props){
                                                         <label>AI Level</label>
                                                         <br />
                                                         {/* <input onChange={e=>setAILevel(e.target.value)} type="number" placeholder="2" min="1" max="3" className="w-100 rounded border-0" /> */}
-                                                        <select className={`rounded ${styles.customGameOption}`} onChange={e=>setAILevel(+e.target.value)}>
+                                                        <select className={`rounded ${styles.customGameOption}`} defaultValue="2" onChange={e=>setAILevel(+e.target.value)}>
                                                             <option value="1">Easy</option>
                                                             <option value="2">Medium</option>
                                                             <option value="3">Hard</option>

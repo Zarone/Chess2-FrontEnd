@@ -8,30 +8,14 @@ function rawJoin(time){
         + `&server=${window.server}`;
 }
 
-function rawSinglePlayer(time){
-    // window.location.href="../game.html?friendRoom=false&timeLimit="+time.toString();
-    window.location.href = "../game.html?friendRoom=true&timeLimit=100&gamemode=HUMAN_VS_AI&computerLevel=2&computerType=ALGORITHMIC"
-}
-
 window.onload = async () => {
 
 
     let raw_join_button = document.getElementById("raw-join");
     let raw_join_timed_button = document.getElementById("raw-join-timed");
-    let raw_singleplayer = document.getElementById("raw-singleplayer");
-    let room_join_button = document.getElementById("room-join");
-    let room_join_id = document.getElementById("room-id");
-    let room_join_time = document.getElementById("room-time");
 
     raw_join_button.addEventListener("click", () => rawJoin(100))
     raw_join_timed_button.addEventListener("click", () => rawJoin(15))
-    raw_singleplayer.addEventListener("click", () => rawSinglePlayer(100))
-
-    
-    // room_join_button.addEventListener("click", ()=>{
-    //     window.location.href="../game.html?friendRoom=true&roomID="+room_join_id.value+"&timeLimit="+(room_join_time.value||"100");
-    // })
-
 
     let roomsCount_Dom = document.getElementById("rooms-count")
     let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
