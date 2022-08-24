@@ -76,6 +76,7 @@ export class ChessBoard {
     }
 
     dragStart(event){
+        this.resetTiles()
         let canMove = (this.isWhite && this.currentTurn == "White") || (!this.isWhite && this.currentTurn == "Black");
         if (!canMove) return;
         
