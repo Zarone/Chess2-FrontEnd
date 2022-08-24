@@ -76,7 +76,6 @@ export class ChessBoard {
     }
 
     dragStart(event){
-        this.resetTiles()
         let canMove = (this.isWhite && this.currentTurn == "White") || (!this.isWhite && this.currentTurn == "Black");
         if (!canMove) return;
         
@@ -107,7 +106,7 @@ export class ChessBoard {
 
         let attemptMoveTo = document.elementFromPoint(event.clientX, event.clientY)
 
-        if (attemptMoveTo.nodeName == "IMG"){
+        if (attemptMoveTo?.nodeName == "IMG"){
             attemptMoveTo = attemptMoveTo.parentElement
         }
 
@@ -216,13 +215,21 @@ export class ChessBoard {
     }
 
     makeMove(moveToDom, event){
-        let classNames = moveToDom.className.split(" ")
+        let classNames;
+        let isMoveableTile;
         
-        let isMoveableTile = this.styleType.canMove.checkAgainst(moveToDom);
+        if (!moveToDom){
+            classNames = [];
+            isMoveableTile = false;
+        } else {
+            classNames = moveToDom.className.split(" ")
+            isMoveableTile = this.styleType.canMove.checkAgainst(moveToDom);
+        }
+        
 
         let monkeyJumpingNonRescue = false;
 
-        const toPos = new Position(moveToDom.id);
+        const toPos = moveToDom ? new Position(moveToDom.id) : null;
         const fromPos = ( this.draggingMonkey || this.draggingRoyalty ) ?
             "TEMP" : this.draggingPiece.position;
 
