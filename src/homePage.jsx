@@ -71,12 +71,12 @@ export default function HomePage(props){
                         <div className="container">
                             <img className="logo" src="./assets/_Logo.png" alt="" />
                         </div>
-                        <p className="h3">Chess 2 by <a className="text-decoration-none" href="https://www.youtube.com/c/OatsJenkins">Oats Jenkins</a></p>
+                        <p className="h3">Chess 2 by <a target="_blank" rel="noopener noreferrer" className="text-decoration-none" href="https://www.youtube.com/c/OatsJenkins">Oats Jenkins</a></p>
                         <p className="h3">Website by Zach Alfano</p>
-                        <p className="h3">Chess 2 <a href="https://discord.gg/aGFThSgGsj">Discord</a> by sup lloooll</p>
-                        <p style={noticeMe}>
+                        <p className="h3">Chess 2 <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/aGFThSgGsj">Discord</a> by sup lloooll</p>
+                        {/* <p style={noticeMe}>
                             ^ Discord link was broken, but we fixed it
-                        </p>
+                        </p>*/}
 
                     </div>
                     <div className="col-lg-6 pt-5">
