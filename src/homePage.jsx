@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react"
-import * as ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client"
 import Header from "./components/header"
 import SettingsMenu from "./components/settingsMenu";
 import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
 import "../dist/helper-js/join";
 import { styleList } from "./helper-js/StyleManager";
 import { GameMode, GameModes } from "../src/helper-js/GameModes"
-import { goToGame, serverID } from "../dist/helper-js/utils";
+import { goToGame, LOADING_ROOMS_TEXT, serverID } from "../dist/helper-js/utils";
 import { computerTypes } from "../src/helper-js/EnemyComputerSettings"
 import styles from "../dist/styles/home.module.css"
 import { Servers, ServerUtil } from "./helper-js/Servers";
@@ -18,6 +18,7 @@ export default function HomePage(props){
 
     const [gameMode, setGameMode] = useState(GameModes.SINGLE_PLAYER.modeName);
     const [server, setServer] = useState(undefined);
+    const [serversAvailable, setServersAvailable] = useState([]);
     const [roomID, setRoomID] = useState();
     const [timeLimit, setTimeLimit] = useState(15)
     const [AILevel, setAILevel] = useState(2)
@@ -25,27 +26,34 @@ export default function HomePage(props){
 
     useEffect(()=>{
         globalThis.cookie.style = customStyle.name
-        console.log(globalThis.cookie.style)
     }, [customStyle])
     
     useEffect(()=>{
         globalThis.cookie.sound = soundOn
-        console.log(globalThis.cookie.sound)
     }, [soundOn])
     
     useEffect(() => {
         window.server = server || "heroku-1";
         (async () => {
             let roomsCount_Dom = document.getElementById("rooms-count")
-            let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
-            let roomsCountJson = await roomsCountRaw.json();
-            roomsCount_Dom.innerText = "Rooms: " + roomsCountJson.roomCount;
+            try {
+                let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
+                let roomsCountJson = await roomsCountRaw.json();
+                roomsCount_Dom.innerText = "Rooms: " + roomsCountJson.roomCount;
+            } catch(err){
+                roomsCount_Dom.innerText = LOADING_ROOMS_TEXT//err
+            }
         })();
     }, [server])
     
     useEffect(()=>{
         (async ()=>{
-            setServer(await ServerUtil.getDefault())
+            await ServerUtil.getAvailableServers(
+                async (...args)=>{ 
+                    setServersAvailable(...args); 
+                    setServer(await ServerUtil.getDefault(...args)); 
+                } 
+            );
         })()
     }, [])
 
@@ -81,15 +89,14 @@ export default function HomePage(props){
                     </div>
                     <div className="col-lg-6 pt-5">
                         <div className="container custom-bg-tertiary rounded pt-3 pb-3">
-                            <div><p className="h2 text-center" id="rooms-count">Loading room count...</p></div>
+                            <div><p className="h2 text-center" id="rooms-count">{LOADING_ROOMS_TEXT}</p></div>
         
                             <div style={noticeMe}>
                                 Choose a different server if rooms are full<br />
                                 <select className={`rounded ${styles.customGameOption}`} title="Select Server" value={server} onChange={(e)=>{setServer(e.target.value)}}>
                                     {
-                                        Object.keys(Servers).map((el)=>{
-                                            if ( Servers[el].visible && ! Servers[el].visible() ) return "";
-                                            return Servers[el].hidden ? "" : <option key={el} value={el}>{Servers[el].label}</option>
+                                        serversAvailable.map((el)=>{
+                                            return <option key={el} value={el}>{Servers[el].label}</option>
                                         })
                                     }
                                 </select>
@@ -228,4 +235,7 @@ export default function HomePage(props){
 
 function Root(props) { return <HomePage></HomePage> }
 
-ReactDOM.render( Root(), document.getElementById('react-main-root') );
+const container = document.getElementById('react-main-root')
+const root = createRoot(container)
+
+root.render( Root() );

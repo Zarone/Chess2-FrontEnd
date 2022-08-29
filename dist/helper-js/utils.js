@@ -35,7 +35,6 @@ export async function getRoomCount(serverAddress){
                 return +json.roomCount.split("/")[0];
             })
     } catch(err){
-        console.error(err);
         val = false;
     }
 
@@ -52,6 +51,7 @@ export const DISCONNECT_TIMER_START = 30
 export const LOSE_TEXT = "You Lost. Better Luck Next Time! 😊"
 export const WIN_TEXT = "You Win! 💯"
 export const NEUTRAL_GAME_OVER = "Game Over"
+export const LOADING_ROOMS_TEXT = "Loading room count..."
 
 export function disconnectText(secondRemaining){
     return "You've disconnect 😥 You have " + secondRemaining.toString() + " seconds to reconnect. Try reload the page."

@@ -1,4 +1,4 @@
-import {serverID} from "./utils.js";
+import {LOADING_ROOMS_TEXT, serverID} from "./utils.js";
 import {Cookie} from "./cookieManager.js"
 
 import { GameMode, GameModes } from "../../src/helper-js/GameModes"
@@ -17,11 +17,6 @@ window.onload = async () => {
     raw_join_button.addEventListener("click", () => rawJoin(100))
     raw_join_timed_button.addEventListener("click", () => rawJoin(15))
 
-    let roomsCount_Dom = document.getElementById("rooms-count")
-    let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
-    let roomsCountJson = await roomsCountRaw.json();
-
-    roomsCount_Dom.innerText = "Rooms: " + roomsCountJson.roomCount;
 }
 
 // foam.ENUM({
