@@ -47,8 +47,10 @@ export const ServerUtil = {
             return 'localhost';
         } else if ( (await getRoomCount(Servers['heroku-1'].http)||Infinity) < Servers['heroku-1'].limit*0.8 ){
             return 'heroku-1';
-        } else {
+        } else if (!Servers["heroku-2"].hidden){
             return 'heroku-2'
+        } else {
+            return 'glitchapi'
         }
     }
 };
