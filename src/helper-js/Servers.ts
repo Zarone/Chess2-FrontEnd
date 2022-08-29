@@ -3,14 +3,14 @@ import { serverID, getRoomCount } from "../../dist/helper-js/utils";
 export const Servers = {
     'localhost': {
         visible: () =>
-            window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
+            false,//window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
         label: 'Development (:8080)',
         http: 'http://127.0.0.1:8080',
         ws: 'ws://127.0.0.1:8080'
     },
     'localhost-2': {
         visible: () =>
-            window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
+            false,//window.location.href.split(":")[1] == "//127.0.0.1" || window.location.href.split(":")[1] == "//localhost",
         label: 'Development (:8081)',
         http: 'http://127.0.0.1:8081',
         ws: 'ws://127.0.0.1:8081'
@@ -46,10 +46,13 @@ export const ServerUtil = {
         if ( Servers['localhost'].visible() ) {
             return 'localhost';
         } else if ( (await getRoomCount(Servers['heroku-1'].http)||Infinity) < Servers['heroku-1'].limit*0.8 ){
+            console.log("here1")
             return 'heroku-1';
         } else if (!Servers["heroku-2"].hidden){
+            console.log("here2")
             return 'heroku-2'
         } else {
+            console.log("here3")
             return 'glitchapi'
         }
     }

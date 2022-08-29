@@ -24,14 +24,22 @@ export function goToGame({modeName, roomID, timeLimit, computerLevel, computerTy
 
 export async function getRoomCount(serverAddress){
 
-    return fetch(serverAddress+"/getRoomCount")
-        .then((raw)=>{
-            return raw.json();
-        })
-        .then((json)=>{
-            return +json.roomCount.split("/")[0];
-        })
+    let val;
     
+    try {
+        val = await fetch(serverAddress+"/getRoomCount")
+            .then((raw)=>{
+                return raw.json();
+            })
+            .then((json)=>{
+                return +json.roomCount.split("/")[0];
+            })
+    } catch(err){
+        console.error(err);
+        val = false;
+    }
+
+    return val;    
 }
 
 export const canMoveColor = "red"
