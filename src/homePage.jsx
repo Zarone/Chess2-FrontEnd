@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { createRoot } from "react-dom/client"
+import * as ReactDOM from "react-dom";
 import Header from "./components/header"
 import SettingsMenu from "./components/settingsMenu";
 import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
@@ -235,7 +235,4 @@ export default function HomePage(props){
 
 function Root(props) { return <HomePage></HomePage> }
 
-const container = document.getElementById('react-main-root')
-const root = createRoot(container)
-
-root.render( Root() );
+ReactDOM.render( Root(), document.getElementById('react-main-root') );
