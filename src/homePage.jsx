@@ -35,14 +35,27 @@ export default function HomePage(props){
     useEffect(() => {
         window.server = server || "heroku-1";
         (async () => {
+            let initial = window.server;
             let roomsCount_Dom = document.getElementById("rooms-count")
+
+            let roomsCountRaw;
             try {
-                let roomsCountRaw = await fetch(serverID()+"/getRoomCount")
-                let roomsCountJson = await roomsCountRaw.json();
+                roomsCountRaw = await fetch(serverID()+"/getRoomCount")
+            } catch(err) {
+                console.log(initial, "error in fetch", err);
+                return;
+            }
+
+            let roomsCountJson;
+            try {
+                roomsCountJson = await roomsCountRaw.json();
+                console.log(initial, roomsCountJson)
                 roomsCount_Dom.innerText = "Rooms: " + roomsCountJson.roomCount;
             } catch(err){
-                roomsCount_Dom.innerText = LOADING_ROOMS_TEXT//err
+                console.log(initial, "error in to json", err)
+                return;
             }
+
         })();
     }, [server])
     
