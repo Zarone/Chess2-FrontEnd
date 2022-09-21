@@ -1,6 +1,7 @@
 import React from "react"
 import * as ReactDOM from "react-dom";
 import Header from "./components/header"
+import Footer from "./components/footer"
 
 export default function FAQPage(props){
     return <React.Fragment>
@@ -111,12 +112,12 @@ export default function FAQPage(props){
                 </ul>
                 <p className="display-3">Contact Info</p>
                 <p>
-                    If there are any bug, suggestions, or are just eager for discussion, then you can check out the <a class="d-info-link" target="_blank" rel="noopener noreferrer" href="https://discord.gg/aGFThSgGsj">Discord</a>.
+                    If there are any bug, suggestions, or are just eager for discussion, then you can check out the <a className="d-info-link" target="_blank" rel="noopener noreferrer" href="https://discord.gg/aGFThSgGsj">Discord</a>.
                 </p>
                 <p className="display-3">What of this website can you re-use, and how?</p>
                 <p>
                     The general license for the code base is the MIT LICENSE.txt file in the root directory of the github repository. Certain assets 
-                    may have an alternate license, as is the case with images for the High Res custom theme provided by SteamDemon296 under the <a class="d-info-link" target="_blank" rel="noopener noreferrer license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+                    may have an alternate license, as is the case with images for the High Res custom theme provided by SteamDemon296 under the <a className="d-info-link" target="_blank" rel="noopener noreferrer license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
                 </p>
             </div>
         </div>
