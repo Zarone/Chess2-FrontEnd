@@ -1,7 +1,7 @@
 import React from "react"
 
 export default function NavBar(){
-    return <nav className="navbar navbar-expand-sm custom-bg-primary">
+    return <nav className="navbar navbar-expand-sm d-navbar-bg-color">
     <div className="container-fluid">
         <div className="navbar-collapse justify-content-center">
         <ul className="navbar-nav">

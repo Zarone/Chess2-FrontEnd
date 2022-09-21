@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import * as ReactDOM from "react-dom";
 import Header from "./components/header"
+import Footer from "./components/footer"
 import SettingsMenu from "./components/settingsMenu";
 import {initAndGetSound, cookieInit} from "../dist/helper-js/cookieManager"
 import "../dist/helper-js/join";
@@ -80,88 +81,131 @@ export default function HomePage(props){
     return <React.Fragment>
     <script src="../dist/foam-bin.js"></script>
     <script src="./helper-js/join.js" type="module"></script>
-    <Header />
     <section>
-        <div className="container-fluid text-white pt-5">
-            <div className="container custom-bg-primary rounded">
-                <p className="h1 text-center"><a href="./faq.html">Rules Here</a></p>
-            </div>
-            <div className="container my-5 custom-bg-primary pb-5 rounded">
-                <div className="row mb-4">
-                    <div className="col-lg-6 pt-5 mt-5">
-                        <div className="container">
-                            <img className="logo" src="./assets/_Logo.png" alt="" />
+        <Header />
+        <div className="d-title-section">
+            <img className="logo d-title-img" src="./assets/_Logo.png" alt="" />
+            <p class="d-title-text">Chess 2 by <a class="d-link" href="https://www.youtube.com/c/OatsJenkins">Oat Jenkins</a></p>
+        </div>
+        <div className="d-play-panel-container">
+            <div className="d-play-panel">
+                <div className="d-play-panel-flex">
+                    <div className="d-play-panel-left">
+                        <div className="d-play-panel-left-rules-container">
+                            <h1 className="d-play-panel-left-rules-title">Rules</h1>
+                            <iframe class="d-video" src="https://www.youtube-nocookie.com/embed/mcivL8u176Y?start=93" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <br></br><a class="d-link d-play-panel-left-rules-link" href="./faq.html">OR Read Them Here...</a>
+                        
                         </div>
-                        <p className="h3">Chess 2 by <a target="_blank" rel="noopener noreferrer" className="text-decoration-none" href="https://www.youtube.com/c/OatsJenkins">Oats Jenkins</a></p>
-                        <p className="h3">Website by Zach Alfano</p>
-                        <p className="h3">Chess 2 <a target="_blank" rel="noopener noreferrer" href="https://discord.gg/aGFThSgGsj">Discord</a> by sup lloooll</p>
-                        {/* <p style={noticeMe}>
-                            ^ Discord link was broken, but we fixed it
-                        </p>*/}
-
+                        <div className="d-play-panel-left-settings-container">
+                        <h2 class="d-play-panel-left-settings-title">Settings</h2>
+                            <div>
+                                <SettingsMenu 
+                                    customStyle={customStyle} 
+                                    setCustomStyle={setCustomStyle} 
+                                    soundOn={soundOn} 
+                                    setSoundToggle={setSoundToggle}
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <div className="col-lg-6 pt-5">
-                        <div className="container custom-bg-tertiary rounded pt-3 pb-3">
-                            <div><p className="h2 text-center" id="rooms-count">{LOADING_ROOMS_TEXT}</p></div>
+
+
+
+
+
+
+
+
+
+
+                    <div className="d-play-panel-right">
+
+                    <div className="d-play-panel-right-flex">
+                        <div >
         
-                            <div style={noticeMe}>
-                                Choose a different server if rooms are full<br />
-                                <select className={`rounded ${styles.customGameOption}`} title="Select Server" value={server} onChange={(e)=>{setServer(e.target.value)}}>
+                            <div class="d-select-container">
+                            <div><p className="h2 text-center" class="d-play-panel-right-rooms-title" id="rooms-count">{LOADING_ROOMS_TEXT}</p></div>
+
+                            <select className="d-select" title="Select Server" value={server} onChange={(e)=>{setServer(e.target.value)}}>
                                     {
                                         serversAvailable.map((el)=>{
-                                            return <option key={el} value={el}>{Servers[el].label}</option>
+                                            return <option class="d-option" key={el} value={el}>{Servers[el].label}</option>
                                         })
                                     }
                                 </select>
+                                <br></br>
+                                Select another server if the rooms are full.
+                                
                             </div>
                             
-                            <h2>Quick Play</h2>
+                            <div class="d-select-container">
 
+                            <h2 class="d-h2-fontsize">Single Player</h2>
+                            <p>
+                                    Select a difficulty and play Chess 2 against an AI!
+                            </p>
                             <div className="d-grid">
-                                <button type="button" 
-                                    id="raw-singleplayer" 
-                                    className="btn btn-primary btn-block"
-                                    onClick={()=>{goToGame({modeName:GameModes.HUMAN_VS_AI.modeName, roomID, timeLimit: 100, computerLevel: AILevel, computerType: AIType})}} 
-                                >
-                                        Play (singleplayer)
-                                </button>
-                                <p>
-                                    Press this button if you just want to jump into a singleplayer game against an AI player!
-                                </p>
-                                <div style={{margin: "0 auto 70px auto", width: "80%", textAlign: "center"}}>
-                                    <p className="h4">Change difficulty</p>
-                                    <select className={`w-100 rounded ${styles.customGameOption}`} defaultValue="2" onChange={e=>setAILevel(+e.target.value)}>
+                            <div>
+                                    <select className="d-select" defaultValue="2" onChange={e=>setAILevel(+e.target.value)}>
                                         <option value="1">Easy</option>
                                         <option value="2">Medium</option>
                                         <option value="3">Hard</option>
                                         <option value="4">Very Hard</option>
                                     </select>
                                 </div>
+                                <button type="button" 
+                                    id="raw-singleplayer" 
+                                    className="d-button d-button-mt"
+                                    onClick={()=>{goToGame({modeName:GameModes.HUMAN_VS_AI.modeName, roomID, timeLimit: 100, computerLevel: AILevel, computerType: AIType})}} 
+                                >
+                                        Play (singleplayer)
+                                </button>
+                            </div>
+                                
+
+
+                                
 
                             </div>
+
+                            <div class="d-select-container">
+   
+
+
+                            <h2 class="d-h2-fontsize">Quick Play (Online)</h2>
+
                             <div className="d-grid">
-                                <button type="button" id="raw-join-timed" className="btn btn-primary btn-block">Play (timed 15 minutes)</button>
-                                <p>
-                                    Press this button if you just want to jump into a timed online game!
-                                </p>
+                            <p>
+                                    Join/Create a random game to play (15 Min Timer).
+                            </p>
+                                <button type="button" id="raw-join-timed" className="d-button">Play (15 Min)</button>
+                                
                             </div>
                             <div className="d-grid">
-                                <button type="button" id="raw-join" className="btn btn-primary btn-block">Play (un-timed)</button>
-                                <p>
-                                    Press this button if you just want to jump into an online game!
-                                </p>
+                            <p>
+                            Join/Create a random game to play (No Timer).
+                            </p>
+                                <button type="button" id="raw-join" className="d-button">Play (untimed)</button>
+                                
                             </div>
+
+                            </div>
+
+                            <div class="d-select-container">
+
+
 
                             <div className="d-grid">
                                 {/* <foam className="chess2.GameConfigView" of="chess2.GameConfig"></foam> */}
                                 <div>
-                                    <h2>Custom Game</h2>
+                                    <h2 class="d-h2-fontsize">Custom Game (Online)</h2>
                                     <div>
                                         <div style={{textAlign: "center", margin: "0 auto"}}>
                                             <div >
                                                 <label>Game Mode</label>
                                                 <br/>
-                                                <select className={`rounded ${styles.customGameOption}`} title="Game Mode" defaultValue="disabled" onChange={(e)=>{setGameMode(e.target.value)}}>
+                                                <select className="d-select" title="Game Mode" defaultValue="disabled" onChange={(e)=>{setGameMode(e.target.value)}}>
                                                     <option value="disabled" disabled>Pick Gamemode...</option>
                                                     {
                                                         Object.keys(GameModes).map((el)=>{
@@ -196,7 +240,7 @@ export default function HomePage(props){
                                                         <label>AI Level</label>
                                                         <br />
                                                         {/* <input onChange={e=>setAILevel(e.target.value)} type="number" placeholder="2" min="1" max="3" className="w-100 rounded border-0" /> */}
-                                                        <select className={`rounded ${styles.customGameOption}`} defaultValue="2" onChange={e=>setAILevel(+e.target.value)}>
+                                                        <select className="d-select" defaultValue="2" onChange={e=>setAILevel(+e.target.value)}>
                                                             <option value="1">Easy</option>
                                                             <option value="2">Medium</option>
                                                             <option value="3">Hard</option>
@@ -209,39 +253,41 @@ export default function HomePage(props){
                                             <div>
                                                 <label>Time (minutes)</label> 
                                                 <br/>
-                                                <input onChange={e=>setTimeLimit(e.target.value)} className={`rounded border-0 ${styles.customGameOption}`} type="number" />
+                                                <input onChange={e=>setTimeLimit(e.target.value)} className="d-select" type="number" />
                                             </div>
                                         </div>
                                         <button 
                                             onClick={()=>{goToGame({modeName:gameMode, roomID, timeLimit, computerLevel: AILevel, computerType: AIType})}} 
-                                            className="btn btn-primary btn-block w-100 mt-4"
+                                            className="d-button d-button-mt"
                                             disabled={!GameModes[gameMode].singleplayer && roomID==""}
                                             >
-                                                Start
+                                                Play
                                         </button>
                                     </div>
                                 </div>
                                 <p>
-                                    If you want to play with friends, you can enter a custom room ID! Please use an uncommon room name so that you're 
-                                    less likely to join someone else's game by accident.
+                                    To play with friends, you can enter a custom room ID.<br></br>Try not to use a common room ID, to prevent other people from joining your game.
+                                    
                                 </p>
                             </div>
-                            
-                            <h2 className="mt-5">Settings</h2>
-                            <div>
-                                <SettingsMenu 
-                                    customStyle={customStyle} 
-                                    setCustomStyle={setCustomStyle} 
-                                    soundOn={soundOn} 
-                                    setSoundToggle={setSoundToggle}
-                                />
+
                             </div>
+                            
 
                         </div>
                     </div>
+                    </div>
                 </div>
             </div>
+            
         </div>
+        
+        <Footer /> 
+
+
+
+
+
     </section>
 </React.Fragment>
 }

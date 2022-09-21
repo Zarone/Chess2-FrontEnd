@@ -4,7 +4,7 @@ const path_ = require('path');
 const args = process.argv.slice(2);
 
 const flags = {
-    foam: false,
+    // foam: false,
     go: true 
 };
 
@@ -14,9 +14,10 @@ for ( k in flags ) {
 }
 
 try {
-    if ( flags.foam ) execSync('node ../node_modules/foam3/tools/genjs -pom=../tools/pom', {
-        cwd: path_.join(__dirname, '../dist')
-    });
+    // if ( flags.foam ) execSync('node ../node_modules/foam3/tools/genjs -pom=../tools/pom', {
+    //     cwd: path_.join(__dirname, '../dist')
+    // });
+    console.log(path_.join(__dirname, '../src/ai'))
     if ( flags.go ) execSync('go build -o ../../dist/assets/main.wasm', {
         cwd: path_.join(__dirname, '../src/ai'),
         env: {
