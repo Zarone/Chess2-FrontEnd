@@ -63,7 +63,7 @@ body{
 .d-play-panel{
     width:80%;
     margin-top:5rem;
-    background-color: #517297;
+    background-color:#0000;
     height:auto;
     padding:3rem 2rem;
     text-align: center;
@@ -295,6 +295,12 @@ body{
 
 @media only screen and (max-width: 1000px) {
     /* For mobile phones: */
+    
+    .d-play-panel{
+        background-color: #0000;
+        margin-top: 0;
+    }
+    
     .d-play-panel-flex{
         display:block;
         height:100%;
@@ -307,7 +313,8 @@ body{
         height:fit-content;
         margin-right:1rem;
         border-radius:10px;
-
+        margin: 1rem auto;
+        padding-top: 0.5rem;
     } 
     
     .d-play-panel-right{
@@ -316,7 +323,7 @@ body{
         height:fit-content;
         margin-right:1rem;
         border-radius:10px;
-
+        margin: 0;
     } 
 
     .d-video{
