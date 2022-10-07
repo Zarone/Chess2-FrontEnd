@@ -36,7 +36,7 @@ export class MultiplayerPlugin extends GameModeBasePlugin {
         super.install(game)
 
         game.set('flipped', true)
-        let socket = this.socket || (this.socket = io(socketID()));
+        let socket = this.socket || (this.socket = io(socketID(), {timeout: 100000}));
 
         let disconnectTimer = DISCONNECT_TIMER_START;
         socket.on("disconnect", () => {
