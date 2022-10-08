@@ -49,7 +49,7 @@ export const onLoad = async (styleSheet, styleName) => {
     turn_Dom.innerText = "...Waiting for player to join"
     turn_Dom.style.backgroundColor = 'white'
 
-    let socket = io(socketID())
+    let socket = io(socketID(), {timeout: 100000})
 
     const launcher = new GameLauncher({ debug: true });
     launcher.init();
